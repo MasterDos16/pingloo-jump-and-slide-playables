@@ -748,8 +748,8 @@ window.initGame = function(root) {
         if (anim_container) anim_container.style.cssText = cssStyle;
         if (dom_overlay_container) dom_overlay_container.style.cssText = cssStyle + " pointer-events: none;";
 
-        // 2. Узнаем плотность пикселей экрана (Retina/HiDPI)
-        let pRatio = window.devicePixelRatio || 1;
+        // Ограничиваем плотность до 1.5, чтобы не убить видеокарту телефона
+        let pRatio = Math.min(window.devicePixelRatio || 1, 1.5);
         
         // 3. Задаем холсту физические пиксели устройства
         canvas.width = w * pRatio;
