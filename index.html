@@ -25,6 +25,10 @@ function init() {
 	
 	// ВАЖНО: Создаем загрузчик, который берет манифест из библиотеки Animate и скачивает картинки из папки images/
 	var loader = new createjs.LoadQueue(false);
+	loader.on("progress", function(evt) {
+    let percent = Math.round(evt.progress * 100);
+    // Здесь можно менять текст на экране загрузки: "Загрузка: " + percent + "%"
+	});
 	loader.addEventListener("fileload", function(evt) { handleFileLoad(evt, comp); });
 	loader.addEventListener("complete", function(evt) { handleComplete(evt, comp); });
 	loader.loadManifest(lib.properties.manifest);
