@@ -141,7 +141,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6484,859);
 
 
 
-(lib.CachedBmp_295 = function() {
+(lib.CachedBmp_318 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(4);
 }).prototype = p = new cjs.Sprite();
@@ -154,7 +154,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6484,859);
 p.nominalBounds = new cjs.Rectangle(0,0,2761,1982);
 
 
-(lib.CachedBmp_294 = function() {
+(lib.CachedBmp_317 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(5);
 }).prototype = p = new cjs.Sprite();
@@ -167,14 +167,14 @@ p.nominalBounds = new cjs.Rectangle(0,0,2761,1982);
 p.nominalBounds = new cjs.Rectangle(0,0,2761,1982);
 
 
-(lib.CachedBmp_293 = function() {
+(lib.CachedBmp_316 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(6);
 }).prototype = p = new cjs.Sprite();
 
 
 
-(lib.CachedBmp_292 = function() {
+(lib.CachedBmp_315 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(7);
 }).prototype = p = new cjs.Sprite();
@@ -430,7 +430,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_291 = function() {
+(lib.CachedBmp_314 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(27);
 }).prototype = p = new cjs.Sprite();
@@ -444,7 +444,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_290 = function() {
+(lib.CachedBmp_313 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(29);
 }).prototype = p = new cjs.Sprite();
@@ -458,7 +458,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_289 = function() {
+(lib.CachedBmp_312 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(31);
 }).prototype = p = new cjs.Sprite();
@@ -486,7 +486,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_288 = function() {
+(lib.CachedBmp_311 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(33);
 }).prototype = p = new cjs.Sprite();
@@ -500,7 +500,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_287 = function() {
+(lib.CachedBmp_310 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(35);
 }).prototype = p = new cjs.Sprite();
@@ -514,7 +514,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_286 = function() {
+(lib.CachedBmp_309 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(37);
 }).prototype = p = new cjs.Sprite();
@@ -542,7 +542,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_285 = function() {
+(lib.CachedBmp_308 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(39);
 }).prototype = p = new cjs.Sprite();
@@ -556,7 +556,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_284 = function() {
+(lib.CachedBmp_307 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(41);
 }).prototype = p = new cjs.Sprite();
@@ -577,7 +577,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_283 = function() {
+(lib.CachedBmp_306 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(43);
 }).prototype = p = new cjs.Sprite();
@@ -598,7 +598,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_282 = function() {
+(lib.CachedBmp_305 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(45);
 }).prototype = p = new cjs.Sprite();
@@ -619,7 +619,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_281 = function() {
+(lib.CachedBmp_304 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(47);
 }).prototype = p = new cjs.Sprite();
@@ -640,7 +640,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_280 = function() {
+(lib.CachedBmp_303 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(49);
 }).prototype = p = new cjs.Sprite();
@@ -668,7 +668,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_279 = function() {
+(lib.CachedBmp_302 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(51);
 }).prototype = p = new cjs.Sprite();
@@ -682,7 +682,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_278 = function() {
+(lib.CachedBmp_301 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(53);
 }).prototype = p = new cjs.Sprite();
@@ -710,7 +710,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_277 = function() {
+(lib.CachedBmp_300 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(57);
 }).prototype = p = new cjs.Sprite();
@@ -724,7 +724,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_276 = function() {
+(lib.CachedBmp_299 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(59);
 }).prototype = p = new cjs.Sprite();
@@ -738,7 +738,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_275 = function() {
+(lib.CachedBmp_298 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(61);
 }).prototype = p = new cjs.Sprite();
@@ -752,7 +752,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_274 = function() {
+(lib.CachedBmp_297 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(63);
 }).prototype = p = new cjs.Sprite();
@@ -766,7 +766,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,6152,6153);
 
 
 
-(lib.CachedBmp_273 = function() {
+(lib.CachedBmp_296 = function() {
 	this.initialize(ss["pingloo_wings_game_v01_atlas_7"]);
 	this.gotoAndStop(65);
 }).prototype = p = new cjs.Sprite();
@@ -16616,7 +16616,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_91();
 	this.instance.setTransform(-118.55,-258.65,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_289();
+	this.instance_1 = new lib.CachedBmp_312();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -16625,13 +16625,13 @@ if (reversed == null) { reversed = false; }
 	this.instance_3 = new lib.CachedBmp_94();
 	this.instance_3.setTransform(-118.55,-258.65,0.5,0.5);
 
-	this.instance_4 = new lib.CachedBmp_290();
+	this.instance_4 = new lib.CachedBmp_313();
 	this.instance_4.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_5 = new lib.CachedBmp_97();
 	this.instance_5.setTransform(-118.55,-258.65,0.5,0.5);
 
-	this.instance_6 = new lib.CachedBmp_291();
+	this.instance_6 = new lib.CachedBmp_314();
 	this.instance_6.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.instance_2},{t:this.instance_4},{t:this.instance_3}]},1).to({state:[{t:this.instance_2},{t:this.instance_6},{t:this.instance_5}]},1).wait(1));
@@ -16700,7 +16700,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_80();
 	this.instance.setTransform(-118.55,-261.05,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_286();
+	this.instance_1 = new lib.CachedBmp_309();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -16709,13 +16709,13 @@ if (reversed == null) { reversed = false; }
 	this.instance_3 = new lib.CachedBmp_83();
 	this.instance_3.setTransform(-118.55,-261.05,0.5,0.5);
 
-	this.instance_4 = new lib.CachedBmp_287();
+	this.instance_4 = new lib.CachedBmp_310();
 	this.instance_4.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_5 = new lib.CachedBmp_86();
 	this.instance_5.setTransform(-118.55,-261.05,0.5,0.5);
 
-	this.instance_6 = new lib.CachedBmp_288();
+	this.instance_6 = new lib.CachedBmp_311();
 	this.instance_6.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.instance_2},{t:this.instance_4},{t:this.instance_3}]},1).to({state:[{t:this.instance_2},{t:this.instance_6},{t:this.instance_5}]},1).wait(1));
@@ -16788,7 +16788,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_72();
 	this.instance.setTransform(-118.55,-259.85,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_284();
+	this.instance_1 = new lib.CachedBmp_307();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -16797,7 +16797,7 @@ if (reversed == null) { reversed = false; }
 	this.instance_3 = new lib.CachedBmp_75();
 	this.instance_3.setTransform(-118.55,-259.85,0.5,0.5);
 
-	this.instance_4 = new lib.CachedBmp_285();
+	this.instance_4 = new lib.CachedBmp_308();
 	this.instance_4.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.instance_2},{t:this.instance_4},{t:this.instance_3}]},2).wait(1));
@@ -16870,7 +16870,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_68();
 	this.instance.setTransform(-118.55,-258.65,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_283();
+	this.instance_1 = new lib.CachedBmp_306();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -16939,7 +16939,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_64();
 	this.instance.setTransform(-118.55,-261.05,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_282();
+	this.instance_1 = new lib.CachedBmp_305();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -17012,7 +17012,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_60();
 	this.instance.setTransform(-118.55,-259.85,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_281();
+	this.instance_1 = new lib.CachedBmp_304();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -17085,7 +17085,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_56();
 	this.instance.setTransform(-118.55,-262.25,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_280();
+	this.instance_1 = new lib.CachedBmp_303();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -17155,7 +17155,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_48();
 	this.instance.setTransform(-118.55,-262.25,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_278();
+	this.instance_1 = new lib.CachedBmp_301();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -17164,7 +17164,7 @@ if (reversed == null) { reversed = false; }
 	this.instance_3 = new lib.CachedBmp_51();
 	this.instance_3.setTransform(-118.55,-262.25,0.5,0.5);
 
-	this.instance_4 = new lib.CachedBmp_279();
+	this.instance_4 = new lib.CachedBmp_302();
 	this.instance_4.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.instance_2},{t:this.instance_4},{t:this.instance_3}]},2).wait(1));
@@ -17234,7 +17234,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_43();
 	this.instance.setTransform(-118.55,-271.25,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_277();
+	this.instance_1 = new lib.CachedBmp_300();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -17329,7 +17329,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_34();
 	this.instance.setTransform(-118.55,-272.45,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_274();
+	this.instance_1 = new lib.CachedBmp_297();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -17424,7 +17424,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_31();
 	this.instance.setTransform(-118.55,-272,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_273();
+	this.instance_1 = new lib.CachedBmp_296();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -18965,7 +18965,7 @@ if (reversed == null) { reversed = false; }
 	this.txtTotalCoins.parent = this;
 	this.txtTotalCoins.setTransform(-715.15,-470.6);
 
-	this.instance = new lib.CachedBmp_292();
+	this.instance = new lib.CachedBmp_315();
 	this.instance.setTransform(-823.9,-519.8,0.5,0.5);
 
 	this.instance_1 = new lib.Symbol5();
@@ -19611,7 +19611,7 @@ if (reversed == null) { reversed = false; }
 	this.instance = new lib.CachedBmp_37();
 	this.instance.setTransform(-118.55,-272.6,0.5,0.5);
 
-	this.instance_1 = new lib.CachedBmp_275();
+	this.instance_1 = new lib.CachedBmp_298();
 	this.instance_1.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.instance_2 = new lib.CachedBmp_95();
@@ -19620,7 +19620,7 @@ if (reversed == null) { reversed = false; }
 	this.instance_3 = new lib.CachedBmp_40();
 	this.instance_3.setTransform(-118.55,-272.6,0.5,0.5);
 
-	this.instance_4 = new lib.CachedBmp_276();
+	this.instance_4 = new lib.CachedBmp_299();
 	this.instance_4.setTransform(-127.45,-286.35,0.5,0.5);
 
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2},{t:this.instance_1},{t:this.instance}]}).to({state:[{t:this.instance_2},{t:this.instance_4},{t:this.instance_3}]},3).wait(1));
@@ -20039,7 +20039,7 @@ if (reversed == null) { reversed = false; }
 	this.txtTotalCoins.parent = this;
 	this.txtTotalCoins.setTransform(-715.15,-473);
 
-	this.instance = new lib.CachedBmp_295();
+	this.instance = new lib.CachedBmp_318();
 	this.instance.setTransform(-823.9,-519.8,0.5,0.5);
 
 	this.instance_1 = new lib.Symbol5();
@@ -20096,7 +20096,7 @@ if (reversed == null) { reversed = false; }
 	this.txtTotalCoins.parent = this;
 	this.txtTotalCoins.setTransform(-715.15,-470.6);
 
-	this.instance = new lib.CachedBmp_293();
+	this.instance = new lib.CachedBmp_316();
 	this.instance.setTransform(-823.9,-519.8,0.5,0.5);
 
 	this.instance_1 = new lib.Symbol5();
@@ -20132,7 +20132,7 @@ if (reversed == null) { reversed = false; }
 	this.txtTotalCoins_1.parent = this;
 	this.txtTotalCoins_1.setTransform(-715.15,-473);
 
-	this.instance_3 = new lib.CachedBmp_294();
+	this.instance_3 = new lib.CachedBmp_317();
 	this.instance_3.setTransform(-823.9,-519.8,0.5,0.5);
 
 	this.instance_4 = new lib.Symbol5();
@@ -20563,48 +20563,48 @@ lib.properties = {
 	color: "#FFFFFF",
 	opacity: 1.00,
 	manifest: [
-		{src:"images/CachedBmp_155.png?1791982976084", id:"CachedBmp_155"},
-		{src:"images/CachedBmp_154.png?1791982976084", id:"CachedBmp_154"},
-		{src:"images/CachedBmp_151.png?1791982976084", id:"CachedBmp_151"},
-		{src:"images/CachedBmp_150.png?1791982976084", id:"CachedBmp_150"},
-		{src:"images/CachedBmp_139.png?1791982976084", id:"CachedBmp_139"},
-		{src:"images/CachedBmp_136.png?1791982976084", id:"CachedBmp_136"},
-		{src:"images/CachedBmp_121.png?1791982976084", id:"CachedBmp_121"},
-		{src:"images/CachedBmp_120.png?1791982976084", id:"CachedBmp_120"},
-		{src:"images/CachedBmp_117.png?1791982976084", id:"CachedBmp_117"},
-		{src:"images/CachedBmp_27.png?1791982976084", id:"CachedBmp_27"},
-		{src:"images/CachedBmp_26.png?1791982976084", id:"CachedBmp_26"},
-		{src:"images/CachedBmp_25.png?1791982976084", id:"CachedBmp_25"},
-		{src:"images/CachedBmp_24.png?1791982976084", id:"CachedBmp_24"},
-		{src:"images/CachedBmp_23.png?1791982976084", id:"CachedBmp_23"},
-		{src:"images/CachedBmp_22.png?1791982976084", id:"CachedBmp_22"},
-		{src:"images/CachedBmp_21.png?1791982976084", id:"CachedBmp_21"},
-		{src:"images/CachedBmp_20.png?1791982976084", id:"CachedBmp_20"},
-		{src:"images/CachedBmp_19.png?1791982976084", id:"CachedBmp_19"},
-		{src:"images/CachedBmp_18.png?1791982976084", id:"CachedBmp_18"},
-		{src:"images/CachedBmp_17.png?1791982976084", id:"CachedBmp_17"},
-		{src:"images/CachedBmp_16.png?1791982976084", id:"CachedBmp_16"},
-		{src:"images/CachedBmp_15.png?1791982976084", id:"CachedBmp_15"},
-		{src:"images/CachedBmp_14.png?1791982976084", id:"CachedBmp_14"},
-		{src:"images/CachedBmp_13.png?1791982976084", id:"CachedBmp_13"},
-		{src:"images/CachedBmp_12.png?1791982976084", id:"CachedBmp_12"},
-		{src:"images/CachedBmp_11.png?1791982976084", id:"CachedBmp_11"},
-		{src:"images/CachedBmp_10.png?1791982976084", id:"CachedBmp_10"},
-		{src:"images/CachedBmp_9.png?1791982976084", id:"CachedBmp_9"},
-		{src:"images/CachedBmp_8.png?1791982976084", id:"CachedBmp_8"},
-		{src:"images/CachedBmp_7.png?1791982976084", id:"CachedBmp_7"},
-		{src:"images/CachedBmp_6.png?1791982976084", id:"CachedBmp_6"},
-		{src:"images/CachedBmp_5.png?1791982976084", id:"CachedBmp_5"},
-		{src:"images/CachedBmp_4.png?1791982976084", id:"CachedBmp_4"},
-		{src:"images/CachedBmp_3.png?1791982976084", id:"CachedBmp_3"},
-		{src:"images/CachedBmp_2.png?1791982976084", id:"CachedBmp_2"},
-		{src:"images/pingloo_wings_game_v01_atlas_1.png?1791982974914", id:"pingloo_wings_game_v01_atlas_1"},
-		{src:"images/pingloo_wings_game_v01_atlas_2.png?1791982974914", id:"pingloo_wings_game_v01_atlas_2"},
-		{src:"images/pingloo_wings_game_v01_atlas_3.png?1791982974914", id:"pingloo_wings_game_v01_atlas_3"},
-		{src:"images/pingloo_wings_game_v01_atlas_4.png?1791982974914", id:"pingloo_wings_game_v01_atlas_4"},
-		{src:"images/pingloo_wings_game_v01_atlas_5.png?1791982974914", id:"pingloo_wings_game_v01_atlas_5"},
-		{src:"images/pingloo_wings_game_v01_atlas_6.png?1791982974914", id:"pingloo_wings_game_v01_atlas_6"},
-		{src:"images/pingloo_wings_game_v01_atlas_7.png?1791982974915", id:"pingloo_wings_game_v01_atlas_7"}
+		{src:"images/CachedBmp_155.png", id:"CachedBmp_155"},
+		{src:"images/CachedBmp_154.png", id:"CachedBmp_154"},
+		{src:"images/CachedBmp_151.png", id:"CachedBmp_151"},
+		{src:"images/CachedBmp_150.png", id:"CachedBmp_150"},
+		{src:"images/CachedBmp_139.png", id:"CachedBmp_139"},
+		{src:"images/CachedBmp_136.png", id:"CachedBmp_136"},
+		{src:"images/CachedBmp_121.png", id:"CachedBmp_121"},
+		{src:"images/CachedBmp_120.png", id:"CachedBmp_120"},
+		{src:"images/CachedBmp_117.png", id:"CachedBmp_117"},
+		{src:"images/CachedBmp_27.png", id:"CachedBmp_27"},
+		{src:"images/CachedBmp_26.png", id:"CachedBmp_26"},
+		{src:"images/CachedBmp_25.png", id:"CachedBmp_25"},
+		{src:"images/CachedBmp_24.png", id:"CachedBmp_24"},
+		{src:"images/CachedBmp_23.png", id:"CachedBmp_23"},
+		{src:"images/CachedBmp_22.png", id:"CachedBmp_22"},
+		{src:"images/CachedBmp_21.png", id:"CachedBmp_21"},
+		{src:"images/CachedBmp_20.png", id:"CachedBmp_20"},
+		{src:"images/CachedBmp_19.png", id:"CachedBmp_19"},
+		{src:"images/CachedBmp_18.png", id:"CachedBmp_18"},
+		{src:"images/CachedBmp_17.png", id:"CachedBmp_17"},
+		{src:"images/CachedBmp_16.png", id:"CachedBmp_16"},
+		{src:"images/CachedBmp_15.png", id:"CachedBmp_15"},
+		{src:"images/CachedBmp_14.png", id:"CachedBmp_14"},
+		{src:"images/CachedBmp_13.png", id:"CachedBmp_13"},
+		{src:"images/CachedBmp_12.png", id:"CachedBmp_12"},
+		{src:"images/CachedBmp_11.png", id:"CachedBmp_11"},
+		{src:"images/CachedBmp_10.png", id:"CachedBmp_10"},
+		{src:"images/CachedBmp_9.png", id:"CachedBmp_9"},
+		{src:"images/CachedBmp_8.png", id:"CachedBmp_8"},
+		{src:"images/CachedBmp_7.png", id:"CachedBmp_7"},
+		{src:"images/CachedBmp_6.png", id:"CachedBmp_6"},
+		{src:"images/CachedBmp_5.png", id:"CachedBmp_5"},
+		{src:"images/CachedBmp_4.png", id:"CachedBmp_4"},
+		{src:"images/CachedBmp_3.png", id:"CachedBmp_3"},
+		{src:"images/CachedBmp_2.png", id:"CachedBmp_2"},
+		{src:"images/pingloo_wings_game_v01_atlas_1.png", id:"pingloo_wings_game_v01_atlas_1"},
+		{src:"images/pingloo_wings_game_v01_atlas_2.png", id:"pingloo_wings_game_v01_atlas_2"},
+		{src:"images/pingloo_wings_game_v01_atlas_3.png", id:"pingloo_wings_game_v01_atlas_3"},
+		{src:"images/pingloo_wings_game_v01_atlas_4.png", id:"pingloo_wings_game_v01_atlas_4"},
+		{src:"images/pingloo_wings_game_v01_atlas_5.png", id:"pingloo_wings_game_v01_atlas_5"},
+		{src:"images/pingloo_wings_game_v01_atlas_6.png", id:"pingloo_wings_game_v01_atlas_6"},
+		{src:"images/pingloo_wings_game_v01_atlas_7.png", id:"pingloo_wings_game_v01_atlas_7"}
 	],
 	preloads: []
 };
