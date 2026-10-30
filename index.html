@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>pingloo_wings_game_v02</title>
+        <meta name="generator" content="PixiJS Animate Extension">
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        
+        <!-- YouTube Playables SDK -->
+        <script src="https://www.youtube.com/game_api/v1"></script>
+        
+        <!-- Модуль звука CreateJS -->
+        <script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
+        
+        <style>
+            html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000000; }
+            #stage { position: absolute; display: block; top: 0; left: 0; }
+        </style>
+    </head>
+    <body>
+        <canvas id="stage" width="1920" height="1080"></canvas>
+        
+        <!-- Библиотеки Pixi -->
+        <script src="libs/pixi.js"></script>
+        <script src="libs/pixi-animate.js"></script>
+        <script src="pingloo_wings_game_v02.js"></script>
+        
+        <!-- Твоя игровая логика -->
+        <script src="game.js"></script>
+        
+        <script>
+            // Создаем сцену PixiAnimate
+            var gameScene = new PIXI.animate.Scene(1920, 1080, {
+                view: document.getElementById("stage"),
+                backgroundColor: 0x000000,
+                antialias: true
+            });
+
+            // Сразу загружаем библиотеку и стартуем игру без лишних прелоадеров
+            gameScene.load(lib.pingloo_wings_game_v02, function(instance) {
+                if (typeof window.initGame === 'function') {
+                    window.initGame(instance, gameScene);
+                }
+            });
+        </script>
+    </body>
+</html>
