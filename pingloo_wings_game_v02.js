@@ -1,4 +1,4 @@
-// v1.6.4
+// v1.6.5
 (function (PIXI, lib) {
 
     var MovieClip = PIXI.animate.MovieClip;
