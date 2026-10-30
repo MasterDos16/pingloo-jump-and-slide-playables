@@ -271,7 +271,7 @@ function switchBiome(index) {
     
     for (let i = 0; i <= 7; i++) {
         layers.forEach(key => {
-            let bgKey = "bg" + key.
+            let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
             // Ищем слой по любым вариантам: trees_1, bgTrees_1 или просто bgTrees (для 0)
             let layer = gameRoot[key + "_" + i] || gameRoot[bgKey + "_" + i] || (i === 0 ? gameRoot[bgKey] : null);
             
