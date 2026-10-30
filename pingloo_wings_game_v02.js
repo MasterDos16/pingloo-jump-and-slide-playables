@@ -1,4 +1,4 @@
-// // new file
+// v1.6.4
 (function (PIXI, lib) {
 
     var MovieClip = PIXI.animate.MovieClip;

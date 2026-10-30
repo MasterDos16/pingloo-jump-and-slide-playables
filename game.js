@@ -1,4 +1,4 @@
-// v1.6.3
+// v1.6.4
 
 let activeCharMC = null;
 let player;
@@ -285,7 +285,7 @@ function switchBiome(index) {
             }
         });
     }
-}
+} 
 
 // === МИНИ-ДВИЖОК АНИМАЦИЙ ===
 window.activeTweens = [];
