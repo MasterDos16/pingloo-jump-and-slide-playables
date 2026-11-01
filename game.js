@@ -1,4 +1,4 @@
-// v1.6.5
+// v1.6.6
 
 let activeCharMC = null;
 let player;
@@ -1162,7 +1162,7 @@ function gameLoop(dt) {
         }
     }
 
-    if (isPlaying && !isGameOver) {
+    if (isPlaying && !isGameOver && !hasSled) {
         currentEnergy -= energyDepletionRate * dt;
         if (currentEnergy <= 0) {
             currentEnergy = 0;
@@ -1427,7 +1427,7 @@ function gameLoop(dt) {
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
-        spawnSled(nextSledX, getHillY(nextSledX) - 40);
+        spawnSled(nextSledX, getHillY(nextSledX));
         nextSledX += 24000 + Math.random() * 16000; 
     }
 
@@ -1575,7 +1575,7 @@ function gameLoop(dt) {
         sledTimer -= dt;
         
         if (activeSledInstance) {
-            let sledOffsetY = 40; 
+            let sledOffsetY = 85; 
             let sledOffsetX = 0; 
             let rad = player.rotation;
             setPlayerState("sled"); 

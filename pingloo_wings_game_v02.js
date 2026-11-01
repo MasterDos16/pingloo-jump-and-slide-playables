@@ -1,4 +1,3 @@
-// v1.6.5
 (function (PIXI, lib) {
 
     var MovieClip = PIXI.animate.MovieClip;
@@ -789518,10 +789517,10 @@
             .setTransform(-653.779, -137.319, 0.783, 0.734);
         var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[332])
-            .setTransform(-3781.663, -777.734, 2.256, 2.7);
+            .setTransform(-3781.592, -777.734, 2.256, 2.7);
         var instance8 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[332])
-            .setTransform(-2365.296, -179.852, 1.421, 1.33);
+            .setTransform(-2365.225, -179.852, 1.421, 1.33);
         var instance7 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[333])
             .setTransform(-81.45, -375.2, 1.421, 1.33);
@@ -789530,7 +789529,7 @@
             .setTransform(-1547.399, -377.605, 0.783, 0.734);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[332])
-            .setTransform(-2083.254, -77.604, 1.421, 1.33);
+            .setTransform(-2083.183, -77.604, 1.421, 1.33);
         var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[332])
             .setTransform(-2707.1, -175.5, 1.421, 1.33);
@@ -1041873,169 +1041872,169 @@
             .setTransform(676.25, 20.35);
         var instance55 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[387])
-            .setTransform(1599.196, 865.487, 0.104, 0.104);
+            .setTransform(1599.189, 865.483, 0.104, 0.104);
         var instance54 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[386])
-            .setTransform(1599.196, 865.487, 0.104, 0.104);
+            .setTransform(1599.189, 865.483, 0.104, 0.104);
         var instance53 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[385])
-            .setTransform(1599.196, 865.487, 0.104, 0.104);
+            .setTransform(1599.189, 865.483, 0.104, 0.104);
         var instance52 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[384])
-            .setTransform(1599.196, 865.487, 0.104, 0.104);
+            .setTransform(1599.189, 865.483, 0.104, 0.104);
         var instance51 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[383])
-            .setTransform(2038.012, 786.399, 0.124, 0.124);
+            .setTransform(2037.994, 786.392, 0.124, 0.124);
         var instance50 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[382])
-            .setTransform(2038.012, 786.399, 0.124, 0.124);
+            .setTransform(2037.994, 786.392, 0.124, 0.124);
         var instance49 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[381])
-            .setTransform(2038.012, 786.399, 0.124, 0.124);
+            .setTransform(2037.994, 786.392, 0.124, 0.124);
         var instance48 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[380])
-            .setTransform(2038.012, 786.399, 0.124, 0.124);
+            .setTransform(2037.994, 786.392, 0.124, 0.124);
         var instance47 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[379])
-            .setTransform(2038.012, 786.399, 0.124, 0.124);
+            .setTransform(2037.994, 786.392, 0.124, 0.124);
         var instance46 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[378])
-            .setTransform(2038.012, 786.399, 0.124, 0.124);
+            .setTransform(2037.994, 786.392, 0.124, 0.124);
         var instance45 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[359])
-            .setTransform(1054.525, 788.566, 0.015, 0.015);
+            .setTransform(1054.518, 788.56, 0.015, 0.015);
         var instance44 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[358])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance43 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[357])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance42 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[356])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance41 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[355])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance40 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[354])
             .setTransform(939.829, 702.797, 0.122, 0.122);
         var instance39 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[377])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance38 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[376])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance37 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[375])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance36 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[374])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance35 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[373])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance34 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[372])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance33 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[371])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance32 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[370])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance31 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[369])
-            .setTransform(1625.945, 779.578, 0.038, 0.038);
+            .setTransform(1625.93, 779.571, 0.038, 0.038);
         var instance30 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[367])
-            .setTransform(1620.388, 777.038, 0.038, 0.039);
+            .setTransform(1620.374, 777.032, 0.038, 0.039);
         var instance29 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[367])
-            .setTransform(1620.73, 779.517, 0.038, 0.039);
+            .setTransform(1620.717, 779.51, 0.038, 0.039);
         var instance28 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[368])
-            .setTransform(1625.945, 779.578, 0.038, 0.038);
+            .setTransform(1625.93, 779.571, 0.038, 0.038);
         var instance27 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[367])
-            .setTransform(1625.604, 777.406, 0.038, 0.038);
+            .setTransform(1625.589, 777.4, 0.038, 0.038);
         var instance26 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[367])
-            .setTransform(1625.945, 779.578, 0.038, 0.038);
+            .setTransform(1625.93, 779.571, 0.038, 0.038);
         var instance25 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[366])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance24 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[365])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[364])
-            .setTransform(1625.945, 779.578, 0.038, 0.038);
+            .setTransform(1625.93, 779.571, 0.038, 0.038);
         var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[363])
-            .setTransform(1625.945, 779.578, 0.038, 0.038);
+            .setTransform(1625.93, 779.571, 0.038, 0.038);
         var instance21 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[362])
-            .setTransform(1544.552, 740.553, 0.086, 0.086);
+            .setTransform(1544.546, 740.55, 0.086, 0.086);
         var instance20 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[361])
-            .setTransform(1625.945, 779.578, 0.038, 0.038);
+            .setTransform(1625.93, 779.571, 0.038, 0.038);
         var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[360])
             .setTransform(1360.312, 652.217, 0.195, 0.195);
         var instance18 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[353])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[352])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance16 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[351])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance15 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[350])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[349])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance13 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[348])
-            .setTransform(1024.839, 766.367, 0.043, 0.043);
+            .setTransform(1024.835, 766.364, 0.043, 0.043);
         var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[359])
-            .setTransform(1468.406, 777.053, 0.015, 0.015);
+            .setTransform(1468.395, 777.047, 0.015, 0.015);
         var instance11 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[358])
-            .setTransform(1427.073, 755.18, 0.043, 0.043);
+            .setTransform(1427.068, 755.178, 0.043, 0.043);
         var instance10 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[357])
-            .setTransform(1427.073, 755.18, 0.043, 0.043);
+            .setTransform(1427.068, 755.178, 0.043, 0.043);
         var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[356])
-            .setTransform(1427.073, 755.18, 0.043, 0.043);
+            .setTransform(1427.068, 755.178, 0.043, 0.043);
         var instance8 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[355])
-            .setTransform(2411.736, 815.218, 0.043, 0.043);
+            .setTransform(2411.727, 815.215, 0.043, 0.043);
         var instance7 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[354])
             .setTransform(2211.692, 747.599, 0.122, 0.122);
         var instance6 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[353])
-            .setTransform(3430.244, 731.857, 0.043, 0.043);
+            .setTransform(3430.231, 731.854, 0.043, 0.043);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[352])
-            .setTransform(3430.244, 731.857, 0.043, 0.043);
+            .setTransform(3430.231, 731.854, 0.043, 0.043);
         var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[351])
-            .setTransform(3430.244, 731.857, 0.043, 0.043);
+            .setTransform(3430.231, 731.854, 0.043, 0.043);
         var instance3 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[350])
-            .setTransform(3430.244, 731.857, 0.043, 0.043);
+            .setTransform(3430.231, 731.854, 0.043, 0.043);
         var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[349])
-            .setTransform(3430.244, 731.857, 0.043, 0.043);
+            .setTransform(3430.231, 731.854, 0.043, 0.043);
         var instance1 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[348])
-            .setTransform(3430.244, 731.857, 0.043, 0.043);
+            .setTransform(3430.231, 731.854, 0.043, 0.043);
         this.addChild(instance67, instance66, instance65, instance64, instance63, instance62, instance61, instance60, instance59, instance58, instance57, instance56, instance55, instance54, instance53, instance52, instance51, instance50, instance49, instance48, instance47, instance46, instance45, instance44, instance43, instance42, instance41, instance40, instance39, instance38, instance37, instance36, instance35, instance34, instance33, instance32, instance31, instance30, instance29, instance28, instance27, instance26, instance25, instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -1140091,13 +1140090,13 @@
         this[instance21.name = "bgCloudsFront_6"] = instance21;
         var instance20 = new lib.bgSky_7()
             .setTransform(952.05, 539.85);
-        this[instance20.name = "bgSky_6"] = instance20;
+        this[instance20.name = "bgSky_7"] = instance20;
         var instance19 = new lib.mountains_7()
             .setTransform(-1696.85, -428.7);
-        this[instance19.name = "bgMountains_6"] = instance19;
+        this[instance19.name = "bgMountains_7"] = instance19;
         var instance18 = new lib.forest_7()
             .setTransform(-1853.35, -52.55);
-        this[instance18.name = "bgTrees_6"] = instance18;
+        this[instance18.name = "bgTrees_7"] = instance18;
         var instance17 = new lib.bgHolder();
         this[instance17.name = "bgContainerMC"] = instance17;
         var instance16 = new lib.Ground_mc()
