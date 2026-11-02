@@ -51,7 +51,7 @@ let effects = [];
 
 // ПУЛ ОБЪЕКТОВ: Хранилище для переиспользования
 let objPool = {
-    coins: [], fishes: [], sleds: [], coinFX: [], fishFX: [], comboText: [], comboFlash: []
+    coins: [], fishes: [], sleds: {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}, coinFX: [], fishFX: [], comboText: [], comboFlash: []
 };
 
 // window.killPixiObj = function(obj) {
@@ -106,7 +106,9 @@ let initialUI_Y = {};
 
 // === ЭКОНОМИКА И ДАННЫЕ ИГРОКА ===
 let globalCoins = parseInt(localStorage.getItem("pinglooTotalCoins")) || 0;
-let unlockedBiomes = [0, 1, 2, 3, 4, 5, 6, 7]; // Разблокированы все биомы
+let savedBiomes = localStorage.getItem("pinglooUnlockedBiomes");
+let unlockedBiomes = savedBiomes ? JSON.parse(savedBiomes) : [0]; // По умолчанию открыт только 0 (первый биом)
+let biomeCosts = [0, 500, 1000, 1500, 2000, 3000, 4000, 5000]; // Цены биомов по порядку
 let unlockedChars = [0, 1, 2, 3]; 
 window.selectedCharID = parseInt(localStorage.getItem("pinglooSelectedChar")) || 0; 
 
@@ -150,7 +152,7 @@ let biomes = [
     { id: 1, startDist: 1500, lineColor: 0x63B6E5, fillColor: 0xABEFFF }, 
     { id: 2, startDist: 3000, lineColor: 0x99D798, fillColor: 0xBCFBB2 }, 
     { id: 3, startDist: 4500, lineColor: 0xD9B558, fillColor: 0xFFE783 }, 
-    { id: 4, startDist: 6000, lineColor: 0xC0BBA6, fillColor: 0xE2DCC3 }, 
+    { id: 4, startDist: 6000, lineColor: 0xFECB8C, fillColor: 0xFEEDB5 }, 
     { id: 5, startDist: 7500, lineColor: 0x337B99, fillColor: 0x57A6C8 }, 
     { id: 6, startDist: 9000, lineColor: 0xC09F58, fillColor: 0xFAE08C },
     { id: 7, startDist: 10500, lineColor: 0x5F5E7D, fillColor: 0xAEAFCE } 
@@ -248,11 +250,17 @@ function spawnFish(worldX, worldY) {
 
 function spawnSled(worldX, worldY) {
     let sledObj;
-    if (objPool.sleds.length > 0) {
-        sledObj = objPool.sleds.pop();
+    let biomePool = objPool.sleds[currentBiomeIndex] || objPool.sleds[0];
+    
+    if (biomePool.length > 0) {
+        sledObj = biomePool.pop();
         sledObj.visible = true;
     } else {
-        sledObj = getCachedSprite("Sled");
+        let libName = "Sled_" + currentBiomeIndex;
+        if (!lib || !lib[libName]) libName = "Sled_0"; // Фолбек
+        sledObj = getCachedSprite(libName);
+        sledObj.biomeID = currentBiomeIndex; // Запоминаем биом
+        
         let playerIndex = cameraContainer.getChildIndex(player);
         cameraContainer.addChildAt(sledObj, playerIndex);
     }
@@ -363,6 +371,7 @@ window.initGame = function(root, pixiScene) {
                 gameRoot[name].interactive = true;
                 gameRoot[name].cursor = "pointer";
                 gameRoot[name].on("pointerdown", () => { 
+                    gameRoot.btnPause.visible = false; // Скрываем кнопку
                     if (window.isCountdown) return; 
                     createjs.Sound.play("SfxPause"); // НОВЫЙ ЗВУК
                     isPlaying = false; 
@@ -523,8 +532,11 @@ window.initGame = function(root, pixiScene) {
                 let btn = pageMC["btnLevel" + i];
                 if (btn && typeof btn.gotoAndStop === "function") {
                     let isUnlocked = unlockedBiomes.includes(i);
-                    if (!isUnlocked) btn.gotoAndStop(2); 
-                    else if (i === selectedIndex) btn.gotoAndStop(1); 
+                    if (!isUnlocked) {
+                        btn.gotoAndStop(2); 
+                        if (btn.txtCost) btn.txtCost.text = biomeCosts[i];
+                    }
+                    else if (i === selectedIndex) btn.gotoAndStop(1);
                     else btn.gotoAndStop(0); 
                 }
             }
@@ -537,11 +549,41 @@ window.initGame = function(root, pixiScene) {
                 btn.interactive = true;
                 btn.cursor = "pointer";
                 btn.on("pointerdown", () => {
-                    if (unlockedBiomes.includes(i)) {
-                        createjs.Sound.play("SfxClick");
-                        updateBiomeUI(i);
+                if (unlockedBiomes.includes(i)) {
+                    // Если биом уже куплен - просто выбираем его
+                    createjs.Sound.play("SfxClick");
+                    updateBiomeUI(i);
+                } else {
+                    // Если биом заблокирован, проверяем деньги
+                    if (globalCoins >= biomeCosts[i]) {
+                        // Покупаем!
+                        globalCoins -= biomeCosts[i]; // Списываем монеты
+                        localStorage.setItem("pinglooTotalCoins", globalCoins); // Сохраняем монеты
+                        
+                        unlockedBiomes.push(i); // Добавляем биом в открытые
+                        localStorage.setItem("pinglooUnlockedBiomes", JSON.stringify(unlockedBiomes)); // Сохраняем покупку
+                        
+                        updateGlobalUI(); // Обновляем текст монет на экране
+                        createjs.Sound.play("SfxClick"); 
+                        updateBiomeUI(i); // Кнопка переключится в открытое состояние
+                    } else {
+                        // Денег нет - трясем текст монет
+                        let coinTxt = gameRoot.menuLevelScreen.txtTotalCoins;
+                        if (coinTxt && !coinTxt.isShaking) {
+                            coinTxt.isShaking = true;
+                            let startX = coinTxt.x;
+                            // Простая анимация влево-вправо
+                            addTween(coinTxt, { x: startX - 15 }, 40, () => {
+                                addTween(coinTxt, { x: startX + 15 }, 40, () => {
+                                    addTween(coinTxt, { x: startX }, 40, () => {
+                                        coinTxt.isShaking = false;
+                                    });
+                                });
+                            });
+                        }
                     }
-                });
+                }
+            });
             }
         }
         updateBiomePage();
@@ -903,7 +945,8 @@ function resetGame(startImmediately) {
 
     for (let i = 0; i < sleds.length; i++) {
         sleds[i].shape.visible = false;
-        objPool.sleds.push(sleds[i].shape);
+        let bID = sleds[i].shape.biomeID || 0;
+        objPool.sleds[bID].push(sleds[i].shape);
     }
     sleds = [];
     
@@ -914,7 +957,8 @@ function resetGame(startImmediately) {
     
     if (activeSledInstance) {
         activeSledInstance.visible = false;
-        objPool.sleds.push(activeSledInstance);
+        let bID = activeSledInstance.biomeID || 0;
+        objPool.sleds[bID].push(activeSledInstance);
     }
     activeSledInstance = null;
     
@@ -948,10 +992,6 @@ function resetGame(startImmediately) {
     if (gameRoot.bgContainerMC) {
         gameRoot.bgContainerMC.alpha = 1;
         gameRoot.bgContainerMC.visible = startImmediately;
-    }
-    if (window.bgCloudsFront) {
-        window.bgCloudsFront.alpha = 1;
-        window.bgCloudsFront.visible = startImmediately;
     }
 
     if (gameRoot.gameOverOverlay) {
@@ -1046,37 +1086,34 @@ function resumeWithCountdown() {
     });
     let txt = new PIXI.Text(count, style);
     txt.anchor.set(0.5);
-    
     txt.x = (960 - gameRoot.x) / gameRoot.scale.x;
     txt.y = (540 - gameRoot.y) / gameRoot.scale.y;
-    
     gameRoot.addChild(txt); 
 
     function animateNumber() {
         if (count > 0) {
             txt.text = count;
-            txt.alpha = 1;
+            txt.alpha = 1; // Возвращаем видимость
             txt.scale.set(0.1); 
-            
             let targetScale = 1 / gameRoot.scale.x; 
 
-            // Замена Tween: Ручная анимация
             addTween(txt.scale, {x: targetScale, y: targetScale}, 300, () => {
                 setTimeout(() => {
-                    addTween(txt, {alpha: 0}, 200);
-                    addTween(txt.scale, {x: targetScale * 1.5, y: targetScale * 1.5}, 200, () => {
+                    addTween(txt, {alpha: 0}, 200, () => {
                         count--;
                         animateNumber(); 
                     });
-                }, 400);
+                    addTween(txt.scale, {x: targetScale * 1.5, y: targetScale * 1.5}, 200);
+                }, 200);
             });
         } else {
             if (txt.parent) txt.parent.removeChild(txt);
             window.isCountdown = false; 
             isPlaying = true; 
-            if (currentBgmInstance) currentBgmInstance.paused = false; // ВОЗВРАТ МУЗЫКИ
-            if (player && typeof player.play === "function") player.play(); // ВОЗВРАТ ПЕРСОНАЖА
-            if (avalanche && typeof avalanche.play === "function") avalanche.play(); // ВОЗВРАТ ЛАВИНЫ
+            if (gameRoot.btnPause) gameRoot.btnPause.visible = true; // Возвращаем кнопку
+            if (currentBgmInstance) currentBgmInstance.paused = false; 
+            if (player && typeof player.play === "function") player.play(); 
+            if (avalanche && typeof avalanche.play === "function") avalanche.play(); 
         }
     }
     animateNumber();
@@ -1545,28 +1582,15 @@ function gameLoop(dt) {
             currentEnergy += (window.selectedCharID === 3) ? 24 : 16; 
             if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
             
-            let spawnY = f.shape.y; 
+            let startScale = f.shape.scale.x;
+            addTween(f.shape, { x: player.x, y: player.y - 20, alpha: 0 }, 250, () => {
+                f.shape.visible = false;
+                f.shape.alpha = 1;
+                f.shape.scale.set(startScale);
+                objPool.fishes.push(f.shape);
+            });
+            addTween(f.shape.scale, { x: 0, y: 0 }, 250);
             
-            f.shape.visible = false;
-            if (f.shape.children[0] && typeof f.shape.children[0].stop === "function") f.shape.children[0].stop();
-            objPool.fishes.push(f.shape);
-            
-            if (lib && lib.FishFX) {
-                let fx;
-                if (objPool.fishFX.length > 0) {
-                    fx = objPool.fishFX.pop();
-                    fx.visible = true;
-                    if (typeof fx.gotoAndPlay === "function") fx.gotoAndPlay(0);
-                } else {
-                    fx = new lib.FishFX();
-                    fx.poolType = "fishFX";
-                    coinsContainer.addChild(fx);
-                }
-                fx.worldX = f.worldX; 
-                fx.y = spawnY;
-                fx.life = 0;
-                effects.push(fx); 
-            }
             fishes.splice(i, 1);
         }
     }
@@ -1593,7 +1617,8 @@ function gameLoop(dt) {
             
             activeSledInstance.visible = false;
             if (activeSledInstance.children[0] && typeof activeSledInstance.children[0].stop === "function") activeSledInstance.children[0].stop();
-            objPool.sleds.push(activeSledInstance);
+            let bID = activeSledInstance.biomeID || 0;
+            objPool.sleds[bID].push(activeSledInstance);
             activeSledInstance = null;
             spawnBoostFlash();
         }
@@ -1607,7 +1632,8 @@ function gameLoop(dt) {
         if (s.shape.x < -1500) {
             s.shape.visible = false;
             if (s.shape.children[0] && typeof s.shape.children[0].stop === "function") s.shape.children[0].stop();
-            objPool.sleds.push(s.shape);
+            let bID = s.shape.biomeID || 0;
+            objPool.sleds[bID].push(s.shape);
             sleds.splice(i, 1);
             continue;
         }
