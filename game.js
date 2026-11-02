@@ -738,18 +738,14 @@ window.initGame = function(root, pixiScene) {
         if (gameRoot) {
             let targetW = 1920; let targetH = 1080;
             
-            // Считаем масштаб так, чтобы игра всегда покрывала экран (Cover), а не вписывалась с полосами (Contain)
-            let scaleX = w / targetW;
-            let scaleY = h / targetH;
-            
-            // Берем максимальный масштаб, чтобы заполнить весь экран телефона
-            let finalScale = Math.max(scaleX, scaleY); 
+            // ВЕРНУЛИ Math.min: Игра всегда вписывается в экран целиком, ничего не обрезается
+            let finalScale = Math.min(w / targetW, h / targetH); 
             window.baseGameScale = finalScale;
 
             gameRoot.scale.set(finalScale);
             gameRoot.rotation = 0; 
             
-            // Центрируем игру по экрану
+            // Ровное центрирование по всем осям
             gameRoot.x = (w - (targetW * finalScale)) / 2;
             gameRoot.y = (h - (targetH * finalScale)) / 2; 
             

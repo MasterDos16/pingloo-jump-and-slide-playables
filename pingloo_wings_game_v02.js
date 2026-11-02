@@ -1538796,7 +1538796,7 @@
     lib.Sled_5 = Container.extend(function () {
         Container.call(this);
         var instance1 = new lib.Symbol_112()
-            .setTransform(16.45, -32.6, 0.708);
+            .setTransform(46.95, -32.6, 0.708);
         this.addChild(instance1);
     });
 
@@ -1539706,7 +1539706,7 @@
             .setTransform(-12.35, 1945.5);
         this[instance55.name = "Sled_4"] = instance55;
         var instance54 = new lib.Sled_5()
-            .setTransform(238.05, 1945.5);
+            .setTransform(170.9, 1946.15);
         this[instance54.name = "Sled_5"] = instance54;
         var instance53 = new lib.Sled_6()
             .setTransform(437.65, 1945.5);
