@@ -1469,7 +1469,7 @@ function gameLoop(dt) {
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
-        spawnSled(nextSledX, getHillY(nextSledX) - 40); // Увеличивай 50, чтобы поднять выше
+        spawnSled(nextSledX, getHillY(nextSledX)); // Увеличивай 50, чтобы поднять выше
         nextSledX += 24000 + Math.random() * 16000; 
     }
 
@@ -1604,7 +1604,7 @@ function gameLoop(dt) {
         sledTimer -= dt;
         
         if (activeSledInstance) {
-            let sledOffsetY = 60; // Уменьшай цифру, чтобы притянуть санки выше к ногам
+            let sledOffsetY = 85; // Уменьшай цифру, чтобы притянуть санки выше к ногам
             let sledOffsetX = 0; 
             let rad = player.rotation;
             setPlayerState("sled"); 
