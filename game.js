@@ -720,14 +720,12 @@ window.initGame = function(root, pixiScene) {
         if (w === lastW && h === lastH) return;
         lastW = w; lastH = h;
 
-        // Холст на весь экран без черных полос
         canvas.style.cssText = "position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; touch-action: none; -webkit-touch-callout: none; user-select: none;";
 
-        // Масштаб строго по высоте 1080 (базовый вертикальный размер)
+        // Масштабируем строго по высоте (1080)
         let scale = h / 1080;
         let virtualWidth = w / scale;
 
-        // Физический размер WebGL буфера
         canvas.width = Math.round(w);
         canvas.height = Math.round(h);
 
@@ -739,21 +737,12 @@ window.initGame = function(root, pixiScene) {
             window.baseGameScale = scale;
             gameRoot.scale.set(scale);
             gameRoot.rotation = 0;
-            gameRoot.x = 0;
+            
+            // Центрирует ВСЁ: и стартовый экран, и меню, и интерфейс
+            gameRoot.x = (w - (1920 * scale)) / 2;
             gameRoot.y = 0;
-            gameRoot.baseX = 0;
+            gameRoot.baseX = gameRoot.x;
             gameRoot.baseY = 0;
-        }
-
-        // Центрируем элементы UI меню (кнопка Play, лого), чтобы они не улетали за края экрана на широких смартфонах
-        if (gameRoot && gameRoot.menuScreen) {
-            // Меню держится по центру
-            let centerOffset = (virtualWidth - 1920) / 2;
-            if (centerOffset > 0) {
-                gameRoot.menuScreen.x = centerOffset;
-            } else {
-                gameRoot.menuScreen.x = 0;
-            }
         }
     };
     
