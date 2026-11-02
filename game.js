@@ -282,8 +282,8 @@ function switchBiome(index) {
     for (let i = 0; i <= 7; i++) {
         layers.forEach(key => {
             let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
-            // Ищем слой по любым вариантам: trees_1, bgTrees_1 или просто bgTrees (для 0)
-            let layer = gameRoot[key + "_" + i] || gameRoot[bgKey + "_" + i] || (i === 0 ? (gameRoot[bgKey] || gameRoot[key]) : null);
+            // Теперь ищем строго с индексом, без исключений для i === 0
+            let layer = gameRoot[key + "_" + i] || gameRoot[bgKey + "_" + i];
             
             if (layer) {
                 layer.visible = (i === index); 
@@ -732,19 +732,27 @@ window.initGame = function(root, pixiScene) {
         canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: " + w + "px; height: " + h + "px; overflow: hidden; touch-action: none; user-select: none;";
 
         if (scene && scene.renderer) {
-            // Убрали динамическое изменение resolution, чтобы избежать бага со сжатием в нижний угол
             scene.renderer.resize(w, h);
         }
 
         if (gameRoot) {
             let targetW = 1920; let targetH = 1080;
-            let finalScale = Math.min(w / targetW, h / targetH); 
+            
+            // Считаем масштаб так, чтобы игра всегда покрывала экран (Cover), а не вписывалась с полосами (Contain)
+            let scaleX = w / targetW;
+            let scaleY = h / targetH;
+            
+            // Берем максимальный масштаб, чтобы заполнить весь экран телефона
+            let finalScale = Math.max(scaleX, scaleY); 
             window.baseGameScale = finalScale;
 
             gameRoot.scale.set(finalScale);
             gameRoot.rotation = 0; 
+            
+            // Центрируем игру по экрану
             gameRoot.x = (w - (targetW * finalScale)) / 2;
             gameRoot.y = (h - (targetH * finalScale)) / 2; 
+            
             gameRoot.baseX = gameRoot.x;
             gameRoot.baseY = gameRoot.y;
         }
@@ -1228,7 +1236,8 @@ function gameLoop(dt) {
     // Собираем слои только текущего биома с учетом префикса bg
     layers.forEach(key => {
         let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
-        b[key] = gameRoot[key + "_" + currentBiomeIndex] || gameRoot[bgKey + "_" + currentBiomeIndex] || (currentBiomeIndex === 0 ? (gameRoot[bgKey] || gameRoot[key]) : null);
+        // Собираем слои только текущего биома строго по индексу
+        b[key] = gameRoot[key + "_" + currentBiomeIndex] || gameRoot[bgKey + "_" + currentBiomeIndex];
     });
 
     if (b.cloudsBack) b.cloudsBack.x = b.cloudsBack.initialX - ((worldOffsetX * 0.05) % bgWidth);
@@ -1742,7 +1751,7 @@ function gameLoop(dt) {
 
     // Возвращаем классическую камеру: жесткий горизонт
     let targetCameraY = gameRoot.baseY || 0; 
-    let cameraFocusY = 650;
+    let cameraFocusY = 350;
     let scaledPlayerY = player.y * currentScale;
 
     if (scaledPlayerY < cameraFocusY) {
