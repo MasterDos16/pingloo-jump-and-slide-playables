@@ -731,7 +731,12 @@ window.initGame = function(root, pixiScene) {
 
         canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: " + w + "px; height: " + h + "px; overflow: hidden; touch-action: none; user-select: none;";
 
+        // ФИКС КРАШЕЙ IOS: Запрещаем браузеру раздувать холст в 2-3 раза на Retina-экранах
+        let dpr = window.devicePixelRatio || 1;
+        let pixelRatio = (localStorage.getItem("pinglooLowQuality") === "true") ? 1 : Math.min(dpr, 1.25);
+
         if (scene && scene.renderer) {
+            scene.renderer.resolution = pixelRatio;
             scene.renderer.resize(w, h);
         }
 
@@ -1747,7 +1752,7 @@ function gameLoop(dt) {
 
     // Возвращаем классическую камеру: жесткий горизонт
     let targetCameraY = gameRoot.baseY || 0; 
-    let cameraFocusY = 350;
+    let cameraFocusY = 350 * (window.baseGameScale || 1.0); // ФИКС: Адаптация точки фокуса под масштаб экрана телефона
     let scaledPlayerY = player.y * currentScale;
 
     if (scaledPlayerY < cameraFocusY) {

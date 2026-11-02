@@ -1538789,7 +1538789,7 @@
         var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[703]);
         var instance1 = new lib.Symbol_114()
-            .setTransform(13.5, 7.3);
+            .setTransform(60.75, 7.3);
         this.addChild(instance2, instance1);
     });
 
@@ -1539706,7 +1539706,7 @@
             .setTransform(-12.35, 1945.5);
         this[instance55.name = "Sled_4"] = instance55;
         var instance54 = new lib.Sled_5()
-            .setTransform(170.9, 1946.15);
+            .setTransform(117.35, 2019);
         this[instance54.name = "Sled_5"] = instance54;
         var instance53 = new lib.Sled_6()
             .setTransform(437.65, 1945.5);

@@ -34,7 +34,7 @@
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
                 backgroundColor: 0x000000,
-                antialias: true
+                antialias: false // ФИКС КРАШЕЙ IOS: Отключаем, сглаживание потребляет критически много видеопамяти
             });
 
             // Сразу загружаем библиотеку и стартуем игру без лишних прелоадеров
