@@ -108,8 +108,10 @@ let initialUI_Y = {};
 let globalCoins = parseInt(localStorage.getItem("pinglooTotalCoins")) || 0;
 let savedBiomes = localStorage.getItem("pinglooUnlockedBiomes");
 let unlockedBiomes = savedBiomes ? JSON.parse(savedBiomes) : [0]; // По умолчанию открыт только 0 (первый биом)
-let biomeCosts = [0, 500, 1000, 1500, 2000, 3000, 4000, 5000]; // Цены биомов по порядку
-let unlockedChars = [0, 1, 2, 3]; 
+let biomeCosts = [0, 100, 100, 100, 100, 100, 100, 100]; // Цены биомов по порядку
+let savedChars = localStorage.getItem("pinglooUnlockedChars");
+let unlockedChars = savedChars ? JSON.parse(savedChars) : [0]; 
+let charCosts = [0, 100, 100, 100]; // Впиши свои цены
 window.selectedCharID = parseInt(localStorage.getItem("pinglooSelectedChar")) || 0; 
 
 function updateGlobalUI() {
@@ -321,6 +323,8 @@ window.initGame = function(root, pixiScene) {
     createjs.Sound.registerSound("sounds/sfx_fish2.mp3", "SfxFish");
     createjs.Sound.registerSound("sounds/sfx_pause.mp3", "SfxPause");
     createjs.Sound.registerSound("sounds/sfx_page.mp3", "SfxPage");
+    createjs.Sound.registerSound("sounds/sfx_buy.mp3", "SfxBuy");
+    createjs.Sound.registerSound("sounds/sfx_error.mp3", "SfxError");
 
     player = root.player;
 
@@ -550,29 +554,23 @@ window.initGame = function(root, pixiScene) {
                 btn.cursor = "pointer";
                 btn.on("pointerdown", () => {
                 if (unlockedBiomes.includes(i)) {
-                    // Если биом уже куплен - просто выбираем его
                     createjs.Sound.play("SfxClick");
                     updateBiomeUI(i);
                 } else {
-                    // Если биом заблокирован, проверяем деньги
                     if (globalCoins >= biomeCosts[i]) {
-                        // Покупаем!
-                        globalCoins -= biomeCosts[i]; // Списываем монеты
-                        localStorage.setItem("pinglooTotalCoins", globalCoins); // Сохраняем монеты
-                        
-                        unlockedBiomes.push(i); // Добавляем биом в открытые
-                        localStorage.setItem("pinglooUnlockedBiomes", JSON.stringify(unlockedBiomes)); // Сохраняем покупку
-                        
-                        updateGlobalUI(); // Обновляем текст монет на экране
-                        createjs.Sound.play("SfxClick"); 
-                        updateBiomeUI(i); // Кнопка переключится в открытое состояние
+                        globalCoins -= biomeCosts[i];
+                        localStorage.setItem("pinglooTotalCoins", globalCoins);
+                        unlockedBiomes.push(i);
+                        localStorage.setItem("pinglooUnlockedBiomes", JSON.stringify(unlockedBiomes));
+                        updateGlobalUI();
+                        createjs.Sound.play("SfxBuy"); // УСПЕХ
+                        updateBiomeUI(i);
                     } else {
-                        // Денег нет - трясем текст монет
+                        createjs.Sound.play("SfxError"); // ОШИБКА
                         let coinTxt = gameRoot.menuLevelScreen.txtTotalCoins;
                         if (coinTxt && !coinTxt.isShaking) {
                             coinTxt.isShaking = true;
                             let startX = coinTxt.x;
-                            // Простая анимация влево-вправо
                             addTween(coinTxt, { x: startX - 15 }, 40, () => {
                                 addTween(coinTxt, { x: startX + 15 }, 40, () => {
                                     addTween(coinTxt, { x: startX }, 40, () => {
@@ -632,7 +630,10 @@ window.initGame = function(root, pixiScene) {
             charBtns.forEach((btnName, i) => {
                 let btn = gameRoot.menuCharScreen[btnName];
                 if (btn) {
-                    if (!unlockedChars.includes(i)) setButtonState(btn, 3);
+                    if (!unlockedChars.includes(i)) {
+                    setButtonState(btn, 3);
+                    if (btn.txtCost) btn.txtCost.text = charCosts[i]; // Текст ценника в символе
+                }
                     else if (i === selectedIndex) setButtonState(btn, 1);
                     else if (i === prevSelectedCharID && prevSelectedCharID !== selectedIndex) setButtonState(btn, 2);
                     else setButtonState(btn, 0);
@@ -646,11 +647,33 @@ window.initGame = function(root, pixiScene) {
                 btn.cursor = "pointer";
                 btn.removeAllListeners();
                 btn.on("pointerdown", () => {
-                    if (unlockedChars.includes(i)) {
-                        createjs.Sound.play("SfxClick");
+                if (unlockedChars.includes(i)) {
+                    createjs.Sound.play("SfxClick");
+                    updateCharUI(i); 
+                } else {
+                    if (globalCoins >= charCosts[i]) {
+                        globalCoins -= charCosts[i];
+                        localStorage.setItem("pinglooTotalCoins", globalCoins);
+                        unlockedChars.push(i);
+                        localStorage.setItem("pinglooUnlockedChars", JSON.stringify(unlockedChars));
+                        updateGlobalUI();
+                        createjs.Sound.play("SfxBuy"); // УСПЕХ
                         updateCharUI(i); 
+                    } else {
+                        createjs.Sound.play("SfxError"); // ОШИБКА
+                        let coinTxt = gameRoot.menuCharScreen.txtTotalCoins;
+                        if (coinTxt && !coinTxt.isShaking) {
+                            coinTxt.isShaking = true;
+                            let startX = coinTxt.x;
+                            addTween(coinTxt, { x: startX - 15 }, 40, () => {
+                                addTween(coinTxt, { x: startX + 15 }, 40, () => {
+                                    addTween(coinTxt, { x: startX }, 40, () => coinTxt.isShaking = false );
+                                });
+                            });
+                        }
                     }
-                });
+                }
+            });
             }
         });
         updateCharUI(window.selectedCharID);
@@ -703,44 +726,28 @@ window.initGame = function(root, pixiScene) {
         let w = window.innerWidth;
         let h = window.innerHeight;
         
-        // ЗАЩИТА ОТ БЕСКОНЕЧНОГО ЦИКЛА В SAFARI (OUT OF MEMORY)
         if (w === lastW && h === lastH) return;
-        lastW = w;
-        lastH = h;
+        lastW = w; lastH = h;
 
-        // ИСПРАВЛЕНИЕ КРАША: Запрещаем мобильному браузеру дергаться и скроллить при тапах (touch-action)
-        canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: " + w + "px; height: " + h + "px; overflow: hidden; touch-action: none; -webkit-touch-callout: none; user-select: none;";
+        // Жестко прибиваем размер через CSS-переменные экрана
+        canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: 100vw; height: 100vh; overflow: hidden; touch-action: none; user-select: none;";
         
-        // --- ДИНАМИЧЕСКОЕ КАЧЕСТВО ДЛЯ СМАРТФОНОВ ---
-        // Считываем настройку из памяти. Если игрок выбрал низкое качество, ставим 1.
-        // Иначе берем реальную плотность экрана телефона (2 или 3 для Retina).
-        let isLowQuality = localStorage.getItem("pinglooLowQuality") === "true";
-        let pixelRatio = isLowQuality ? 1 : (window.devicePixelRatio || 1);
+        let pixelRatio = (localStorage.getItem("pinglooLowQuality") === "true") ? 1 : (window.devicePixelRatio || 1);
 
         if (scene && scene.renderer) {
             scene.renderer.resolution = pixelRatio;
             scene.renderer.resize(w, h);
-        } else if (scene && scene.app && scene.app.renderer) {
-            scene.app.renderer.resolution = pixelRatio;
-            scene.app.renderer.resize(w, h);
-        } else {
-            canvas.width = w * pixelRatio;
-            canvas.height = h * pixelRatio;
         }
 
         if (gameRoot) {
-            let targetW = 1920;
-            let targetH = 1080;
-            
+            let targetW = 1920; let targetH = 1080;
             let finalScale = Math.min(w / targetW, h / targetH); 
             window.baseGameScale = finalScale;
 
             gameRoot.scale.set(finalScale);
             gameRoot.rotation = 0; 
-            
             gameRoot.x = (w - (targetW * finalScale)) / 2;
             gameRoot.y = (h - (targetH * finalScale)) / 2; 
-            
             gameRoot.baseX = gameRoot.x;
             gameRoot.baseY = gameRoot.y;
         }
@@ -1464,7 +1471,7 @@ function gameLoop(dt) {
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
-        spawnSled(nextSledX, getHillY(nextSledX));
+        spawnSled(nextSledX, getHillY(nextSledX) - 50); // Увеличивай 50, чтобы поднять выше
         nextSledX += 24000 + Math.random() * 16000; 
     }
 
@@ -1599,7 +1606,7 @@ function gameLoop(dt) {
         sledTimer -= dt;
         
         if (activeSledInstance) {
-            let sledOffsetY = 85; 
+            let sledOffsetY = 30; // Уменьшай цифру, чтобы притянуть санки выше к ногам
             let sledOffsetX = 0; 
             let rad = player.rotation;
             setPlayerState("sled"); 
