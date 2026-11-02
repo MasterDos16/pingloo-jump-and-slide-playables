@@ -270,7 +270,7 @@ function switchBiome(index) {
     currentBiomeIndex = index;
     let layers = ["sky", "cloudsBack", "mountainsMid", "mountains", "trees", "cloudsFront"];
     
-    for (let i = 0; i <= 7; i++) {
+    for (let i = 0; i <= 0; i++) { // Вместо 7 проверяем только 0
         layers.forEach(key => {
             let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
             // Теперь ищем строго с индексом, без исключений для i === 0
