@@ -207,13 +207,13 @@ function getCachedSprite(libName) {
     let r = (scene && scene.renderer) ? scene.renderer : (scene && scene.app && scene.app.renderer ? scene.app.renderer : null);
     if (!window.cachedTextures[libName] && lib && lib[libName] && r) {
         let tempMC = new lib[libName]();
-        // Ставим максимальное качество (под плотность экрана) вместо 0.5
-        window.cachedTextures[libName] = r.generateTexture(tempMC, PIXI.SCALE_MODES.LINEAR, window.devicePixelRatio || 2); 
+        // ФИКС ВЫЛЕТОВ: Жестко ограничиваем масштаб до 1.5, отвязываясь от экранов Retina
+        window.cachedTextures[libName] = r.generateTexture(tempMC, PIXI.SCALE_MODES.LINEAR, 1.5); 
         tempMC.destroy({ children: true });
     }
     if (window.cachedTextures[libName]) {
         let spr = new PIXI.Sprite(window.cachedTextures[libName]);
-        spr.anchor.set(0.5); // Возвращаем якорь точно в центр
+        spr.anchor.set(0.5); 
         return spr;
     }
     return (lib && lib[libName]) ? new lib[libName]() : new PIXI.Container();
@@ -1468,7 +1468,7 @@ function gameLoop(dt) {
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
-        spawnSled(nextSledX, getHillY(nextSledX) - 50); // Увеличивай 50, чтобы поднять выше
+        spawnSled(nextSledX, getHillY(nextSledX) - 40); // Увеличивай 50, чтобы поднять выше
         nextSledX += 24000 + Math.random() * 16000; 
     }
 
@@ -1740,9 +1740,9 @@ function gameLoop(dt) {
     gameRoot.scale.set(currentScale);
     gameRoot.x += player.x * (oldScale - currentScale);
 
-    // Возвращаем классическую камеру: жесткий горизонт, подъем только при высоких прыжках
+    // Возвращаем классическую камеру: жесткий горизонт
     let targetCameraY = gameRoot.baseY || 0; 
-    let cameraFocusY = 350; 
+    let cameraFocusY = 650;
     let scaledPlayerY = player.y * currentScale;
 
     if (scaledPlayerY < cameraFocusY) {
