@@ -17007,6 +17007,20 @@
             .addTimedChild(instance1);
     });
 
+    lib.Symbol_1 = Container.extend(function () {
+        Container.call(this);
+        var instance1 = new Sprite(fromFrame("Bitmap 19"))
+            .setTransform(-168, 283, 0.174, 0.174);
+        this.addChild(instance1);
+    });
+
+    lib.Symbol_4 = Container.extend(function () {
+        Container.call(this);
+        var instance1 = new lib.Symbol_1()
+            .setTransform(973.7, -1626.25, 5.747, 5.747);
+        this.addChild(instance1);
+    });
+
     lib.Tween_40 = Container.extend(function () {
         Container.call(this);
         var instance3 = new Sprite(fromFrame("Bitmap 64"))
@@ -17020,24 +17034,34 @@
 
     lib.Symbol_98 = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 11"))
-            .setTransform(-2090, -484);
-        this.addChild(instance1);
+        var instance5 = new Sprite(fromFrame("Bitmap 90"))
+            .setTransform(-1186, -493);
+        var instance4 = new Sprite(fromFrame("Bitmap 90"))
+            .setTransform(-450, -493);
+        var instance3 = new Sprite(fromFrame("Bitmap 90"))
+            .setTransform(276, -493);
+        var instance2 = new Sprite(fromFrame("Bitmap 90"))
+            .setTransform(1001, -493);
+        var instance1 = new Sprite(fromFrame("Bitmap 90"))
+            .setTransform(-1919, -493);
+        this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
     var Graphic268 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 1200, loop: false });
-        var instance5 = new lib.Symbol_98()
+        var instance6 = new lib.Symbol_98()
             .setTransform(-103.4, -280.25);
-        var instance4 = new lib.Tween_40();
-        var instance3 = new Sprite(fromFrame("Bitmap 8"))
-            .setTransform(-2101, -444);
-        var instance2 = new Sprite(fromFrame("Bitmap 62"))
-            .setTransform(-1327, -376);
-        var instance1 = new Sprite(fromFrame("Bitmap 61"))
-            .setTransform(-2186, -207);
-        this.addTimedChild(instance5)
-            .addTimedChild(instance4, 0, 1200, {
+        var instance5 = new lib.Tween_40();
+        var instance4 = new Sprite(fromFrame("Bitmap 91"))
+            .setTransform(-2166, -444);
+        var instance3 = new Sprite(fromFrame("Bitmap 91"))
+            .setTransform(-396, -421);
+        var instance2 = new lib.Symbol_4()
+            .setTransform(-1955.1, -397.1);
+        var instance1 = new lib.Symbol_4()
+            .setTransform(-46.05, -397.1);
+        this.addTimedChild(instance6)
+            .addTimedChild(instance5, 0, 1200, {
                 "0": {
                     x: -163.6,
                     y: -524.4
@@ -20640,6 +20664,7 @@
                     x: -1848.15
                 }
             })
+            .addTimedChild(instance4)
             .addTimedChild(instance3)
             .addTimedChild(instance2)
             .addTimedChild(instance1);
@@ -21646,17 +21671,19 @@
 
     var Graphic283 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 1200, loop: false });
-        var instance5 = new lib.Symbol_98()
+        var instance6 = new lib.Symbol_98()
             .setTransform(-103.4, -280.25);
-        var instance4 = new lib.Tween_40();
-        var instance3 = new Sprite(fromFrame("Bitmap 8"))
-            .setTransform(-2101, -444);
-        var instance2 = new Sprite(fromFrame("Bitmap 62"))
-            .setTransform(-1327, -376);
-        var instance1 = new Sprite(fromFrame("Bitmap 61"))
-            .setTransform(-2186, -207);
-        this.addTimedChild(instance5)
-            .addTimedChild(instance4, 0, 1200, {
+        var instance5 = new lib.Tween_40();
+        var instance4 = new Sprite(fromFrame("Bitmap 91"))
+            .setTransform(-2166, -444);
+        var instance3 = new Sprite(fromFrame("Bitmap 91"))
+            .setTransform(-396, -421);
+        var instance2 = new lib.Symbol_4()
+            .setTransform(-1955.1, -397.1);
+        var instance1 = new lib.Symbol_4()
+            .setTransform(-46.05, -397.1);
+        this.addTimedChild(instance6)
+            .addTimedChild(instance5, 0, 1200, {
                 "0": {
                     x: -163.6,
                     y: -524.4
@@ -25259,6 +25286,7 @@
                     x: -1848.15
                 }
             })
+            .addTimedChild(instance4)
             .addTimedChild(instance3)
             .addTimedChild(instance2)
             .addTimedChild(instance1);
@@ -25422,7 +25450,7 @@
         this.addChild(instance1);
     });
 
-    lib.Symbol_1 = Container.extend(function () {
+    lib.Symbol_2 = Container.extend(function () {
         Container.call(this);
         var instance1 = new lib.Graphic291()
             .setTransform(4.15, -27);
@@ -25571,17 +25599,19 @@
 
     var Graphic296 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 1200, loop: false });
-        var instance5 = new lib.Symbol_98()
+        var instance6 = new lib.Symbol_98()
             .setTransform(-103.4, -280.25);
-        var instance4 = new lib.Tween_40();
-        var instance3 = new Sprite(fromFrame("Bitmap 8"))
-            .setTransform(-2101, -444);
-        var instance2 = new Sprite(fromFrame("Bitmap 62"))
-            .setTransform(-1327, -376);
-        var instance1 = new Sprite(fromFrame("Bitmap 61"))
-            .setTransform(-2186, -207);
-        this.addTimedChild(instance5)
-            .addTimedChild(instance4, 0, 1200, {
+        var instance5 = new lib.Tween_40();
+        var instance4 = new Sprite(fromFrame("Bitmap 91"))
+            .setTransform(-2166, -444);
+        var instance3 = new Sprite(fromFrame("Bitmap 91"))
+            .setTransform(-396, -421);
+        var instance2 = new lib.Symbol_4()
+            .setTransform(-1955.1, -397.1);
+        var instance1 = new lib.Symbol_4()
+            .setTransform(-46.05, -397.1);
+        this.addTimedChild(instance6)
+            .addTimedChild(instance5, 0, 1200, {
                 "0": {
                     x: -163.6,
                     y: -524.4
@@ -29184,6 +29214,7 @@
                     x: -1848.15
                 }
             })
+            .addTimedChild(instance4)
             .addTimedChild(instance3)
             .addTimedChild(instance2)
             .addTimedChild(instance1);
@@ -29203,7 +29234,7 @@
         var instance7 = new lib.btnCredits()
             .setTransform(-854.8, 451.1, 0.995, 0.995);
         this[instance7.name = "btnCredits"] = instance7;
-        var instance6 = new lib.Symbol_1()
+        var instance6 = new lib.Symbol_2()
             .setTransform(0.35, -218.95, 1.254, 1.254);
         var instance5 = new lib.btnSettings()
             .setTransform(853.05, 451.45);
@@ -1441205,18 +1441236,28 @@
 
     lib.forest2_1 = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 1"))
-            .setTransform(-66, -443);
-        this.addChild(instance1);
+        var instance4 = new Sprite(fromFrame("Bitmap 88"))
+            .setTransform(3769, -446);
+        var instance3 = new Sprite(fromFrame("Bitmap 88"))
+            .setTransform(1799, -446);
+        var instance2 = new Sprite(fromFrame("Bitmap 88"))
+            .setTransform(5739, -446);
+        var instance1 = new Sprite(fromFrame("Bitmap 88"))
+            .setTransform(-171, -446);
+        this.addChild(instance4, instance3, instance2, instance1);
     });
 
     lib.mountains2_1 = Container.extend(function () {
         Container.call(this);
-        var instance2 = new Sprite(fromFrame("Bitmap 5"))
-            .setTransform(-223, 557);
-        var instance1 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[303]);
-        this.addChild(instance2, instance1);
+        var instance4 = new Sprite(fromFrame("Bitmap 89"))
+            .setTransform(1752, 550);
+        var instance3 = new Sprite(fromFrame("Bitmap 89"))
+            .setTransform(-291, 550);
+        var instance2 = new Sprite(fromFrame("Bitmap 89"))
+            .setTransform(3795, 550);
+        var instance1 = new Sprite(fromFrame("Bitmap 89"))
+            .setTransform(5838, 550);
+        this.addChild(instance4, instance3, instance2, instance1);
     });
 
     lib.bgCloudsBack_1 = Container.extend(function () {
@@ -1441234,34 +1441275,66 @@
 
     lib.bgSky_1 = Container.extend(function () {
         Container.call(this);
-        var instance3 = new Sprite(fromFrame("Bitmap 13"))
-            .setTransform(-867, -2821);
-        var instance2 = new Sprite(fromFrame("Bitmap 13"))
-            .setTransform(-2867, -2821);
-        var instance1 = new Sprite(fromFrame("Bitmap 13"))
-            .setTransform(1134, -2821);
-        this.addChild(instance3, instance2, instance1);
+        var instance19 = new Sprite(fromFrame("Bitmap 100"))
+            .setTransform(-3225, -2985, 3.266, 3.21);
+        var instance18 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-950, -630);
+        var instance17 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(863, -630);
+        var instance16 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-2815, -630);
+        var instance15 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(959, -1090, 1, 1, 0, 0, 3.142);
+        var instance14 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-854, -1090, 1, 1, 0, 0, 3.142);
+        var instance13 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(2824, -1090, 1, 1, 0, 0, 3.142);
+        var instance12 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-950, -1550);
+        var instance11 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(863, -1550);
+        var instance10 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-2815, -1550);
+        var instance9 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(959, -2010, 1, 1, 0, 0, 3.142);
+        var instance8 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-854, -2010, 1, 1, 0, 0, 3.142);
+        var instance7 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(2824, -2010, 1, 1, 0, 0, 3.142);
+        var instance6 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-818, -2470);
+        var instance5 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(995, -2470);
+        var instance4 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-2683, -2470);
+        var instance3 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(1091, -2930, 1, 1, 0, 0, 3.142);
+        var instance2 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-722, -2930, 1, 1, 0, 0, 3.142);
+        var instance1 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(2956, -2930, 1, 1, 0, 0, 3.142);
+        this.addChild(instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
+    });
+
+    lib.Graphic17082 = Container.extend(function () {
+        Container.call(this);
+        var instance5 = new Sprite(fromFrame("Bitmap 43"))
+            .setTransform(-1276, 147, 0.264, 0.264);
+        var instance4 = new Sprite(fromFrame("Bitmap 43"))
+            .setTransform(-774, 147, 0.264, 0.264);
+        var instance3 = new Sprite(fromFrame("Bitmap 43"))
+            .setTransform(-263, 147, 0.264, 0.264);
+        var instance2 = new Sprite(fromFrame("Bitmap 43"))
+            .setTransform(246, 147, 0.264, 0.264);
+        var instance1 = new Sprite(fromFrame("Bitmap 43"))
+            .setTransform(757, 147, 0.264, 0.264);
+        this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
     lib.bgCloudsFront = Container.extend(function () {
         Container.call(this);
-        var instance5 = new Sprite(fromFrame("Bitmap 43"))
-            .setTransform(-3821, -1431);
-        var instance4 = new Sprite(fromFrame("Bitmap 43"))
-            .setTransform(-1919, -1431);
-        var instance3 = new Sprite(fromFrame("Bitmap 43"))
-            .setTransform(17, -1431);
-        var instance2 = new Sprite(fromFrame("Bitmap 43"))
-            .setTransform(1942, -1430);
-        var instance1 = new Sprite(fromFrame("Bitmap 43"))
-            .setTransform(3878, -1430);
-        this.addChild(instance5, instance4, instance3, instance2, instance1);
-    });
-
-    lib.Symbol_4 = Container.extend(function () {
-        Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 19"))
-            .setTransform(10, -2);
+        var instance1 = new lib.Graphic17082()
+            .setTransform(979.5, -2028.25, 3.914, 3.914);
         this.addChild(instance1);
     });
 
@@ -1441278,10 +1441351,24 @@
         this.addChild(instance4, instance3, instance2, instance1);
     });
 
-    lib.Symbol_3 = Container.extend(function () {
+    lib.Graphic17083 = Container.extend(function () {
         Container.call(this);
         var instance1 = new Sprite(fromFrame("Bitmap 18"))
-            .setTransform(445, 567);
+            .setTransform(-291, 271, 0.244, 0.244);
+        this.addChild(instance1);
+    });
+
+    lib.Symbol_6 = Container.extend(function () {
+        Container.call(this);
+        var instance1 = new lib.Graphic17083()
+            .setTransform(28.15, -1646.95, 4.107, 4.107);
+        this.addChild(instance1);
+    });
+
+    lib.Symbol_3 = Container.extend(function () {
+        Container.call(this);
+        var instance1 = new lib.Symbol_6()
+            .setTransform(1637.5, 1096.5);
         this.addChild(instance1);
     });
 
@@ -1441298,32 +1441385,32 @@
         this.addChild(instance4, instance3, instance2, instance1);
     });
 
-    lib.bgCloudsBack = Container.extend(function () {
+    lib.Graphic17084 = Container.extend(function () {
         Container.call(this);
         var instance5 = new Sprite(fromFrame("Bitmap 40"))
-            .setTransform(-1946, -465);
+            .setTransform(-645, 143, 0.228, 0.228);
         var instance4 = new Sprite(fromFrame("Bitmap 40"))
-            .setTransform(-23, -465);
+            .setTransform(-207, 143, 0.228, 0.228);
         var instance3 = new Sprite(fromFrame("Bitmap 40"))
-            .setTransform(1896, -464);
+            .setTransform(229, 143, 0.228, 0.228);
         var instance2 = new Sprite(fromFrame("Bitmap 40"))
-            .setTransform(3820, -464);
+            .setTransform(667, 143, 0.228, 0.228);
         var instance1 = new Sprite(fromFrame("Bitmap 40"))
-            .setTransform(-3856, -465);
+            .setTransform(-1079, 143, 0.228, 0.228);
         this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
-    lib.Symbol_30 = Container.extend(function () {
+    lib.bgCloudsBack = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 12"))
-            .setTransform(-1067, -1662, 1.075);
+        var instance1 = new lib.Graphic17084()
+            .setTransform(870.5, -1089.05, 4.364, 4.364);
         this.addChild(instance1);
     });
 
     lib.bgSky = Container.extend(function () {
         Container.call(this);
-        var instance1 = new lib.Symbol_30()
-            .setTransform(-12.05, -1127.55, 2.916);
+        var instance1 = new Sprite(fromFrame("Bitmap 98"))
+            .setTransform(-3204, -2944, 3.262, 3.308);
         this.addChild(instance1);
     });
 
@@ -1441345,55 +1441432,55 @@
     lib.Санки_copy = Container.extend(function () {
         Container.call(this);
         var instance24 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[325]);
-        var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[324]);
-        var instance22 = new Graphics()
+        var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[323]);
-        var instance21 = new Graphics()
+        var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[322]);
-        var instance20 = new Graphics()
+        var instance21 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[321]);
-        var instance19 = new Graphics()
+        var instance20 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[320]);
-        var instance18 = new Graphics()
+        var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[319]);
-        var instance17 = new Graphics()
+        var instance18 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[318]);
-        var instance16 = new Graphics()
+        var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[317]);
-        var instance15 = new Graphics()
+        var instance16 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[316]);
-        var instance14 = new Graphics()
+        var instance15 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[315]);
-        var instance13 = new Graphics()
+        var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[314]);
-        var instance12 = new Graphics()
+        var instance13 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[313]);
-        var instance11 = new Graphics()
+        var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[312]);
-        var instance10 = new Graphics()
+        var instance11 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[311]);
-        var instance9 = new Graphics()
+        var instance10 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[310]);
-        var instance8 = new Graphics()
+        var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[309]);
+        var instance8 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[308]);
         var instance7 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[308])
+            .drawCommands(shapes.pingloo_wings_game_v02[307])
             .setTransform(410.35, -1.85);
         var instance6 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[307])
+            .drawCommands(shapes.pingloo_wings_game_v02[306])
             .setTransform(399.35);
         var instance5 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[308]);
-        var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[307]);
-        var instance3 = new Graphics()
+        var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[306]);
-        var instance2 = new Graphics()
+        var instance3 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[305]);
-        var instance1 = new Graphics()
+        var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[304]);
+        var instance1 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[303]);
         this.addChild(instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -1441408,23 +1441495,26 @@
     lib.Symbol_114 = Container.extend(function () {
         Container.call(this);
         var instance1 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[326]);
+            .drawCommands(shapes.pingloo_wings_game_v02[325]);
         this.addChild(instance1);
     });
 
     lib.Symbol_112 = Container.extend(function () {
         Container.call(this);
-        var instance2 = new Graphics()
+        var instance3 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[327]);
+        var instance2 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[326])
+            .setTransform(-22.1, 0, 1.229);
         var instance1 = new lib.Symbol_114()
             .setTransform(60.75, 7.3);
-        this.addChild(instance2, instance1);
+        this.addChild(instance3, instance2, instance1);
     });
 
     lib.Sled_5 = Container.extend(function () {
         Container.call(this);
         var instance1 = new lib.Symbol_112()
-            .setTransform(46.95, -32.6, 0.708);
+            .setTransform(-9.45, -32.6, 0.708);
         this.addChild(instance1);
     });
 
@@ -1441473,51 +1441563,51 @@
         var instance24 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[333]);
         var instance23 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[323]);
-        var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[322]);
-        var instance21 = new Graphics()
+        var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[321]);
-        var instance20 = new Graphics()
+        var instance21 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[320]);
+        var instance20 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[319]);
         var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[332]);
         var instance18 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[319]);
-        var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[318]);
-        var instance16 = new Graphics()
+        var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[317]);
-        var instance15 = new Graphics()
+        var instance16 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[316]);
+        var instance15 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[315]);
         var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[331]);
         var instance13 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[314]);
-        var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[313]);
-        var instance11 = new Graphics()
+        var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[312]);
-        var instance10 = new Graphics()
+        var instance11 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[311]);
+        var instance10 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[310]);
         var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[330]);
         var instance8 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[309]);
+            .drawCommands(shapes.pingloo_wings_game_v02[308]);
         var instance7 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[308])
+            .drawCommands(shapes.pingloo_wings_game_v02[307])
             .setTransform(410.35, -1.85);
         var instance6 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[307])
+            .drawCommands(shapes.pingloo_wings_game_v02[306])
             .setTransform(399.35);
         var instance5 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[308]);
-        var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[307]);
+        var instance4 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[306]);
         var instance3 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[329]);
         var instance2 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[305]);
+            .drawCommands(shapes.pingloo_wings_game_v02[304]);
         var instance1 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[328]);
         this.addChild(instance25, instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
@@ -1441531,7 +1441621,7 @@
         this.addChild(instance1);
     });
 
-    lib.Graphic17082 = Container.extend(function () {
+    lib.Graphic17085 = Container.extend(function () {
         Container.call(this);
         var instance50 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[383]);
@@ -1441639,12 +1441729,12 @@
 
     lib.FishFX = Container.extend(function () {
         Container.call(this);
-        var instance1 = new lib.Graphic17082()
+        var instance1 = new lib.Graphic17085()
             .setTransform(0.05, 0, 0.138, 0.138);
         this.addChild(instance1);
     });
 
-    var Graphic17083 = MovieClip.extend(function (mode) {
+    var Graphic17086 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 60, loop: false });
         var instance50 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[383]);
@@ -1441803,7 +1441893,7 @@
         MovieClip.call(this, {
             duration: 60
         });
-        var instance1 = new Graphic17083(MovieClip.SYNCHED);
+        var instance1 = new Graphic17086(MovieClip.SYNCHED);
         this.addTimedChild(instance1, 0, 60, {
             "0": {
                 x: 0.05,
@@ -1442344,19 +1442434,19 @@
         this[instance52.name = "Sled_7"] = instance52;
         var instance51 = new lib.bgSky()
             .setTransform(952.05, 539.85);
-        this[instance51.name = "bgSky"] = instance51;
+        this[instance51.name = "bgSky_0"] = instance51;
         var instance50 = new lib.bgCloudsBack()
             .setTransform(1942.95, 94.35);
-        this[instance50.name = "bgCloudsBack"] = instance50;
+        this[instance50.name = "bgCloudsBack_0"] = instance50;
         var instance49 = new lib.mountains2()
             .setTransform(0, -341.5);
-        this[instance49.name = "bgMountains"] = instance49;
+        this[instance49.name = "bgMountains_0"] = instance49;
         var instance48 = new lib.forest2()
             .setTransform(0.3, -93.55);
-        this[instance48.name = "bgTrees"] = instance48;
+        this[instance48.name = "bgTrees_0"] = instance48;
         var instance47 = new lib.bgCloudsFront()
             .setTransform(1899.6, -501.9);
-        this[instance47.name = "bgCloudsFront"] = instance47;
+        this[instance47.name = "bgCloudsFront_0"] = instance47;
         var instance46 = new lib.bgSky_1()
             .setTransform(952.05, 539.85);
         this[instance46.name = "bgSky_1"] = instance46;
@@ -1442524,52 +1442614,20 @@
     });
 
     lib.pingloo_wings_game_v02.assets = {
-        "Bitmap 61": "images/Bitmap 61.png",
-        "Bitmap 62": "images/Bitmap 62.png",
-        "Bitmap 8": "images/Bitmap 8.png",
-        "Bitmap 64": "images/Bitmap 64.png",
-        "Bitmap 11": "images/Bitmap 11.png",
-        "Bitmap 65": "images/Bitmap 65.png",
-        "Bitmap 66": "images/Bitmap 66.png",
-        "Bitmap 39": "images/Bitmap 39.png",
-        "Bitmap 14": "images/Bitmap 14.png",
-        "lunii_holm": "images/lunii_holm.png",
-        "luniie_holmi": "images/luniie_holmi.png",
         "Bitmap 28": "images/Bitmap 28.png",
-        "Bitmap 53": "images/Bitmap 53.png",
-        "ruini": "images/ruini.png",
-        "gbhfvblf 2": "images/gbhfvblf 2.png",
-        "Bitmap 52": "images/Bitmap 52.png",
-        "Bitmap 26": "images/Bitmap 26.png",
-        "vodorosli3": "images/vodorosli3.png",
-        "underwater": "images/underwater.png",
-        "Bitmap 36": "images/Bitmap 36.png",
-        "Bitmap 50": "images/Bitmap 50.png",
-        "Bitmap 51": "images/Bitmap 51.png",
-        "Bitmap 25": "images/Bitmap 25.png",
-        "Bitmap 49": "images/Bitmap 49.png",
-        "Bitmap 46": "images/Bitmap 46.png",
-        "Bitmap 47": "images/Bitmap 47.png",
-        "Bitmap 48": "images/Bitmap 48.png",
-        "Bitmap 24": "images/Bitmap 24.png",
-        "Bitmap 44": "images/Bitmap 44.png",
-        "Bitmap 1": "images/Bitmap 1.png",
-        "Bitmap 5": "images/Bitmap 5.png",
-        "Bitmap 45": "images/Bitmap 45.png",
-        "Bitmap 13": "images/Bitmap 13.png",
-        "Bitmap 43": "images/Bitmap 43.png",
-        "Bitmap 19": "images/Bitmap 19.png",
-        "Bitmap 18": "images/Bitmap 18.png",
-        "Bitmap 40": "images/Bitmap 40.png",
-        "Bitmap 12": "images/Bitmap 12.png",
-        "космические санки": "images/космические санки.png",
-        "подводные санки": "images/подводные санки.png",
-        "пляжные сани": "images/пляжные сани.png",
         "pingloo_wings_game_v02": "images/pingloo_wings_game_v02.shapes.txt",
         "pingloo_wings_game_v02_atlas_1": "images/pingloo_wings_game_v02_atlas_1.json",
         "pingloo_wings_game_v02_atlas_2": "images/pingloo_wings_game_v02_atlas_2.json",
         "pingloo_wings_game_v02_atlas_3": "images/pingloo_wings_game_v02_atlas_3.json",
-        "pingloo_wings_game_v02_atlas_4": "images/pingloo_wings_game_v02_atlas_4.json"
+        "pingloo_wings_game_v02_atlas_4": "images/pingloo_wings_game_v02_atlas_4.json",
+        "pingloo_wings_game_v02_atlas_5": "images/pingloo_wings_game_v02_atlas_5.json",
+        "pingloo_wings_game_v02_atlas_6": "images/pingloo_wings_game_v02_atlas_6.json",
+        "pingloo_wings_game_v02_atlas_7": "images/pingloo_wings_game_v02_atlas_7.json",
+        "pingloo_wings_game_v02_atlas_8": "images/pingloo_wings_game_v02_atlas_8.json",
+        "pingloo_wings_game_v02_atlas_9": "images/pingloo_wings_game_v02_atlas_9.json",
+        "pingloo_wings_game_v02_atlas_10": "images/pingloo_wings_game_v02_atlas_10.json",
+        "pingloo_wings_game_v02_atlas_11": "images/pingloo_wings_game_v02_atlas_11.json",
+        "pingloo_wings_game_v02_atlas_12": "images/pingloo_wings_game_v02_atlas_12.json"
     };
 })(PIXI, lib = lib || {});
 var lib;

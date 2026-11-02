@@ -726,10 +726,14 @@ window.initGame = function(root, pixiScene) {
         let scale = h / 1080;
         let virtualWidth = w / scale;
 
-        canvas.width = Math.round(w);
-        canvas.height = Math.round(h);
+        let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        let dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
 
         if (scene && scene.renderer) {
+            scene.renderer.resolution = dpr;
             scene.renderer.resize(w, h);
         }
 
@@ -1732,7 +1736,7 @@ function gameLoop(dt) {
         // На ПК оставляем отдаление до 60% (как у вас и было).
         // На смартфонах ограничиваем отдаление максимум 25-30%, 
         // чтобы камера не улетала слишком далеко.
-        let maxZoomOut = isMobile ? 0.25 : 0.6;
+        let maxZoomOut = isMobile ? 0.42 : 0.6;
 
         targetScale = baseScale * (1.0 - Math.min(heightFactor, maxZoomOut)); 
     }
