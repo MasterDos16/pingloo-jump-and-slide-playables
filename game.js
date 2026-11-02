@@ -283,7 +283,7 @@ function switchBiome(index) {
         layers.forEach(key => {
             let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
             // Ищем слой по любым вариантам: trees_1, bgTrees_1 или просто bgTrees (для 0)
-            let layer = gameRoot[key + "_" + i] || gameRoot[bgKey + "_" + i] || (i === 0 ? gameRoot[bgKey] : null);
+            let layer = gameRoot[key + "_" + i] || gameRoot[bgKey + "_" + i] || (i === 0 ? (gameRoot[bgKey] || gameRoot[key]) : null);
             
             if (layer) {
                 layer.visible = (i === index); 
@@ -729,13 +729,10 @@ window.initGame = function(root, pixiScene) {
         if (w === lastW && h === lastH) return;
         lastW = w; lastH = h;
 
-        // Жестко прибиваем размер через CSS-переменные экрана
-        canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: 100vw; height: 100vh; overflow: hidden; touch-action: none; user-select: none;";
-        
-        let pixelRatio = (localStorage.getItem("pinglooLowQuality") === "true") ? 1 : (window.devicePixelRatio || 1);
+        canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: " + w + "px; height: " + h + "px; overflow: hidden; touch-action: none; user-select: none;";
 
         if (scene && scene.renderer) {
-            scene.renderer.resolution = pixelRatio;
+            // Убрали динамическое изменение resolution, чтобы избежать бага со сжатием в нижний угол
             scene.renderer.resize(w, h);
         }
 
@@ -1231,7 +1228,7 @@ function gameLoop(dt) {
     // Собираем слои только текущего биома с учетом префикса bg
     layers.forEach(key => {
         let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
-        b[key] = gameRoot[key + "_" + currentBiomeIndex] || gameRoot[bgKey + "_" + currentBiomeIndex] || (currentBiomeIndex === 0 ? gameRoot[bgKey] : null);
+        b[key] = gameRoot[key + "_" + currentBiomeIndex] || gameRoot[bgKey + "_" + currentBiomeIndex] || (currentBiomeIndex === 0 ? (gameRoot[bgKey] || gameRoot[key]) : null);
     });
 
     if (b.cloudsBack) b.cloudsBack.x = b.cloudsBack.initialX - ((worldOffsetX * 0.05) % bgWidth);
@@ -1606,7 +1603,7 @@ function gameLoop(dt) {
         sledTimer -= dt;
         
         if (activeSledInstance) {
-            let sledOffsetY = 30; // Уменьшай цифру, чтобы притянуть санки выше к ногам
+            let sledOffsetY = 60; // Уменьшай цифру, чтобы притянуть санки выше к ногам
             let sledOffsetX = 0; 
             let rad = player.rotation;
             setPlayerState("sled"); 
