@@ -1740,10 +1740,10 @@ function gameLoop(dt) {
     // Классическая камера: жесткий горизонт
     let targetCameraY = gameRoot.baseY || 0; 
     let cameraFocusY = 350; 
-    let scaledPlayerY = player.y * currentScale;
 
-    if (scaledPlayerY < cameraFocusY) {
-        targetCameraY = (gameRoot.baseY || 0) + (cameraFocusY - scaledPlayerY); 
+    // Сравниваем чистую координату в пространстве игры (1080), а не сжатую экраном
+    if (player.y < cameraFocusY) {
+        targetCameraY = (gameRoot.baseY || 0) + (cameraFocusY - player.y) * currentScale; 
     }
 
     gameRoot.y += (targetCameraY - gameRoot.y) * 0.1 * dt;
