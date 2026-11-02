@@ -30,14 +30,17 @@
         <script src="game.js"></script>
         
         <script>
-            // Создаем сцену PixiAnimate
+            // Определяем мобильное устройство
+            var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            // Создаем сцену: на ПК красивое сглаживание, на смартфонах — легкий режим без утечек памяти
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
                 backgroundColor: 0x000000,
-                antialias: false // ФИКС КРАШЕЙ IOS: Отключаем, сглаживание потребляет критически много видеопамяти
+                antialias: !isMobile // На ПК — true (идеал), на телефонах — false (чтобы не жрало ОЗУ)
             });
 
-            // Сразу загружаем библиотеку и стартуем игру без лишних прелоадеров
+            // Сразу загружаем библиотеку и стартуем игру
             gameScene.load(lib.pingloo_wings_game_v02, function(instance) {
                 if (typeof window.initGame === 'function') {
                     window.initGame(instance, gameScene);

@@ -207,8 +207,8 @@ function getCachedSprite(libName) {
     let r = (scene && scene.renderer) ? scene.renderer : (scene && scene.app && scene.app.renderer ? scene.app.renderer : null);
     if (!window.cachedTextures[libName] && lib && lib[libName] && r) {
         let tempMC = new lib[libName]();
-        // ФИКС ВЫЛЕТОВ: Жестко ограничиваем масштаб до 1.5, отвязываясь от экранов Retina
-        window.cachedTextures[libName] = r.generateTexture(tempMC, PIXI.SCALE_MODES.LINEAR, 1.5); 
+        // Генерируем с фактором 1.0 — для санок, рыбок и монет этого разрешения за глаза, а видеопамять не забьется
+        window.cachedTextures[libName] = r.generateTexture(tempMC, PIXI.SCALE_MODES.LINEAR, 1.0); 
         tempMC.destroy({ children: true });
     }
     if (window.cachedTextures[libName]) {
@@ -725,37 +725,38 @@ window.initGame = function(root, pixiScene) {
 
         let w = window.innerWidth;
         let h = window.innerHeight;
-        
-        if (w === lastW && h === lastH) return;
-        lastW = w; lastH = h;
 
-        canvas.style.cssText = "position: absolute; top: 0px; left: 0px; width: " + w + "px; height: " + h + "px; overflow: hidden; touch-action: none; user-select: none;";
+        // Фиксируем физический размер канваса в буфере строго под сцену Animate
+        canvas.width = 1920;
+        canvas.height = 1080;
 
-        // ФИКС КРАШЕЙ IOS: Запрещаем браузеру раздувать холст в 2-3 раза на Retina-экранах
-        let dpr = window.devicePixelRatio || 1;
-        let pixelRatio = (localStorage.getItem("pinglooLowQuality") === "true") ? 1 : Math.min(dpr, 1.25);
+        // Рассчитываем правильные экранные пропорции (Contain)
+        let scale = Math.min(w / 1920, h / 1080);
+        let displayW = Math.round(1920 * scale);
+        let displayH = Math.round(1080 * scale);
+        let leftOffset = Math.round((w - displayW) / 2);
+        let topOffset = Math.round((h - displayH) / 2);
 
-        if (scene && scene.renderer) {
-            scene.renderer.resolution = pixelRatio;
-            scene.renderer.resize(w, h);
-        }
+        // Растягиваем холст стилями точно по центру экрана. 
+        // Больше никакого сжатия в угол — игра всегда идеально спозиционирована!
+        canvas.style.cssText = "position: absolute; " +
+            "left: " + leftOffset + "px; " +
+            "top: " + topOffset + "px; " +
+            "width: " + displayW + "px; " +
+            "height: " + displayH + "px; " +
+            "touch-action: none; " +
+            "-webkit-touch-callout: none; " +
+            "user-select: none;";
 
+        // Корневой контейнер игры всегда 1:1 к сцене — хитбоксы и координаты никогда не собьются
         if (gameRoot) {
-            let targetW = 1920; let targetH = 1080;
-            
-            // ВЕРНУЛИ Math.min: Игра всегда вписывается в экран целиком, ничего не обрезается
-            let finalScale = Math.min(w / targetW, h / targetH); 
-            window.baseGameScale = finalScale;
-
-            gameRoot.scale.set(finalScale);
-            gameRoot.rotation = 0; 
-            
-            // Ровное центрирование по всем осям
-            gameRoot.x = (w - (targetW * finalScale)) / 2;
-            gameRoot.y = (h - (targetH * finalScale)) / 2; 
-            
-            gameRoot.baseX = gameRoot.x;
-            gameRoot.baseY = gameRoot.y;
+            window.baseGameScale = 1.0;
+            gameRoot.scale.set(1.0);
+            gameRoot.rotation = 0;
+            gameRoot.x = 0;
+            gameRoot.y = 0;
+            gameRoot.baseX = 0;
+            gameRoot.baseY = 0;
         }
     };
     
@@ -1750,9 +1751,9 @@ function gameLoop(dt) {
     gameRoot.scale.set(currentScale);
     gameRoot.x += player.x * (oldScale - currentScale);
 
-    // Возвращаем классическую камеру: жесткий горизонт
+    // Классическая камера: жесткий горизонт
     let targetCameraY = gameRoot.baseY || 0; 
-    let cameraFocusY = 350 * (window.baseGameScale || 1.0); // ФИКС: Адаптация точки фокуса под масштаб экрана телефона
+    let cameraFocusY = 350; 
     let scaledPlayerY = player.y * currentScale;
 
     if (scaledPlayerY < cameraFocusY) {
