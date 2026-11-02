@@ -204,19 +204,10 @@ function spawnComboText(combo) {
 
 window.cachedTextures = {};
 function getCachedSprite(libName) {
-    let r = (scene && scene.renderer) ? scene.renderer : (scene && scene.app && scene.app.renderer ? scene.app.renderer : null);
-    if (!window.cachedTextures[libName] && lib && lib[libName] && r) {
-        let tempMC = new lib[libName]();
-        // Генерируем с фактором 1.0 — для санок, рыбок и монет этого разрешения за глаза, а видеопамять не забьется
-        window.cachedTextures[libName] = r.generateTexture(tempMC, PIXI.SCALE_MODES.LINEAR, 1.0); 
-        tempMC.destroy({ children: true });
+    if (lib && lib[libName]) {
+        return new lib[libName]();
     }
-    if (window.cachedTextures[libName]) {
-        let spr = new PIXI.Sprite(window.cachedTextures[libName]);
-        spr.anchor.set(0.5); 
-        return spr;
-    }
-    return (lib && lib[libName]) ? new lib[libName]() : new PIXI.Container();
+    return new PIXI.Container();
 }
 
 function spawnCoin(worldX, worldY) {
@@ -726,37 +717,43 @@ window.initGame = function(root, pixiScene) {
         let w = window.innerWidth;
         let h = window.innerHeight;
 
-        // Фиксируем физический размер канваса в буфере строго под сцену Animate
-        canvas.width = 1920;
-        canvas.height = 1080;
+        if (w === lastW && h === lastH) return;
+        lastW = w; lastH = h;
 
-        // Рассчитываем правильные экранные пропорции (Contain)
-        let scale = Math.min(w / 1920, h / 1080);
-        let displayW = Math.round(1920 * scale);
-        let displayH = Math.round(1080 * scale);
-        let leftOffset = Math.round((w - displayW) / 2);
-        let topOffset = Math.round((h - displayH) / 2);
+        // Холст на весь экран без черных полос
+        canvas.style.cssText = "position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; touch-action: none; -webkit-touch-callout: none; user-select: none;";
 
-        // Растягиваем холст стилями точно по центру экрана. 
-        // Больше никакого сжатия в угол — игра всегда идеально спозиционирована!
-        canvas.style.cssText = "position: absolute; " +
-            "left: " + leftOffset + "px; " +
-            "top: " + topOffset + "px; " +
-            "width: " + displayW + "px; " +
-            "height: " + displayH + "px; " +
-            "touch-action: none; " +
-            "-webkit-touch-callout: none; " +
-            "user-select: none;";
+        // Масштаб строго по высоте 1080 (базовый вертикальный размер)
+        let scale = h / 1080;
+        let virtualWidth = w / scale;
 
-        // Корневой контейнер игры всегда 1:1 к сцене — хитбоксы и координаты никогда не собьются
+        // Физический размер WebGL буфера
+        canvas.width = Math.round(w);
+        canvas.height = Math.round(h);
+
+        if (scene && scene.renderer) {
+            scene.renderer.resize(w, h);
+        }
+
         if (gameRoot) {
-            window.baseGameScale = 1.0;
-            gameRoot.scale.set(1.0);
+            window.baseGameScale = scale;
+            gameRoot.scale.set(scale);
             gameRoot.rotation = 0;
             gameRoot.x = 0;
             gameRoot.y = 0;
             gameRoot.baseX = 0;
             gameRoot.baseY = 0;
+        }
+
+        // Центрируем элементы UI меню (кнопка Play, лого), чтобы они не улетали за края экрана на широких смартфонах
+        if (gameRoot && gameRoot.menuScreen) {
+            // Меню держится по центру
+            let centerOffset = (virtualWidth - 1920) / 2;
+            if (centerOffset > 0) {
+                gameRoot.menuScreen.x = centerOffset;
+            } else {
+                gameRoot.menuScreen.x = 0;
+            }
         }
     };
     
