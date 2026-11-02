@@ -1714,25 +1714,27 @@ function gameLoop(dt) {
 
     let baseScale = window.baseGameScale || 1.0;
     let targetScale = baseScale;
+    let minZoomHeight = 150; 
     
-    // 1. Поднимаем порог: камера вообще не реагирует на небольшие холмы и спуски (было 150)
-    let minZoomHeight = 250; 
-    
-    // 2. Убираем сильное проседание камеры на спусках: учитываем только реальный отрыв от земли
-    let predictedDist = Math.max(0, distFromGround);
-    if (velocityY > 0 && distFromGround > 0) {
-        predictedDist -= (velocityY * 4); // Смягчили влияние вертикальной скорости (было * 10)
+    let predictedDist = distFromGround;
+    if (velocityY > 0) {
+        predictedDist -= (velocityY * 10); 
         if (predictedDist < 0) predictedDist = 0;
     }
     
-    // 3. Жестко ограничиваем отдаление (зум-аут)
     if (predictedDist > minZoomHeight) {
         let excessHeight = predictedDist - minZoomHeight;
-        let heightFactor = excessHeight / 1400; // Отдаление происходит плавнее (было / 1000)
-        
-        // Ограничиваем отдаление максимум на 25% (0.25 вместо старых 0.60)
-        // Теперь камера НИКОГДА не отдалится так далеко, чтобы показать пустоту
-        targetScale = baseScale * (1.0 - Math.min(heightFactor, 0.25)); 
+        let heightFactor = excessHeight / 1000; 
+
+        // Проверяем мобильное устройство
+        let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        // На ПК оставляем отдаление до 60% (как у вас и было).
+        // На смартфонах ограничиваем отдаление максимум 25-30%, 
+        // чтобы камера не улетала слишком далеко.
+        let maxZoomOut = isMobile ? 0.25 : 0.6;
+
+        targetScale = baseScale * (1.0 - Math.min(heightFactor, maxZoomOut)); 
     }
 
     let oldScale = gameRoot.scale.x;
