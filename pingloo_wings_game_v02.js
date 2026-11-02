@@ -1189782,7 +1189782,9 @@
         "pingloo_wings_game_v02": "images/pingloo_wings_game_v02.shapes.txt",
         "pingloo_wings_game_v02_atlas_1": "images/pingloo_wings_game_v02_atlas_1.json",
         "pingloo_wings_game_v02_atlas_2": "images/pingloo_wings_game_v02_atlas_2.json",
-        "pingloo_wings_game_v02_atlas_3": "images/pingloo_wings_game_v02_atlas_3.json"
+        "pingloo_wings_game_v02_atlas_3": "images/pingloo_wings_game_v02_atlas_3.json",
+        "pingloo_wings_game_v02_atlas_4": "images/pingloo_wings_game_v02_atlas_4.json",
+        "pingloo_wings_game_v02_atlas_5": "images/pingloo_wings_game_v02_atlas_5.json"
     };
 })(PIXI, lib = lib || {});
 var lib;
