@@ -399,7 +399,8 @@ window.initGame = function(root, pixiScene) {
         gameRoot.gameOverScreen.initY = gameRoot.gameOverScreen.y;
         gameRoot.gameOverScreen.startScaleX = gameRoot.gameOverScreen.scale.x;
         gameRoot.gameOverScreen.startScaleY = gameRoot.gameOverScreen.scale.y;
-        gameRoot.gameOverScreen.visible = false; 
+        gameRoot.gameOverScreen.visible = false;
+        if (typeof gameRoot.gameOverScreen.stop === "function") gameRoot.gameOverScreen.stop(); // ФИКС КРАША
         
         if (gameRoot.gameOverScreen.mcNewRecord) gameRoot.gameOverScreen.mcNewRecord.visible = false; 
 
@@ -691,7 +692,8 @@ window.initGame = function(root, pixiScene) {
     }
 
     if (gameRoot.pauseScreen) {
-        gameRoot.pauseScreen.visible = false; 
+        gameRoot.pauseScreen.visible = false;
+        if (typeof gameRoot.pauseScreen.stop === "function") gameRoot.pauseScreen.stop(); // ФИКС ЛАГА
         gameRoot.pauseScreen.startX = gameRoot.pauseScreen.x;
         gameRoot.pauseScreen.initY = gameRoot.pauseScreen.y;
         gameRoot.pauseScreen.startScaleX = gameRoot.pauseScreen.scale.x;
@@ -1257,16 +1259,16 @@ function gameLoop(dt) {
     if (b.cloudsFront && b.cloudsFront.initialY !== undefined) b.cloudsFront.y = b.cloudsFront.initialY + (gameRoot.y * 0.4);
 
     // --- ОПТИМИЗАЦИЯ РЕНДЕРА ГОРЫ ---
-    /*
-    if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 1000)) {
+    if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 500)) {
         hillShape.lastDrawX = worldOffsetX;
         
         hillShape.clear();
         hillShape.lineStyle(4, currentLineColor, 1);
         hillShape.beginFill(currentFillColor);
         
-        let drawStart = worldOffsetX - 1500; 
-        let drawEnd = worldOffsetX + 5500; 
+        // Экстремально узкая ширина и глубина
+        let drawStart = worldOffsetX - 300; 
+        let drawEnd = worldOffsetX + 2800; 
         let drawStep = 150; 
         
         for (let i = drawStart; i <= drawEnd; i += drawStep) {
@@ -1281,9 +1283,7 @@ function gameLoop(dt) {
         hillShape.lineTo(drawStart, 1500);    
         hillShape.endFill();
     }
-    
     hillShape.x = -worldOffsetX;
-    */
 
     let baseGrav = (window.selectedCharID === 1) ? 0.40 : (window.selectedCharID === 3) ? 0.55 : 0.45;
     let diveGrav = (window.selectedCharID === 1) ? 2.2 : (window.selectedCharID === 3) ? 3.0 : 2.5;
@@ -1422,63 +1422,63 @@ function gameLoop(dt) {
     let playerWorldX = worldOffsetX + player.x;
 
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
-    // while (nextCoinX < worldOffsetX + 5000) {
-    //     if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
-    //     if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
-    //     let patternType = Math.floor(Math.random() * 4); 
-    //     let startX = nextCoinX;
-    //     let skyHeight = 400 + Math.random() * 800; 
+    while (nextCoinX < worldOffsetX + 2600) {
+        if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
+        if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
+        let patternType = Math.floor(Math.random() * 4); 
+        let startX = nextCoinX;
+        let skyHeight = 400 + Math.random() * 800; 
 
-    //     if (patternType === 0) {
-    //         let numCoins = 6 + Math.floor(Math.random() * 6);
-    //         let spacing = 90;
-    //         for (let i = 0; i < numCoins; i++) spawnCoin(startX + (i * spacing), getHillY(startX + (i * spacing)) - 80);
-    //         nextCoinX += (numCoins * spacing) + 3000 + Math.random() * 2000;
-    //     } 
-    //     else if (patternType === 1) {
-    //         let cy = getHillY(startX) - skyHeight; 
-    //         let spacing = 70;
-    //         for (let row = 0; row < 5; row++) {
-    //             for (let col = 0; col < 5; col++) {
-    //                 spawnCoin(startX + (col * spacing) - (spacing * 2), cy + (row * spacing) - (spacing * 2));
-    //             }
-    //         }
-    //         nextCoinX += 3500 + Math.random() * 2000;
-    //     } 
-    //     else if (patternType === 2) {
-    //         let cy = getHillY(startX) - skyHeight; 
-    //         for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) spawnCoin(startX + Math.cos(a) * 200, cy + Math.sin(a) * 200);
-    //         for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) spawnCoin(startX + Math.cos(a) * 100, cy + Math.sin(a) * 100);
-    //         spawnCoin(startX, cy); 
-    //         nextCoinX += 3500 + Math.random() * 2000;
-    //     }
-    //     else {
-    //         let cy = getHillY(startX) - skyHeight; 
-    //         let spacing = 75;
-    //         for (let r = 0; r < 5; r++) {
-    //             let coinsInRow = r + 1;
-    //             let startOffsetX = -(coinsInRow - 1) * (spacing / 2);
-    //             for (let c = 0; c < coinsInRow; c++) spawnCoin(startX + startOffsetX + (c * spacing), cy + (r * spacing));
-    //         }
-    //         nextCoinX += 3500 + Math.random() * 2000;
-    //     }
-    // }
+        if (patternType === 0) {
+            let numCoins = 6 + Math.floor(Math.random() * 6);
+            let spacing = 90;
+            for (let i = 0; i < numCoins; i++) spawnCoin(startX + (i * spacing), getHillY(startX + (i * spacing)) - 80);
+            nextCoinX += (numCoins * spacing) + 3000 + Math.random() * 2000;
+        } 
+        else if (patternType === 1) {
+            let cy = getHillY(startX) - skyHeight; 
+            let spacing = 70;
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    spawnCoin(startX + (col * spacing) - (spacing * 2), cy + (row * spacing) - (spacing * 2));
+                }
+            }
+            nextCoinX += 3500 + Math.random() * 2000;
+        } 
+        else if (patternType === 2) {
+            let cy = getHillY(startX) - skyHeight; 
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) spawnCoin(startX + Math.cos(a) * 200, cy + Math.sin(a) * 200);
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) spawnCoin(startX + Math.cos(a) * 100, cy + Math.sin(a) * 100);
+            spawnCoin(startX, cy); 
+            nextCoinX += 3500 + Math.random() * 2000;
+        }
+        else {
+            let cy = getHillY(startX) - skyHeight; 
+            let spacing = 75;
+            for (let r = 0; r < 5; r++) {
+                let coinsInRow = r + 1;
+                let startOffsetX = -(coinsInRow - 1) * (spacing / 2);
+                for (let c = 0; c < coinsInRow; c++) spawnCoin(startX + startOffsetX + (c * spacing), cy + (r * spacing));
+            }
+            nextCoinX += 3500 + Math.random() * 2000;
+        }
+    }
 
-    // while (nextFishX < worldOffsetX + 5000) {
-    //     let foundDownhill = false;
-    //     for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
-    //         if (Math.abs(scanX - nextSledX) < 1200) continue;
-    //         let nextY = getHillY(scanX + 10);
-    //         let prevY = getHillY(scanX - 10);
-    //         if (nextY - prevY > 4) {
-    //             spawnFish(scanX, getHillY(scanX) - 40); 
-    //             nextFishX = scanX + 1500 + Math.random() * 2000; 
-    //             foundDownhill = true;
-    //             break;
-    //         }
-    //     }
-    //     if (!foundDownhill) nextFishX += 2000; 
-    // }
+    while (nextFishX < worldOffsetX + 2600) {
+        let foundDownhill = false;
+        for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
+            if (Math.abs(scanX - nextSledX) < 1200) continue;
+            let nextY = getHillY(scanX + 10);
+            let prevY = getHillY(scanX - 10);
+            if (nextY - prevY > 4) {
+                spawnFish(scanX, getHillY(scanX) - 40); 
+                nextFishX = scanX + 1500 + Math.random() * 2000; 
+                foundDownhill = true;
+                break;
+            }
+        }
+        if (!foundDownhill) nextFishX += 2000; 
+    }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
         spawnSled(nextSledX, getHillY(nextSledX)); // Увеличивай 50, чтобы поднять выше

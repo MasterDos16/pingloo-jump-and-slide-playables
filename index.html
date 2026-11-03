@@ -31,7 +31,8 @@
         
         <script>
             var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+            // Даем мобилкам полуторное разрешение (1.5x) вместо шакального 1x. Это отличный баланс между четкостью и ОЗУ.
+        var dpr = isMobile ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 2);
 
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
