@@ -1260,8 +1260,8 @@ function gameLoop(dt) {
         }
         
         // Ограничиваем глубину заливки до 1500 пикселей
-        hillShape.lineTo(drawEnd, 1500); 
-        hillShape.lineTo(drawStart, 1500);    
+        hillShape.lineTo(drawEnd, 150); 
+        hillShape.lineTo(drawStart, 150);    
         hillShape.endFill();
     }
     
