@@ -104,7 +104,6 @@
             .drawCommands(shapes.pingloo_wings_game_v02[0])
             .setTransform(-378.7, -168.65);
         this.addChild(instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
-        this.stop();
     });
 
     lib.Graphic11 = Container.extend(function () {
@@ -199,10 +198,7 @@
             .addTimedChild(instance4)
             .addTimedChild(instance3)
             .addTimedChild(instance2)
-            .addTimedChild(instance1)
-            .addAction(function () {
-                this.stop();
-            }, 0);
+            .addTimedChild(instance1);
     });
 
     lib.Graphic16 = Container.extend(function () {
