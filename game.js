@@ -1237,7 +1237,7 @@ function gameLoop(dt) {
     if (b.cloudsFront && b.cloudsFront.initialY !== undefined) b.cloudsFront.y = b.cloudsFront.initialY + (gameRoot.y * 0.4);
 
     // --- ОПТИМИЗАЦИЯ РЕНДЕРА ГОРЫ ---
-    // Обновляем фигуру чуть чаще (каждые 1000px), но рисуем в разы меньше геометрии
+    /*
     if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 1000)) {
         hillShape.lastDrawX = worldOffsetX;
         
@@ -1245,28 +1245,25 @@ function gameLoop(dt) {
         hillShape.lineStyle(4, currentLineColor, 1);
         hillShape.beginFill(currentFillColor);
         
-        // Сужаем ширину полигона (было 10000, стало 7000 пикселей)
         let drawStart = worldOffsetX - 1500; 
         let drawEnd = worldOffsetX + 5500; 
         let drawStep = 150; 
         
         for (let i = drawStart; i <= drawEnd; i += drawStep) {
-            let hillY = getHillY(i);
+            let hillY = getHillY(i); 
             if (i === drawStart) {
                 hillShape.moveTo(i, hillY);
             } else {
                 hillShape.lineTo(i, hillY);
             }
         }
-        
-        // Ограничиваем глубину заливки до 1500 пикселей
-        hillShape.lineTo(drawEnd, 150); 
-        hillShape.lineTo(drawStart, 150);    
+        hillShape.lineTo(drawEnd, 1500); 
+        hillShape.lineTo(drawStart, 1500);    
         hillShape.endFill();
     }
     
-    // Вместо перерисовки просто сдвигаем геометрию влево
     hillShape.x = -worldOffsetX;
+    */
 
     let baseGrav = (window.selectedCharID === 1) ? 0.40 : (window.selectedCharID === 3) ? 0.55 : 0.45;
     let diveGrav = (window.selectedCharID === 1) ? 2.2 : (window.selectedCharID === 3) ? 3.0 : 2.5;
