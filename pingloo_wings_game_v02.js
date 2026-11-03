@@ -78,7 +78,7 @@
         this.addChild(instance1);
     });
 
-    lib.mcNewRecord2 = Container.extend(function () {
+    lib.mcNewRecord = Container.extend(function () {
         Container.call(this);
         var instance11 = new lib.Graphic10()
             .setTransform(-0.55);
@@ -157,16 +157,18 @@
         this.addChild(instance3, instance2, instance1);
     });
 
-    lib.Graphic15 = Container.extend(function () {
-        Container.call(this);
+    var Graphic15 = MovieClip.extend(function (mode) {
+        MovieClip.call(this, { mode: mode, duration: 559, loop: false });
         var instance1 = new Sprite(fromFrame("Bitmap 70"))
             .setTransform(-396, -344);
-        this.addChild(instance1);
+        this.addTimedChild(instance1);
     });
 
-    lib.GameOverScreen2 = Container.extend(function () {
-        Container.call(this);
-        var instance6 = new lib.Graphic15()
+    lib.GameOverScreen = MovieClip.extend(function () {
+        MovieClip.call(this, {
+            duration: 559
+        });
+        var instance6 = new Graphic15(MovieClip.SYNCHED)
             .setTransform(4.05, 12.55);
         var instance5 = new lib.btnRestart()
             .setTransform(-119.3, 83.25, 1.218, 1.218);
@@ -186,14 +188,21 @@
             .setAlign("center")
             .setTransform(5.500000000000028, -131.5);
         this[instance3.name = "txtFinalDistance"] = instance3;
-        var instance2 = new lib.mcNewRecord2()
+        var instance2 = new lib.mcNewRecord()
             .setTransform(1.3, -169.15, 2.299, 2.299);
         this[instance2.name = "mcNewRecord"] = instance2;
         var instance1 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[0])
             .setTransform(107.05, 39.85);
-        this.addChild(instance6, instance5, instance4, instance3, instance2, instance1);
-        this.stop();
+        this.addTimedChild(instance6)
+            .addTimedChild(instance5)
+            .addTimedChild(instance4)
+            .addTimedChild(instance3)
+            .addTimedChild(instance2)
+            .addTimedChild(instance1)
+            .addAction(function () {
+                this.stop();
+            }, 0);
     });
 
     lib.Graphic16 = Container.extend(function () {
@@ -1440124,7 +1440133,7 @@
         var instance3 = new lib.PauseScreen()
             .setTransform(960, 540);
         this[instance3.name = "pauseScreen"] = instance3;
-        var instance2 = new lib.GameOverScreen2()
+        var instance2 = new lib.GameOverScreen()
             .setTransform(960, 540);
         this[instance2.name = "gameOverScreen"] = instance2;
         var instance1 = new Graphics()
