@@ -901,12 +901,14 @@ function triggerGameOver(finalDistance) {
     if (gameRoot.gameOverScreen) {
         gameRoot.addChild(gameRoot.gameOverScreen); 
         gameRoot.gameOverScreen.visible = true; 
-        
-        // Останавливаем окно на статичном кадре. 
-        // Если полностью нарисованное окно лежит на другом кадре, впиши его цифру вместо 0.
         if (typeof gameRoot.gameOverScreen.gotoAndStop === "function") {
-            gameRoot.gameOverScreen.gotoAndStop(0); 
+            gameRoot.gameOverScreen.gotoAndStop(0); // Встаем на первый кадр (где всё уже нарисовано)
         }
+
+        // ПРОГРАММНАЯ АНИМАЦИЯ: Окно плавно выплывает снизу и появляется из прозрачности
+        gameRoot.gameOverScreen.alpha = 0;
+        gameRoot.gameOverScreen.y = gameRoot.gameOverScreen.initY + 100;
+        addTween(gameRoot.gameOverScreen, { alpha: 1, y: gameRoot.gameOverScreen.initY }, 500);
 
         if (gameRoot.gameOverScreen.txtFinalDistance) {
             let distCounter = { val: 0 };
@@ -1130,40 +1132,43 @@ function resumeWithCountdown() {
     if (gameRoot.pauseScreen) gameRoot.pauseScreen.visible = false;
 
     let count = 3;
+    // Используем безопасные системные шрифты и добавляем обводку
     let style = new PIXI.TextStyle({
-        fontFamily: "Arial Black", fontSize: 150, fontWeight: "bold",
-        fill: 0xFFD700, dropShadow: true, dropShadowColor: 0xFF4500, dropShadowDistance: 8, dropShadowBlur: 15
+        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 120, fontWeight: "bold",
+        fill: 0xFFD700, stroke: 0xFF4500, strokeThickness: 8, dropShadow: true
     });
     let txt = new PIXI.Text(count, style);
     txt.anchor.set(0.5);
-    txt.x = (960 - gameRoot.x) / gameRoot.scale.x;
-    txt.y = (540 - gameRoot.y) / gameRoot.scale.y;
-    gameRoot.addChild(txt); 
+    
+    // Центрируем идеально по экрану устройства
+    txt.x = window.innerWidth / 2;
+    txt.y = window.innerHeight / 2;
+    
+    // Вешаем таймер поверх ВСЕГО (напрямую в сцену Pixi)
+    if (scene && scene.stage) scene.stage.addChild(txt); 
 
     function animateNumber() {
         if (count > 0) {
             txt.text = count;
-            txt.alpha = 1; // Возвращаем видимость
+            txt.alpha = 1; 
             txt.scale.set(0.1); 
-            let targetScale = 1 / gameRoot.scale.x; 
 
-            addTween(txt.scale, {x: targetScale, y: targetScale}, 300, () => {
+            addTween(txt.scale, {x: 1, y: 1}, 300, () => {
                 setTimeout(() => {
                     addTween(txt, {alpha: 0}, 200, () => {
                         count--;
                         animateNumber(); 
                     });
-                    addTween(txt.scale, {x: targetScale * 1.5, y: targetScale * 1.5}, 200);
+                    addTween(txt.scale, {x: 1.5, y: 1.5}, 200);
                 }, 200);
             });
         } else {
             if (txt.parent) txt.parent.removeChild(txt);
             window.isCountdown = false; 
             isPlaying = true; 
-            if (gameRoot.btnPause) gameRoot.btnPause.visible = true; // Возвращаем кнопку
+            if (gameRoot.btnPause) gameRoot.btnPause.visible = true; 
             if (currentBgmInstance) currentBgmInstance.paused = false; 
             if (player && typeof player.play === "function") player.play(); 
-            if (avalanche && typeof avalanche.play === "function") avalanche.play(); 
         }
     }
     animateNumber();
