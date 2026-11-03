@@ -1237,27 +1237,31 @@ function gameLoop(dt) {
     if (b.cloudsFront && b.cloudsFront.initialY !== undefined) b.cloudsFront.y = b.cloudsFront.initialY + (gameRoot.y * 0.4);
 
     // --- ОПТИМИЗАЦИЯ РЕНДЕРА ГОРЫ ---
-    if (!hillShape.lastDrawX) { // ТЕСТ: РИСУЕМ ТОЛЬКО 1 РАЗ ПРИ СТАРТЕ И БОЛЬШЕ НЕ ПЕРЕРИСОВЫВАЕМ
+    // Обновляем фигуру чуть чаще (каждые 1000px), но рисуем в разы меньше геометрии
+    if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 1000)) {
         hillShape.lastDrawX = worldOffsetX;
         
         hillShape.clear();
         hillShape.lineStyle(4, currentLineColor, 1);
         hillShape.beginFill(currentFillColor);
         
-        let drawStart = worldOffsetX - 2500; 
-        let drawEnd = worldOffsetX + 7500; 
+        // Сужаем ширину полигона (было 10000, стало 7000 пикселей)
+        let drawStart = worldOffsetX - 1500; 
+        let drawEnd = worldOffsetX + 5500; 
         let drawStep = 150; 
         
         for (let i = drawStart; i <= drawEnd; i += drawStep) {
-            let hillY = getHillY(i); // Считаем по абсолютным координатам
+            let hillY = getHillY(i);
             if (i === drawStart) {
                 hillShape.moveTo(i, hillY);
             } else {
                 hillShape.lineTo(i, hillY);
             }
         }
-        hillShape.lineTo(drawEnd, 8000); 
-        hillShape.lineTo(drawStart, 8000);    
+        
+        // Ограничиваем глубину заливки до 1500 пикселей
+        hillShape.lineTo(drawEnd, 1500); 
+        hillShape.lineTo(drawStart, 1500);    
         hillShape.endFill();
     }
     
