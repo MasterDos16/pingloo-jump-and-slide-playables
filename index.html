@@ -30,14 +30,14 @@
         <script src="game.js"></script>
         
         <script>
-            // Определяем мобильное устройство
             var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
 
-            // Создаем сцену: на ПК красивое сглаживание, на смартфонах — легкий режим без утечек памяти
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
                 backgroundColor: 0x000000,
-                antialias: !isMobile // На ПК — true (идеал), на телефонах — false (чтобы не жрало ОЗУ)
+                antialias: !isMobile,
+                resolution: dpr // Задаем четкость на ПК один раз при старте
             });
 
             // Сразу загружаем библиотеку и стартуем игру
