@@ -1186155,15 +1186155,49 @@
 
     lib.bgSky_7 = Container.extend(function () {
         Container.call(this);
-        var instance4 = new Sprite(fromFrame("Bitmap 28"))
-            .setTransform(-996, -2818);
-        var instance3 = new Sprite(fromFrame("Bitmap 28"))
-            .setTransform(3058, -2818, 1, 1, 0, 0, 3.142);
-        var instance2 = new Sprite(fromFrame("Bitmap 28"))
-            .setTransform(-966, -2818, 1, 1, 0, 0, 3.142);
-        var instance1 = new Sprite(fromFrame("Bitmap 29"))
+        var instance21 = new Sprite(fromFrame("Bitmap 29"))
             .setTransform(214, -560);
-        this.addChild(instance4, instance3, instance2, instance1);
+        var instance20 = new Sprite(fromFrame("Bitmap 9"))
+            .setTransform(-3228, -2977, 115.337, 8.062);
+        var instance19 = new Sprite(fromFrame("Bitmap 29"))
+            .setTransform(214, -610);
+        var instance18 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-950, -630);
+        var instance17 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(863, -630);
+        var instance16 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-2815, -630);
+        var instance15 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(959, -1090, 1, 1, 0, 0, 3.142);
+        var instance14 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-854, -1090, 1, 1, 0, 0, 3.142);
+        var instance13 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(2824, -1090, 1, 1, 0, 0, 3.142);
+        var instance12 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-950, -1550);
+        var instance11 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(863, -1550);
+        var instance10 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-2815, -1550);
+        var instance9 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(959, -2010, 1, 1, 0, 0, 3.142);
+        var instance8 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-854, -2010, 1, 1, 0, 0, 3.142);
+        var instance7 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(2824, -2010, 1, 1, 0, 0, 3.142);
+        var instance6 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-818, -2470);
+        var instance5 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(995, -2470);
+        var instance4 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-2683, -2470);
+        var instance3 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(1091, -2930, 1, 1, 0, 0, 3.142);
+        var instance2 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(-722, -2930, 1, 1, 0, 0, 3.142);
+        var instance1 = new Sprite(fromFrame("Bitmap 99"))
+            .setTransform(2956, -2930, 1, 1, 0, 0, 3.142);
+        this.addChild(instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
     lib.влож_облакаперед_3 = Container.extend(function () {
@@ -1186286,8 +1186320,8 @@
 
     lib.bgSky_6 = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 26"))
-            .setTransform(-3232, -2823, 3.258);
+        var instance1 = new Sprite(fromFrame("Bitmap 7"))
+            .setTransform(-3257, -2911, 79.476, 7.743);
         this.addChild(instance1);
     });
 
@@ -1438489,16 +1438523,16 @@
 
     lib.Sky_5 = Container.extend(function () {
         Container.call(this);
-        var instance5 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[300]);
-        var instance4 = new lib.Graphic17081()
+        var instance5 = new lib.Graphic17081()
             .setTransform(-1955.95, -692.3, 13.357, 13.357, 0.022);
-        var instance3 = new lib.Graphic17080()
+        var instance4 = new lib.Graphic17080()
             .setTransform(1622, -733.4, 13.357, 13.357, 0.022);
-        var instance2 = new lib.Graphic17079()
+        var instance3 = new lib.Graphic17079()
             .setTransform(-1185.4, -82, 7.352, 7.352, 0.022);
-        var instance1 = new lib.Graphic17078()
+        var instance2 = new lib.Graphic17078()
             .setTransform(783.95, -104.65, 7.352, 7.352, 0.022);
+        var instance1 = new Sprite(fromFrame("Bitmap 6"))
+            .setTransform(-3298, -2962, 61.61, 11.178);
         this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -1438507,7 +1438541,7 @@
         var instance2 = new Sprite(fromFrame("vodorosli3"))
             .setTransform(177, -405, 0.775, 0.775);
         var instance1 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[301]);
+            .drawCommands(shapes.pingloo_wings_game_v02[300]);
         this.addChild(instance2, instance1);
     });
 
@@ -1438529,7 +1438563,7 @@
         var instance2 = new Sprite(fromFrame("underwater"))
             .setTransform(404, 223);
         var instance1 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[302]);
+            .drawCommands(shapes.pingloo_wings_game_v02[301]);
         this.addChild(instance2, instance1);
     });
 
@@ -1438552,13 +1438586,9 @@
 
     lib.Sky_4 = Container.extend(function () {
         Container.call(this);
-        var instance3 = new Sprite(fromFrame("Bitmap 36"))
-            .setTransform(-991, -2790);
-        var instance2 = new Sprite(fromFrame("Bitmap 36"))
-            .setTransform(1028, -2790);
-        var instance1 = new Sprite(fromFrame("Bitmap 36"))
-            .setTransform(-3010, -2790);
-        this.addChild(instance3, instance2, instance1);
+        var instance1 = new Sprite(fromFrame("Bitmap 5"))
+            .setTransform(-3232, -2928, 80.787, 8.038);
+        this.addChild(instance1);
     });
 
     lib.bgCloudsFront_3 = Container.extend(function () {
@@ -1438641,8 +1438671,8 @@
 
     lib.bgSky_3 = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 25"))
-            .setTransform(-2987, -2821, 2.949);
+        var instance1 = new Sprite(fromFrame("Bitmap 4"))
+            .setTransform(-3208, -2897, 90.659, 7.768);
         this.addChild(instance1);
     });
 
@@ -1438734,8 +1438764,8 @@
 
     lib.bgSky_2 = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 24"))
-            .setTransform(-3226, -2821, 3.13);
+        var instance1 = new Sprite(fromFrame("Bitmap 1"))
+            .setTransform(-3241, -2960, 11.512, 10.869);
         this.addChild(instance1);
     });
 
@@ -1438802,8 +1438832,8 @@
 
     lib.bgSky_1 = Container.extend(function () {
         Container.call(this);
-        var instance19 = new Sprite(fromFrame("Bitmap 100"))
-            .setTransform(-3225, -2985, 3.266, 3.21);
+        var instance19 = new Sprite(fromFrame("Bitmap 3"))
+            .setTransform(-3200, -2930, 95.031, 7.71);
         var instance18 = new Sprite(fromFrame("Bitmap 99"))
             .setTransform(-950, -630);
         var instance17 = new Sprite(fromFrame("Bitmap 99"))
@@ -1438936,8 +1438966,8 @@
 
     lib.bgSky = Container.extend(function () {
         Container.call(this);
-        var instance1 = new Sprite(fromFrame("Bitmap 98"))
-            .setTransform(-3204, -2944, 3.261, 3.308);
+        var instance1 = new Sprite(fromFrame("Bitmap 2"))
+            .setTransform(-3202, -2894, 55.522, 9.884);
         this.addChild(instance1);
     });
 
@@ -1438959,55 +1438989,55 @@
     lib.Санки_copy = Container.extend(function () {
         Container.call(this);
         var instance24 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[324]);
-        var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[323]);
-        var instance22 = new Graphics()
+        var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[322]);
-        var instance21 = new Graphics()
+        var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[321]);
-        var instance20 = new Graphics()
+        var instance21 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[320]);
-        var instance19 = new Graphics()
+        var instance20 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[319]);
-        var instance18 = new Graphics()
+        var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[318]);
-        var instance17 = new Graphics()
+        var instance18 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[317]);
-        var instance16 = new Graphics()
+        var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[316]);
-        var instance15 = new Graphics()
+        var instance16 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[315]);
-        var instance14 = new Graphics()
+        var instance15 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[314]);
-        var instance13 = new Graphics()
+        var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[313]);
-        var instance12 = new Graphics()
+        var instance13 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[312]);
-        var instance11 = new Graphics()
+        var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[311]);
-        var instance10 = new Graphics()
+        var instance11 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[310]);
-        var instance9 = new Graphics()
+        var instance10 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[309]);
-        var instance8 = new Graphics()
+        var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[308]);
+        var instance8 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[307]);
         var instance7 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[307])
+            .drawCommands(shapes.pingloo_wings_game_v02[306])
             .setTransform(410.35, -1.85);
         var instance6 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[306])
+            .drawCommands(shapes.pingloo_wings_game_v02[305])
             .setTransform(399.35);
         var instance5 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[307]);
-        var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[306]);
-        var instance3 = new Graphics()
+        var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[305]);
-        var instance2 = new Graphics()
+        var instance3 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[304]);
-        var instance1 = new Graphics()
+        var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[303]);
+        var instance1 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[302]);
         this.addChild(instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -1439022,16 +1439052,16 @@
     lib.Symbol_114 = Container.extend(function () {
         Container.call(this);
         var instance1 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[325]);
+            .drawCommands(shapes.pingloo_wings_game_v02[324]);
         this.addChild(instance1);
     });
 
     lib.Symbol_112 = Container.extend(function () {
         Container.call(this);
         var instance3 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[327]);
+            .drawCommands(shapes.pingloo_wings_game_v02[326]);
         var instance2 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[326])
+            .drawCommands(shapes.pingloo_wings_game_v02[325])
             .setTransform(-22.1, 0, 1.229);
         var instance1 = new lib.Symbol_114()
             .setTransform(60.75, 7.3);
@@ -1439086,57 +1439116,57 @@
     lib.Санки = Container.extend(function () {
         Container.call(this);
         var instance25 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[334]);
-        var instance24 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[333]);
-        var instance23 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[322]);
-        var instance22 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[321]);
-        var instance21 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[320]);
-        var instance20 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[319]);
-        var instance19 = new Graphics()
+        var instance24 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[332]);
-        var instance18 = new Graphics()
+        var instance23 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[321]);
+        var instance22 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[320]);
+        var instance21 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[319]);
+        var instance20 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[318]);
-        var instance17 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[317]);
-        var instance16 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[316]);
-        var instance15 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[315]);
-        var instance14 = new Graphics()
+        var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[331]);
-        var instance13 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[313]);
-        var instance12 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[312]);
-        var instance11 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[311]);
-        var instance10 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[310]);
-        var instance9 = new Graphics()
+        var instance18 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[317]);
+        var instance17 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[316]);
+        var instance16 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[315]);
+        var instance15 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[314]);
+        var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[330]);
+        var instance13 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[312]);
+        var instance12 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[311]);
+        var instance11 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[310]);
+        var instance10 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[309]);
+        var instance9 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[329]);
         var instance8 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[308]);
+            .drawCommands(shapes.pingloo_wings_game_v02[307]);
         var instance7 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[307])
+            .drawCommands(shapes.pingloo_wings_game_v02[306])
             .setTransform(410.35, -1.85);
         var instance6 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[306])
+            .drawCommands(shapes.pingloo_wings_game_v02[305])
             .setTransform(399.35);
         var instance5 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[307]);
-        var instance4 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[306]);
+        var instance4 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[305]);
         var instance3 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[329]);
-        var instance2 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[304]);
-        var instance1 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[328]);
+        var instance2 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[303]);
+        var instance1 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[327]);
         this.addChild(instance25, instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -1439151,106 +1439181,106 @@
     lib.Graphic17085 = Container.extend(function () {
         Container.call(this);
         var instance50 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[383]);
-        var instance49 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[382]);
-        var instance48 = new Graphics()
+        var instance49 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[381]);
-        var instance47 = new Graphics()
+        var instance48 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[380]);
-        var instance46 = new Graphics()
+        var instance47 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[379]);
-        var instance45 = new Graphics()
+        var instance46 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[378]);
-        var instance44 = new Graphics()
+        var instance45 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[377]);
-        var instance43 = new Graphics()
+        var instance44 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[376]);
-        var instance42 = new Graphics()
+        var instance43 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[375]);
-        var instance41 = new Graphics()
+        var instance42 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[374]);
-        var instance40 = new Graphics()
+        var instance41 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[373]);
-        var instance39 = new Graphics()
+        var instance40 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[372]);
-        var instance38 = new Graphics()
+        var instance39 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[371]);
-        var instance37 = new Graphics()
+        var instance38 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[370]);
-        var instance36 = new Graphics()
+        var instance37 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[369]);
-        var instance35 = new Graphics()
+        var instance36 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[368]);
-        var instance34 = new Graphics()
+        var instance35 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[367]);
-        var instance33 = new Graphics()
+        var instance34 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[366]);
-        var instance32 = new Graphics()
+        var instance33 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[365]);
-        var instance31 = new Graphics()
+        var instance32 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[364]);
-        var instance30 = new Graphics()
+        var instance31 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[363]);
-        var instance29 = new Graphics()
+        var instance30 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[362]);
-        var instance28 = new Graphics()
+        var instance29 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[361]);
-        var instance27 = new Graphics()
+        var instance28 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[360]);
-        var instance26 = new Graphics()
+        var instance27 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[359]);
-        var instance25 = new Graphics()
+        var instance26 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[358]);
-        var instance24 = new Graphics()
+        var instance25 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[357]);
-        var instance23 = new Graphics()
+        var instance24 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[356]);
-        var instance22 = new Graphics()
+        var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[355]);
-        var instance21 = new Graphics()
+        var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[354]);
-        var instance20 = new Graphics()
+        var instance21 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[353]);
-        var instance19 = new Graphics()
+        var instance20 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[352]);
-        var instance18 = new Graphics()
+        var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[351]);
-        var instance17 = new Graphics()
+        var instance18 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[350]);
-        var instance16 = new Graphics()
+        var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[349]);
-        var instance15 = new Graphics()
+        var instance16 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[348]);
-        var instance14 = new Graphics()
+        var instance15 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[347]);
-        var instance13 = new Graphics()
+        var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[346]);
-        var instance12 = new Graphics()
+        var instance13 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[345]);
-        var instance11 = new Graphics()
+        var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[344]);
-        var instance10 = new Graphics()
+        var instance11 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[343]);
-        var instance9 = new Graphics()
+        var instance10 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[342]);
-        var instance8 = new Graphics()
+        var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[341]);
-        var instance7 = new Graphics()
+        var instance8 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[340]);
-        var instance6 = new Graphics()
+        var instance7 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[339]);
-        var instance5 = new Graphics()
+        var instance6 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[338]);
+        var instance5 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[337]);
         var instance4 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[335])
+            .drawCommands(shapes.pingloo_wings_game_v02[334])
             .setTransform(788.75, 91.3, 4.354, 4.35);
         var instance3 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[337]);
-        var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[336]);
-        var instance1 = new Graphics()
+        var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[335]);
+        var instance1 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[334]);
         this.addChild(instance50, instance49, instance48, instance47, instance46, instance45, instance44, instance43, instance42, instance41, instance40, instance39, instance38, instance37, instance36, instance35, instance34, instance33, instance32, instance31, instance30, instance29, instance28, instance27, instance26, instance25, instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -1439264,106 +1439294,106 @@
     var Graphic17086 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 60, loop: false });
         var instance50 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[383]);
-        var instance49 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[382]);
-        var instance48 = new Graphics()
+        var instance49 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[381]);
-        var instance47 = new Graphics()
+        var instance48 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[380]);
-        var instance46 = new Graphics()
+        var instance47 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[379]);
-        var instance45 = new Graphics()
+        var instance46 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[378]);
-        var instance44 = new Graphics()
+        var instance45 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[377]);
-        var instance43 = new Graphics()
+        var instance44 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[376]);
-        var instance42 = new Graphics()
+        var instance43 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[375]);
-        var instance41 = new Graphics()
+        var instance42 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[374]);
-        var instance40 = new Graphics()
+        var instance41 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[373]);
-        var instance39 = new Graphics()
+        var instance40 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[372]);
-        var instance38 = new Graphics()
+        var instance39 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[371]);
-        var instance37 = new Graphics()
+        var instance38 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[370]);
-        var instance36 = new Graphics()
+        var instance37 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[369]);
-        var instance35 = new Graphics()
+        var instance36 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[368]);
-        var instance34 = new Graphics()
+        var instance35 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[367]);
-        var instance33 = new Graphics()
+        var instance34 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[366]);
-        var instance32 = new Graphics()
+        var instance33 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[365]);
-        var instance31 = new Graphics()
+        var instance32 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[364]);
-        var instance30 = new Graphics()
+        var instance31 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[363]);
-        var instance29 = new Graphics()
+        var instance30 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[362]);
-        var instance28 = new Graphics()
+        var instance29 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[361]);
-        var instance27 = new Graphics()
+        var instance28 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[360]);
-        var instance26 = new Graphics()
+        var instance27 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[359]);
-        var instance25 = new Graphics()
+        var instance26 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[358]);
-        var instance24 = new Graphics()
+        var instance25 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[357]);
-        var instance23 = new Graphics()
+        var instance24 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[356]);
-        var instance22 = new Graphics()
+        var instance23 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[355]);
-        var instance21 = new Graphics()
+        var instance22 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[354]);
-        var instance20 = new Graphics()
+        var instance21 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[353]);
-        var instance19 = new Graphics()
+        var instance20 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[352]);
-        var instance18 = new Graphics()
+        var instance19 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[351]);
-        var instance17 = new Graphics()
+        var instance18 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[350]);
-        var instance16 = new Graphics()
+        var instance17 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[349]);
-        var instance15 = new Graphics()
+        var instance16 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[348]);
-        var instance14 = new Graphics()
+        var instance15 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[347]);
-        var instance13 = new Graphics()
+        var instance14 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[346]);
-        var instance12 = new Graphics()
+        var instance13 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[345]);
-        var instance11 = new Graphics()
+        var instance12 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[344]);
-        var instance10 = new Graphics()
+        var instance11 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[343]);
-        var instance9 = new Graphics()
+        var instance10 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[342]);
-        var instance8 = new Graphics()
+        var instance9 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[341]);
-        var instance7 = new Graphics()
+        var instance8 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[340]);
-        var instance6 = new Graphics()
+        var instance7 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[339]);
-        var instance5 = new Graphics()
+        var instance6 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[338]);
+        var instance5 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[337]);
         var instance4 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[335])
+            .drawCommands(shapes.pingloo_wings_game_v02[334])
             .setTransform(788.75, 91.3, 4.354, 4.35);
         var instance3 = new Graphics()
-            .drawCommands(shapes.pingloo_wings_game_v02[337]);
-        var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[336]);
-        var instance1 = new Graphics()
+        var instance2 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[335]);
+        var instance1 = new Graphics()
+            .drawCommands(shapes.pingloo_wings_game_v02[334]);
         this.addTimedChild(instance50)
             .addTimedChild(instance49)
             .addTimedChild(instance48)
@@ -1440145,9 +1440175,7 @@
         "pingloo_wings_game_v02_atlas_1": "images/pingloo_wings_game_v02_atlas_1.json",
         "pingloo_wings_game_v02_atlas_2": "images/pingloo_wings_game_v02_atlas_2.json",
         "pingloo_wings_game_v02_atlas_3": "images/pingloo_wings_game_v02_atlas_3.json",
-        "pingloo_wings_game_v02_atlas_4": "images/pingloo_wings_game_v02_atlas_4.json",
-        "pingloo_wings_game_v02_atlas_5": "images/pingloo_wings_game_v02_atlas_5.json",
-        "pingloo_wings_game_v02_atlas_6": "images/pingloo_wings_game_v02_atlas_6.json"
+        "pingloo_wings_game_v02_atlas_4": "images/pingloo_wings_game_v02_atlas_4.json"
     };
 })(PIXI, lib = lib || {});
 var lib;

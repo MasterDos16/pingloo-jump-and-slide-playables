@@ -376,6 +376,19 @@ window.initGame = function(root, pixiScene) {
     cameraContainer.addChild(window.hillContainer); // Кладем новую гору поверх игрока  
     cameraContainer.addChild(coinsContainer);
 
+    // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
+    // Создаем 40 монет и 10 рыб заранее, чтобы процессор не делал это в гонке
+    for (let i = 0; i < 40; i++) {
+        let c = getCachedSprite("Coin");
+        c.visible = false;
+        objPool.coins.push(c);
+    }
+    for (let i = 0; i < 10; i++) {
+        let f = getCachedSprite("Fish");
+        f.visible = false;
+        objPool.fishes.push(f);
+    }
+
     if (avalanche) cameraContainer.addChild(avalanche);
 
     // Сортируем слои: Камера (игрок и монеты) над биомами, UI над камерой
@@ -1132,20 +1145,18 @@ function resumeWithCountdown() {
     if (gameRoot.pauseScreen) gameRoot.pauseScreen.visible = false;
 
     let count = 3;
-    // Используем безопасные системные шрифты и добавляем обводку
     let style = new PIXI.TextStyle({
-        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 120, fontWeight: "bold",
+        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 150, fontWeight: "bold",
         fill: 0xFFD700, stroke: 0xFF4500, strokeThickness: 8, dropShadow: true
     });
     let txt = new PIXI.Text(count, style);
     txt.anchor.set(0.5);
     
-    // Центрируем идеально по экрану устройства
-    txt.x = window.innerWidth / 2;
-    txt.y = window.innerHeight / 2;
+    // Центрируем по внутренним координатам игры (1920x1080)
+    txt.x = 960;
+    txt.y = 540;
     
-    // Вешаем таймер поверх ВСЕГО (напрямую в сцену Pixi)
-    if (scene && scene.stage) scene.stage.addChild(txt); 
+    gameRoot.addChild(txt); 
 
     function animateNumber() {
         if (count > 0) {
