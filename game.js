@@ -1237,7 +1237,7 @@ function gameLoop(dt) {
     if (b.cloudsFront && b.cloudsFront.initialY !== undefined) b.cloudsFront.y = b.cloudsFront.initialY + (gameRoot.y * 0.4);
 
     // --- ОПТИМИЗАЦИЯ РЕНДЕРА ГОРЫ ---
-    if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 1500)) {
+    if (!hillShape.lastDrawX) { // ТЕСТ: РИСУЕМ ТОЛЬКО 1 РАЗ ПРИ СТАРТЕ И БОЛЬШЕ НЕ ПЕРЕРИСОВЫВАЕМ
         hillShape.lastDrawX = worldOffsetX;
         
         hillShape.clear();
