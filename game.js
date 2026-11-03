@@ -339,7 +339,13 @@ window.initGame = function(root, pixiScene) {
     
     ground = root.ground;
     if(ground) ground.visible = false; 
+    
     avalanche = root.avalanche; 
+    // ЖЕСТКО ГЛУШИМ ЛАВИНУ
+    if (avalanche) {
+        avalanche.visible = false;
+        if (typeof avalanche.stop === "function") avalanche.stop();
+    }
 
     cameraContainer = new PIXI.Container();
     hillShape = new PIXI.Graphics();
@@ -422,8 +428,16 @@ window.initGame = function(root, pixiScene) {
     function showScreen(screenName) {
         screens.forEach(name => {
             if (gameRoot[name]) {
-                gameRoot[name].visible = (name === screenName);
-                if (name === screenName) gameRoot.addChild(gameRoot[name]);
+                let isTarget = (name === screenName);
+                gameRoot[name].visible = isTarget;
+                if (isTarget) {
+                    gameRoot.addChild(gameRoot[name]);
+                    // Запускаем анимации только активного окна
+                    if (typeof gameRoot[name].play === "function") gameRoot[name].play();
+                } else {
+                    // Глушим таймлайны невидимых окон
+                    if (typeof gameRoot[name].stop === "function") gameRoot[name].stop();
+                }
             }
         });
         updateGlobalUI(); 
@@ -1038,7 +1052,7 @@ function resetGame(startImmediately) {
     }
     if (avalanche) {
         avalanche.x = -500;
-        if (typeof avalanche.play === "function") avalanche.play(); 
+        // if (typeof avalanche.play === "function") avalanche.play(); 
     }
 
     // Возвращаем правильный мобильный масштаб и центр экрана, а не сбрасываем в левый верхний угол
