@@ -265,7 +265,6 @@ function spawnSled(worldX, worldY) {
     sleds.push({ shape: sledObj, worldX: worldX, worldY: worldY, hitRadius: 50, hit: false });
 }
 
-// === НОВАЯ СИСТЕМА БИОМОВ (На главной сцене) ===
 function switchBiome(index) {
     currentBiomeIndex = index;
     let layers = ["sky", "cloudsBack", "mountainsMid", "mountains", "trees", "cloudsFront"];
@@ -273,11 +272,18 @@ function switchBiome(index) {
     for (let i = 0; i <= 7; i++) {
         layers.forEach(key => {
             let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
-            // Теперь ищем строго с индексом, без исключений для i === 0
             let layer = gameRoot[key + "_" + i] || gameRoot[bgKey + "_" + i];
             
             if (layer) {
-                layer.visible = (i === index); 
+                let isTarget = (i === index);
+                layer.visible = isTarget; 
+                
+                // ГЛАВНЫЙ ФИКС ПРОЦЕССОРА: Глушим анимации невидимых биомов
+                if (isTarget) {
+                    if (typeof layer.play === "function") layer.play();
+                } else {
+                    if (typeof layer.stop === "function") layer.stop();
+                }
                 
                 if (layer.initialX === undefined) {
                     layer.initialX = layer.x;
@@ -286,7 +292,7 @@ function switchBiome(index) {
             }
         });
     }
-} 
+}
 
 // === МИНИ-ДВИЖОК АНИМАЦИЙ ===
 window.activeTweens = [];
@@ -999,10 +1005,10 @@ function resetGame(startImmediately) {
     switchBiome(window.selectedBiomeID);
 
     if (player) {
-        if (player.kiko_mc) player.kiko_mc.visible = false;
-        if (player.lulu_mc) player.lulu_mc.visible = false;
-        if (player.papi_mc) player.papi_mc.visible = false;
-        if (player.momi_mc) player.momi_mc.visible = false;
+        if (player.kiko_mc) { player.kiko_mc.visible = false; if (typeof player.kiko_mc.stop === "function") player.kiko_mc.stop(); }
+    if (player.lulu_mc) { player.lulu_mc.visible = false; if (typeof player.lulu_mc.stop === "function") player.lulu_mc.stop(); }
+    if (player.papi_mc) { player.papi_mc.visible = false; if (typeof player.papi_mc.stop === "function") player.papi_mc.stop(); }
+    if (player.momi_mc) { player.momi_mc.visible = false; if (typeof player.momi_mc.stop === "function") player.momi_mc.stop(); }
 
         if (window.selectedCharID === 0) activeCharMC = player.kiko_mc;
         if (window.selectedCharID === 1) activeCharMC = player.lulu_mc;
