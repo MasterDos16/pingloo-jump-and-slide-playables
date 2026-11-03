@@ -355,10 +355,10 @@ window.initGame = function(root, pixiScene) {
     window.hillSlices = [];
     window.hillStrokes = [];
     
-    // Создаем 150 полосок один раз навсегда
-    for(let i = 0; i < 150; i++) {
+    /// Создаем 300 полосок один раз навсегда
+    for(let i = 0; i < 300; i++) {
         let fill = new PIXI.Sprite(PIXI.Texture.WHITE);
-        fill.width = 22; // Шаг 20px + 2px нахлест, чтобы не было щелей
+        fill.width = 12; // Шаг 10px + 2px нахлест
         fill.height = 2000;
         
         let stroke = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -901,7 +901,12 @@ function triggerGameOver(finalDistance) {
     if (gameRoot.gameOverScreen) {
         gameRoot.addChild(gameRoot.gameOverScreen); 
         gameRoot.gameOverScreen.visible = true; 
-        gameRoot.gameOverScreen.gotoAndPlay(2); 
+        
+        // Останавливаем окно на статичном кадре. 
+        // Если полностью нарисованное окно лежит на другом кадре, впиши его цифру вместо 0.
+        if (typeof gameRoot.gameOverScreen.gotoAndStop === "function") {
+            gameRoot.gameOverScreen.gotoAndStop(0); 
+        }
 
         if (gameRoot.gameOverScreen.txtFinalDistance) {
             let distCounter = { val: 0 };
@@ -917,7 +922,13 @@ function triggerGameOver(finalDistance) {
         let savedRecord = localStorage.getItem("pinglooRecordDistance") || 0;
         if (finalDistance > savedRecord) {
             localStorage.setItem("pinglooRecordDistance", finalDistance); 
-            if (gameRoot.gameOverScreen.mcNewRecord) gameRoot.gameOverScreen.mcNewRecord.visible = true;
+            if (gameRoot.gameOverScreen.mcNewRecord) {
+                gameRoot.gameOverScreen.mcNewRecord.visible = true;
+                // Глушим таймлайн плашки рекорда, чтобы не было спайка процессора
+                if (typeof gameRoot.gameOverScreen.mcNewRecord.stop === "function") {
+                    gameRoot.gameOverScreen.mcNewRecord.stop();
+                }
+            }
         }
 
         globalCoins += coinsCollected;
@@ -1308,7 +1319,7 @@ function gameLoop(dt) {
     // hillShape.x = -worldOffsetX;
 
     // --- НОВАЯ БЕСКОНЕЧНАЯ ГОРА (Без перерисовки графики) ---
-    let step = 20; 
+    let step = 10; 
     // Привязываем к сетке, чтобы текстура не дрожала при движении
     let startX = worldOffsetX - (worldOffsetX % step) - 200; 
 
