@@ -348,12 +348,34 @@ window.initGame = function(root, pixiScene) {
     }
 
     cameraContainer = new PIXI.Container();
-    hillShape = new PIXI.Graphics();
     coinsContainer = new PIXI.Container();
+    
+    // НОВАЯ СИСТЕМА ГОРЫ (Пул спрайтов)
+    window.hillContainer = new PIXI.Container();
+    window.hillSlices = [];
+    window.hillStrokes = [];
+    
+    // Создаем 150 полосок один раз навсегда
+    for(let i = 0; i < 150; i++) {
+        let fill = new PIXI.Sprite(PIXI.Texture.WHITE);
+        fill.width = 22; // Шаг 20px + 2px нахлест, чтобы не было щелей
+        fill.height = 2000;
+        
+        let stroke = new PIXI.Sprite(PIXI.Texture.WHITE);
+        stroke.height = 6; // Толщина верхней линии
+        stroke.anchor.set(0, 0.5); // Вращаем линию от левого края
+        
+        window.hillContainer.addChild(fill);
+        window.hillContainer.addChild(stroke);
+        
+        window.hillSlices.push(fill);
+        window.hillStrokes.push(stroke);
+    }
 
     cameraContainer.addChild(player);      
-    cameraContainer.addChild(hillShape);   
-    cameraContainer.addChild(coinsContainer); 
+    cameraContainer.addChild(window.hillContainer); // Кладем новую гору поверх игрока  
+    cameraContainer.addChild(coinsContainer);
+
     if (avalanche) cameraContainer.addChild(avalanche);
 
     // Сортируем слои: Камера (игрок и монеты) над биомами, UI над камерой
@@ -1258,32 +1280,59 @@ function gameLoop(dt) {
     if (b.trees && b.trees.initialY !== undefined) b.trees.y = b.trees.initialY - (gameRoot.y * 0.2);
     if (b.cloudsFront && b.cloudsFront.initialY !== undefined) b.cloudsFront.y = b.cloudsFront.initialY + (gameRoot.y * 0.4);
 
-    // --- ОПТИМИЗАЦИЯ РЕНДЕРА ГОРЫ ---
-    if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 500)) {
-        hillShape.lastDrawX = worldOffsetX;
+    // // --- ОПТИМИЗАЦИЯ РЕНДЕРА ГОРЫ ---
+    // if (!hillShape.lastDrawX || worldOffsetX < hillShape.lastDrawX || (worldOffsetX - hillShape.lastDrawX > 500)) {
+    //     hillShape.lastDrawX = worldOffsetX;
         
-        hillShape.clear();
-        hillShape.lineStyle(4, currentLineColor, 1);
-        hillShape.beginFill(currentFillColor);
+    //     hillShape.clear();
+    //     hillShape.lineStyle(4, currentLineColor, 1);
+    //     hillShape.beginFill(currentFillColor);
         
-        // Экстремально узкая ширина и глубина
-        let drawStart = worldOffsetX - 300; 
-        let drawEnd = worldOffsetX + 2800; 
-        let drawStep = 150; 
+    //     // Экстремально узкая ширина и глубина
+    //     let drawStart = worldOffsetX - 300; 
+    //     let drawEnd = worldOffsetX + 2800; 
+    //     let drawStep = 150; 
         
-        for (let i = drawStart; i <= drawEnd; i += drawStep) {
-            let hillY = getHillY(i); 
-            if (i === drawStart) {
-                hillShape.moveTo(i, hillY);
-            } else {
-                hillShape.lineTo(i, hillY);
-            }
-        }
-        hillShape.lineTo(drawEnd, 1500); 
-        hillShape.lineTo(drawStart, 1500);    
-        hillShape.endFill();
+    //     for (let i = drawStart; i <= drawEnd; i += drawStep) {
+    //         let hillY = getHillY(i); 
+    //         if (i === drawStart) {
+    //             hillShape.moveTo(i, hillY);
+    //         } else {
+    //             hillShape.lineTo(i, hillY);
+    //         }
+    //     }
+    //     hillShape.lineTo(drawEnd, 1500); 
+    //     hillShape.lineTo(drawStart, 1500);    
+    //     hillShape.endFill();
+    // }
+    // hillShape.x = -worldOffsetX;
+
+    // --- НОВАЯ БЕСКОНЕЧНАЯ ГОРА (Без перерисовки графики) ---
+    let step = 20; 
+    // Привязываем к сетке, чтобы текстура не дрожала при движении
+    let startX = worldOffsetX - (worldOffsetX % step) - 200; 
+
+    for(let i = 0; i < window.hillSlices.length; i++) {
+        let px = startX + (i * step);
+        let py = getHillY(px);
+        let nextY = getHillY(px + step);
+        
+        // 1. Двигаем заливку (столбик)
+        let fill = window.hillSlices[i];
+        fill.x = px - worldOffsetX;
+        fill.y = py;
+        fill.tint = currentFillColor;
+        
+        // 2. Двигаем верхнюю линию и поворачиваем её к следующей точке
+        let stroke = window.hillStrokes[i];
+        stroke.x = fill.x;
+        stroke.y = py;
+        stroke.tint = currentLineColor;
+        
+        // Математика поворота линии, чтобы получился гладкий векторный скат
+        stroke.rotation = Math.atan2(nextY - py, step);
+        stroke.width = Math.sqrt(step * step + (nextY - py) * (nextY - py)) + 2; 
     }
-    hillShape.x = -worldOffsetX;
 
     let baseGrav = (window.selectedCharID === 1) ? 0.40 : (window.selectedCharID === 3) ? 0.55 : 0.45;
     let diveGrav = (window.selectedCharID === 1) ? 2.2 : (window.selectedCharID === 3) ? 3.0 : 2.5;
