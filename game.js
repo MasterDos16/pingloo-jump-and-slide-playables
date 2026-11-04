@@ -221,8 +221,7 @@ function spawnCoin(worldX, worldY) {
         coinObj = objPool.coins.pop();
         coinObj.visible = true;
     } else {
-        // ТЕСТ: Идеально легкий спрайт Pixi вместо символа Animate
-        coinObj = PIXI.Sprite.from("coin.png");
+        coinObj = PIXI.Sprite.from("coin.png"); // Только картинка!
         coinObj.anchor.set(0.5);
     }
     
@@ -238,9 +237,8 @@ function spawnFish(worldX, worldY) {
         fishObj = objPool.fishes.pop();
         fishObj.visible = true;
     } else {
-        // ТЕСТ: Легкий спрайт рыбы
-        fishObj = PIXI.Sprite.from("fish.png");
-    fishObj.anchor.set(0.5);
+        fishObj = PIXI.Sprite.from("fish.png"); // Только картинка!
+        fishObj.anchor.set(0.5);
     }
     
     if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
@@ -377,10 +375,10 @@ window.initGame = function(root, pixiScene) {
     window.hillSlices = [];
     window.hillStrokes = [];
     
-    /// Создаем 300 полосок один раз навсегда
-    for(let i = 0; i < 300; i++) {
+    /// Создаем 160 полосок один раз навсегда
+    for(let i = 0; i < 160; i++) {
         let fill = new PIXI.Sprite(PIXI.Texture.WHITE);
-        fill.width = 12; // Шаг 10px + 2px нахлест
+        fill.width = 27; // Шаг 25px + 2px нахлест
         fill.height = 2000;
         
         let stroke = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -400,14 +398,16 @@ window.initGame = function(root, pixiScene) {
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
     for (let i = 0; i < 40; i++) {
-        let c = new PIXI.Sprite(PIXI.Texture.WHITE);
-        c.width = 60; c.height = 60; c.tint = 0xFFD700; c.anchor.set(0.5);
+        // Создаем монету ИЗ ТВОЕЙ КАРТИНКИ, а не из квадрата
+        coinObj = PIXI.Sprite.from("img/coin.png"); 
+        c.anchor.set(0.5);
         c.visible = false;
         objPool.coins.push(c);
     }
     for (let i = 0; i < 10; i++) {
-        let f = new PIXI.Sprite(PIXI.Texture.WHITE);
-        f.width = 80; f.height = 40; f.tint = 0x00BFFF; f.anchor.set(0.5);
+        // Создаем рыбу ИЗ ТВОЕЙ КАРТИНКИ
+        fishObj = PIXI.Sprite.from("img/fish.png");
+        f.anchor.set(0.5);
         f.visible = false;
         objPool.fishes.push(f);
     }
@@ -1416,7 +1416,7 @@ function gameLoop(dt) {
     // hillShape.x = -worldOffsetX;
 
     // --- НОВАЯ БЕСКОНЕЧНАЯ ГОРА (Без перерисовки графики) ---
-    let step = 10; 
+    let step = 25; 
     // Привязываем к сетке, чтобы текстура не дрожала при движении
     let startX = worldOffsetX - (worldOffsetX % step) - 200; 
 
@@ -1954,8 +1954,9 @@ function gameLoop(dt) {
     }
 
     // --- ОПТИМИЗАЦИЯ ТЕКСТА (Защита от утечки текстур) ---
-    // Обновляем текст только если значение реально изменилось
-    if (gameRoot.txtDistance && gameRoot.txtDistance.text != distanceMeters) gameRoot.txtDistance.text = distanceMeters;
+    // --- ОПТИМИЗАЦИЯ ТЕКСТА ---
+    let displayDist = distanceMeters - (distanceMeters % 5);
+    if (gameRoot.txtDistance && gameRoot.txtDistance.text != displayDist) gameRoot.txtDistance.text = displayDist;
     if (gameRoot.txtCoins && gameRoot.txtCoins.text != coinsCollected) gameRoot.txtCoins.text = coinsCollected;
     if (gameRoot.txtFPS && gameRoot.txtFPS.text !== "FPS: 60") gameRoot.txtFPS.text = "FPS: 60";
 

@@ -32,7 +32,7 @@
         <script>
             var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             // На ПК максимум (2), на смартфонах - 1.25 (это уберет шакальное мыло, но снизит нагрузку на GPU почти вдвое)
-            var dpr = isMobile ? 1.25 : Math.min(window.devicePixelRatio || 1, 2);
+            var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
 
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
