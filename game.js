@@ -89,10 +89,15 @@ let objPool = {
 let maxEnergy = 100;
 let currentEnergy = 100;
 let visualEnergy = 100; 
-let energyDepletionRate = 0.08; 
+let energyDepletionRate = 0.020; // Энергия падает почти в 2 раза медленнее
 let fishes = [];
 let nextFishX = 3000; 
 let comboAnimTimer = 0;
+
+// Переменные для таймера смерти
+let deathTimer = 5.0; 
+let isDeathTimerActive = false;
+let txtDeathTimer = null;
 
 // === САНКИ И ТРАНСПОРТ ===
 let sleds = [];
@@ -349,6 +354,16 @@ window.initGame = function(root, pixiScene) {
 
     cameraContainer = new PIXI.Container();
     coinsContainer = new PIXI.Container();
+
+    // Создаем красный таймер смерти
+    let deathStyle = new PIXI.TextStyle({
+        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 100, fontWeight: "bold",
+        fill: 0xFF0000, stroke: 0xFFFFFF, strokeThickness: 8, dropShadow: true
+    });
+    txtDeathTimer = new PIXI.Text("5", deathStyle);
+    txtDeathTimer.anchor.set(0.5);
+    txtDeathTimer.visible = false;
+    cameraContainer.addChild(txtDeathTimer);
     
     // НОВАЯ СИСТЕМА ГОРЫ (Пул спрайтов)
     window.hillContainer = new PIXI.Container();
@@ -979,6 +994,12 @@ function resetGame(startImmediately) {
     coinsCollected = 0;
     currentEnergy = maxEnergy;
     visualEnergy = maxEnergy; 
+
+    // Сброс таймера
+    deathTimer = 5.0;
+    isDeathTimerActive = false;
+    if (txtDeathTimer) txtDeathTimer.visible = false;
+
     nextFishX = 3000;
     comboAnimTimer = 0;
     isTransitioning = false;
@@ -1270,6 +1291,35 @@ function gameLoop(dt) {
         if (currentEnergy <= 0) {
             currentEnergy = 0;
             speedX -= 0.05 * dt; 
+            
+            // Включаем таймер
+            if (!isDeathTimerActive) {
+                isDeathTimerActive = true;
+                deathTimer = 5.0;
+                if (txtDeathTimer) txtDeathTimer.visible = true;
+            }
+            
+            // dt - это множитель кадров (1 = 16.6мс). Переводим в секунды:
+            deathTimer -= (dt * 16.666) / 1000;
+            
+            if (txtDeathTimer) {
+                txtDeathTimer.text = Math.ceil(deathTimer);
+                txtDeathTimer.x = player.x;
+                txtDeathTimer.y = player.y - 130; // Висит над головой
+            }
+            
+            if (deathTimer <= 0) {
+                isGameOver = true;
+                if (txtDeathTimer) txtDeathTimer.visible = false;
+                triggerGameOver(distanceMeters);
+            }
+        } else {
+            // Энергия есть (съели рыбу) - прячем таймер
+            if (isDeathTimerActive) {
+                isDeathTimerActive = false;
+                deathTimer = 5.0;
+                if (txtDeathTimer) txtDeathTimer.visible = false;
+            }
         }
     }
     
@@ -1497,64 +1547,64 @@ function gameLoop(dt) {
     wasDiving = isDiving; 
     let playerWorldX = worldOffsetX + player.x;
 
-    // // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
-    // while (nextCoinX < worldOffsetX + 2600) {
-    //     if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
-    //     if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
-    //     let patternType = Math.floor(Math.random() * 4); 
-    //     let startX = nextCoinX;
-    //     let skyHeight = 400 + Math.random() * 800; 
+    // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
+    while (nextCoinX < worldOffsetX + 2600) {
+        if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
+        if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
+        let patternType = Math.floor(Math.random() * 4); 
+        let startX = nextCoinX;
+        let skyHeight = 400 + Math.random() * 800; 
 
-    //     if (patternType === 0) {
-    //         let numCoins = 6 + Math.floor(Math.random() * 6);
-    //         let spacing = 90;
-    //         for (let i = 0; i < numCoins; i++) spawnCoin(startX + (i * spacing), getHillY(startX + (i * spacing)) - 80);
-    //         nextCoinX += (numCoins * spacing) + 3000 + Math.random() * 2000;
-    //     } 
-    //     else if (patternType === 1) {
-    //         let cy = getHillY(startX) - skyHeight; 
-    //         let spacing = 70;
-    //         for (let row = 0; row < 5; row++) {
-    //             for (let col = 0; col < 5; col++) {
-    //                 spawnCoin(startX + (col * spacing) - (spacing * 2), cy + (row * spacing) - (spacing * 2));
-    //             }
-    //         }
-    //         nextCoinX += 3500 + Math.random() * 2000;
-    //     } 
-    //     else if (patternType === 2) {
-    //         let cy = getHillY(startX) - skyHeight; 
-    //         for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) spawnCoin(startX + Math.cos(a) * 200, cy + Math.sin(a) * 200);
-    //         for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) spawnCoin(startX + Math.cos(a) * 100, cy + Math.sin(a) * 100);
-    //         spawnCoin(startX, cy); 
-    //         nextCoinX += 3500 + Math.random() * 2000;
-    //     }
-    //     else {
-    //         let cy = getHillY(startX) - skyHeight; 
-    //         let spacing = 75;
-    //         for (let r = 0; r < 5; r++) {
-    //             let coinsInRow = r + 1;
-    //             let startOffsetX = -(coinsInRow - 1) * (spacing / 2);
-    //             for (let c = 0; c < coinsInRow; c++) spawnCoin(startX + startOffsetX + (c * spacing), cy + (r * spacing));
-    //         }
-    //         nextCoinX += 3500 + Math.random() * 2000;
-    //     }
-    // }
+        if (patternType === 0) {
+            let numCoins = 6 + Math.floor(Math.random() * 6);
+            let spacing = 90;
+            for (let i = 0; i < numCoins; i++) spawnCoin(startX + (i * spacing), getHillY(startX + (i * spacing)) - 80);
+            nextCoinX += (numCoins * spacing) + 3000 + Math.random() * 2000;
+        } 
+        else if (patternType === 1) {
+            let cy = getHillY(startX) - skyHeight; 
+            let spacing = 70;
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    spawnCoin(startX + (col * spacing) - (spacing * 2), cy + (row * spacing) - (spacing * 2));
+                }
+            }
+            nextCoinX += 3500 + Math.random() * 2000;
+        } 
+        else if (patternType === 2) {
+            let cy = getHillY(startX) - skyHeight; 
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) spawnCoin(startX + Math.cos(a) * 200, cy + Math.sin(a) * 200);
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) spawnCoin(startX + Math.cos(a) * 100, cy + Math.sin(a) * 100);
+            spawnCoin(startX, cy); 
+            nextCoinX += 3500 + Math.random() * 2000;
+        }
+        else {
+            let cy = getHillY(startX) - skyHeight; 
+            let spacing = 75;
+            for (let r = 0; r < 5; r++) {
+                let coinsInRow = r + 1;
+                let startOffsetX = -(coinsInRow - 1) * (spacing / 2);
+                for (let c = 0; c < coinsInRow; c++) spawnCoin(startX + startOffsetX + (c * spacing), cy + (r * spacing));
+            }
+            nextCoinX += 3500 + Math.random() * 2000;
+        }
+    }
 
-    // while (nextFishX < worldOffsetX + 2600) {
-    //     let foundDownhill = false;
-    //     for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
-    //         if (Math.abs(scanX - nextSledX) < 1200) continue;
-    //         let nextY = getHillY(scanX + 10);
-    //         let prevY = getHillY(scanX - 10);
-    //         if (nextY - prevY > 4) {
-    //             spawnFish(scanX, getHillY(scanX) - 40); 
-    //             nextFishX = scanX + 1500 + Math.random() * 2000; 
-    //             foundDownhill = true;
-    //             break;
-    //         }
-    //     }
-    //     if (!foundDownhill) nextFishX += 2000; 
-    // }
+    while (nextFishX < worldOffsetX + 2600) {
+        let foundDownhill = false;
+        for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
+            if (Math.abs(scanX - nextSledX) < 1200) continue;
+            let nextY = getHillY(scanX + 10);
+            let prevY = getHillY(scanX - 10);
+            if (nextY - prevY > 4) {
+                spawnFish(scanX, getHillY(scanX) - 40); 
+                nextFishX = scanX + 1500 + Math.random() * 2000; 
+                foundDownhill = true;
+                break;
+            }
+        }
+        if (!foundDownhill) nextFishX += 2000; 
+    }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
         spawnSled(nextSledX, getHillY(nextSledX)); // Увеличивай 50, чтобы поднять выше
@@ -1759,45 +1809,45 @@ function gameLoop(dt) {
         }
     }
     
-    let distanceToAvalanche = playerWorldX - avalancheWorldX;
-    avalancheBaseSpeed += 0.002 * dt;
-    let currentAvalancheSpeed = avalancheBaseSpeed;
+    // let distanceToAvalanche = playerWorldX - avalancheWorldX;
+    // avalancheBaseSpeed += 0.002 * dt;
+    // let currentAvalancheSpeed = avalancheBaseSpeed;
 
-    if (distanceToAvalanche > 2500) currentAvalancheSpeed = speedX + 1.5;
-    else if (distanceToAvalanche < 1000) {
-        currentAvalancheSpeed = speedX - 0.5; 
-        if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18;
-    }
+    // if (distanceToAvalanche > 2500) currentAvalancheSpeed = speedX + 1.5;
+    // else if (distanceToAvalanche < 1000) {
+    //     currentAvalancheSpeed = speedX - 0.5; 
+    //     if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18;
+    // }
 
-    avalancheWorldX += currentAvalancheSpeed * dt; 
-    if (avalanche) avalanche.x = avalancheWorldX - worldOffsetX; 
+    // avalancheWorldX += currentAvalancheSpeed * dt; 
+    // if (avalanche) avalanche.x = avalancheWorldX - worldOffsetX; 
     
-    if (distanceToAvalanche < 1500 && !isGameOver) {
-        if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
-        avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
-    } else if (avalancheSoundInstance) {
-        avalancheSoundInstance.stop();
-        avalancheSoundInstance = null;
-    }
+    // if (distanceToAvalanche < 1500 && !isGameOver) {
+    //     if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
+    //     avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
+    // } else if (avalancheSoundInstance) {
+    //     avalancheSoundInstance.stop();
+    //     avalancheSoundInstance = null;
+    // }
     
-    if (avalancheWorldX > playerWorldX - 80) {
-        if (!isGameOver) {
-            if (hasSled) {
-                hasSled = false;
-                nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
-                createjs.Sound.play("SfxSledBreak"); 
-                player.y += 35;
-                if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
-                activeSledInstance = null;
-                avalancheWorldX -= 700; 
-                speedX += 10; 
-                spawnBoostFlash();
-            } else {
-                isGameOver = true;
-                triggerGameOver(distanceMeters);
-            }
-        }
-    }
+    // if (avalancheWorldX > playerWorldX - 80) {
+    //     if (!isGameOver) {
+    //         if (hasSled) {
+    //             hasSled = false;
+    //             nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
+    //             createjs.Sound.play("SfxSledBreak"); 
+    //             player.y += 35;
+    //             if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
+    //             activeSledInstance = null;
+    //             avalancheWorldX -= 700; 
+    //             speedX += 10; 
+    //             spawnBoostFlash();
+    //         } else {
+    //             isGameOver = true;
+    //             triggerGameOver(distanceMeters);
+    //         }
+    //     }
+    // }
     
     if (distFromGround > 0 && hasTouchedGroundOnce) {
         let currentAirHeight = Math.floor(distFromGround / 10);
