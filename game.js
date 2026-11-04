@@ -222,10 +222,13 @@ function spawnCoin(worldX, worldY) {
         coinObj.visible = true;
     } else {
         coinObj = getCachedSprite("Coin");
-        coinsContainer.addChild(coinObj);
     }
+    // ГЛАВНОЕ: Безопасно добавляем на сцену по 1 штучке во время езды
+    if (coinObj.parent !== coinsContainer) coinsContainer.addChild(coinObj); 
+    
     coinObj.x = worldX - worldOffsetX; 
     coinObj.y = worldY; 
+    if (typeof coinObj.play === "function") coinObj.play(); // Включаем анимацию
     coins.push({ shape: coinObj, worldX: worldX, worldY: worldY, hitRadius: 35, hit: false });
 }
 
@@ -236,10 +239,13 @@ function spawnFish(worldX, worldY) {
         fishObj.visible = true;
     } else {
         fishObj = getCachedSprite("Fish");
-        coinsContainer.addChild(fishObj); 
     }
+    // ГЛАВНОЕ: Безопасно добавляем на сцену
+    if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
+    
     fishObj.x = worldX - worldOffsetX; 
     fishObj.y = worldY; 
+    if (typeof fishObj.play === "function") fishObj.play(); // Включаем анимацию
     let nextY = getHillY(worldX + 5);
     let prevY = getHillY(worldX - 5);
     fishObj.rotation = Math.atan2(nextY - prevY, 10); 
@@ -357,13 +363,13 @@ window.initGame = function(root, pixiScene) {
 
     // Создаем красный таймер смерти
     let deathStyle = new PIXI.TextStyle({
-        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 100, fontWeight: "bold",
+        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 90, fontWeight: "bold",
         fill: 0xFF0000, stroke: 0xFFFFFF, strokeThickness: 8, dropShadow: true
     });
     txtDeathTimer = new PIXI.Text("5", deathStyle);
-    txtDeathTimer.anchor.set(0.5);
+    txtDeathTimer.anchor.set(0, 0.5); // Якорь слева, чтобы цифры не прыгали
     txtDeathTimer.visible = false;
-    cameraContainer.addChild(txtDeathTimer);
+    gameRoot.addChild(txtDeathTimer); // Кладем в интерфейс, а не к игроку!
     
     // НОВАЯ СИСТЕМА ГОРЫ (Пул спрайтов)
     window.hillContainer = new PIXI.Container();
@@ -392,17 +398,16 @@ window.initGame = function(root, pixiScene) {
     cameraContainer.addChild(coinsContainer);
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
-    // Создаем 40 монет и 10 рыб заранее, чтобы процессор не делал это в гонке
     for (let i = 0; i < 40; i++) {
         let c = getCachedSprite("Coin");
         c.visible = false;
-        coinsContainer.addChild(c); // ГЛАВНЫЙ ФИКС: Кладем на сцену
+        if (typeof c.stop === "function") c.stop(); // Жестко глушим анимацию в фоне
         objPool.coins.push(c);
     }
     for (let i = 0; i < 10; i++) {
         let f = getCachedSprite("Fish");
         f.visible = false;
-        coinsContainer.addChild(f); // ГЛАВНЫЙ ФИКС: Кладем на сцену
+        if (typeof f.stop === "function") f.stop(); // Жестко глушим анимацию в фоне
         objPool.fishes.push(f);
     }
 
@@ -1175,11 +1180,13 @@ function resumeWithCountdown() {
     let txt = new PIXI.Text(count, style);
     txt.anchor.set(0.5);
     
-    // Центрируем по внутренним координатам игры (1920x1080)
-    txt.x = 960;
-    txt.y = 540;
+    // Привязываем к центру физического окна браузера
+    txt.x = window.innerWidth / 2;
+    txt.y = window.innerHeight / 2;
     
-    gameRoot.addChild(txt); 
+    // Добавляем поверх всей игры, игнорируя камеру
+    if (gameRoot.parent) gameRoot.parent.addChild(txt); 
+    else gameRoot.addChild(txt); 
 
     function animateNumber() {
         if (count > 0) {
@@ -1288,40 +1295,42 @@ function gameLoop(dt) {
         }
     }
 
-    if (isPlaying && !isGameOver && !hasSled) {
-        currentEnergy -= energyDepletionRate * dt;
-        if (currentEnergy <= 0) {
-            currentEnergy = 0;
-            speedX -= 0.05 * dt; 
-            
-            // Включаем таймер
-            if (!isDeathTimerActive) {
-                isDeathTimerActive = true;
-                deathTimer = 5.0;
-                if (txtDeathTimer) txtDeathTimer.visible = true;
-            }
-            
-            // dt - это множитель кадров (1 = 16.6мс). Переводим в секунды:
-            deathTimer -= (dt * 16.666) / 1000;
-            
-            if (txtDeathTimer) {
-                txtDeathTimer.text = Math.ceil(deathTimer);
-                txtDeathTimer.x = player.x;
-                txtDeathTimer.y = player.y - 130; // Висит над головой
-            }
-            
-            if (deathTimer <= 0) {
-                isGameOver = true;
-                if (txtDeathTimer) txtDeathTimer.visible = false;
-                let finalDist = Math.floor(worldOffsetX / 100); // Вычисляем дистанцию прямо здесь
-                triggerGameOver(finalDist);
-            }
-        } else {
-            // Энергия есть (съели рыбу) - прячем таймер
+    if (isPlaying && !isGameOver) {
+        if (hasSled) {
+            // ФИКС САНОК: Если мы на санках, прячем и сбрасываем таймер смерти
             if (isDeathTimerActive) {
                 isDeathTimerActive = false;
                 deathTimer = 5.0;
                 if (txtDeathTimer) txtDeathTimer.visible = false;
+            }
+        } else {
+            // Обычная гонка без санок
+            currentEnergy -= energyDepletionRate * dt;
+            if (currentEnergy <= 0) {
+                currentEnergy = 0;
+                speedX -= 0.05 * dt; 
+                
+                if (!isDeathTimerActive) {
+                    isDeathTimerActive = true;
+                    deathTimer = 5.0;
+                    if (txtDeathTimer) txtDeathTimer.visible = true;
+                }
+                
+                deathTimer -= (dt * 16.666) / 1000;
+                if (txtDeathTimer) txtDeathTimer.text = Math.ceil(deathTimer);
+                
+                if (deathTimer <= 0) {
+                    isGameOver = true;
+                    if (txtDeathTimer) txtDeathTimer.visible = false;
+                    let finalDist = Math.floor(worldOffsetX / 100);
+                    triggerGameOver(finalDist);
+                }
+            } else {
+                if (isDeathTimerActive) {
+                    isDeathTimerActive = false;
+                    deathTimer = 5.0;
+                    if (txtDeathTimer) txtDeathTimer.visible = false;
+                }
             }
         }
     }
@@ -1915,6 +1924,14 @@ function gameLoop(dt) {
             el.x = (el.startX - ((gameRoot.x - (gameRoot.baseX || 0)) / baseHScale)) * invZoom;
             el.y = (el.initY - ((gameRoot.y - (gameRoot.baseY || 0)) / baseHScale)) * invZoom;
         }
+    }
+
+    // Жестко приклеиваем таймер смерти к шкале энергии
+    if (txtDeathTimer && gameRoot.mcEnergyBar) {
+        // Отодвигаем на 250 пикселей правее шкалы (настраивай цифру, если нужно дальше/ближе)
+        txtDeathTimer.x = gameRoot.mcEnergyBar.x + (250 * invZoom); 
+        txtDeathTimer.y = gameRoot.mcEnergyBar.y;
+        txtDeathTimer.scale.set(invZoom);
     }
 
     // --- ОПТИМИЗАЦИЯ ТЕКСТА (Защита от утечки текстур) ---
