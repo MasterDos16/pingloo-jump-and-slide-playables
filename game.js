@@ -222,7 +222,7 @@ function spawnCoin(worldX, worldY) {
         coinObj.visible = true;
     } else {
         // ТЕСТ: Идеально легкий спрайт Pixi вместо символа Animate
-        coinObj = PIXI.Sprite.from("images/coin.png");
+        coinObj = PIXI.Sprite.from("img/coin.png");
         coinObj.anchor.set(0.5);
     }
     
@@ -239,11 +239,8 @@ function spawnFish(worldX, worldY) {
         fishObj.visible = true;
     } else {
         // ТЕСТ: Легкий спрайт рыбы
-        fishObj = new PIXI.Sprite(PIXI.Texture.WHITE);
-        fishObj.width = 80;
-        fishObj.height = 40;
-        fishObj.tint = 0x00BFFF; // Синий цвет
-        fishObj.anchor.set(0.5);
+        fishObj = PIXI.Sprite.from("img/fish.png");
+    fishObj.anchor.set(0.5);
     }
     
     if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
