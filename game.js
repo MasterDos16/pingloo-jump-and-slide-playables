@@ -398,15 +398,13 @@ window.initGame = function(root, pixiScene) {
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
     for (let i = 0; i < 40; i++) {
-        // Создаем монету ИЗ ТВОЕЙ КАРТИНКИ, а не из квадрата
-        coinObj = PIXI.Sprite.from("img/coin.png"); 
+        let c = PIXI.Sprite.from("img/coin.png"); 
         c.anchor.set(0.5);
         c.visible = false;
         objPool.coins.push(c);
     }
     for (let i = 0; i < 10; i++) {
-        // Создаем рыбу ИЗ ТВОЕЙ КАРТИНКИ
-        fishObj = PIXI.Sprite.from("img/fish.png");
+        let f = PIXI.Sprite.from("img/fish.png"); 
         f.anchor.set(0.5);
         f.visible = false;
         objPool.fishes.push(f);
