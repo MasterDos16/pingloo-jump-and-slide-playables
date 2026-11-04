@@ -89,7 +89,7 @@ let objPool = {
 let maxEnergy = 100;
 let currentEnergy = 100;
 let visualEnergy = 100; 
-let energyDepletionRate = 0.3; // Энергия падает почти в 2 раза медленнее
+let energyDepletionRate = 0.09; // Энергия падает почти в 2 раза медленнее
 let fishes = [];
 let nextFishX = 3000; 
 let comboAnimTimer = 0;
@@ -221,14 +221,17 @@ function spawnCoin(worldX, worldY) {
         coinObj = objPool.coins.pop();
         coinObj.visible = true;
     } else {
-        coinObj = getCachedSprite("Coin");
+        // ТЕСТ: Идеально легкий спрайт Pixi вместо символа Animate
+        coinObj = new PIXI.Sprite(PIXI.Texture.WHITE);
+        coinObj.width = 60;
+        coinObj.height = 60;
+        coinObj.tint = 0xFFD700; // Желтый цвет
+        coinObj.anchor.set(0.5);
     }
-    // ГЛАВНОЕ: Безопасно добавляем на сцену по 1 штучке во время езды
-    if (coinObj.parent !== coinsContainer) coinsContainer.addChild(coinObj); 
     
+    if (coinObj.parent !== coinsContainer) coinsContainer.addChild(coinObj); 
     coinObj.x = worldX - worldOffsetX; 
     coinObj.y = worldY; 
-    if (typeof coinObj.play === "function") coinObj.play(); // Включаем анимацию
     coins.push({ shape: coinObj, worldX: worldX, worldY: worldY, hitRadius: 35, hit: false });
 }
 
@@ -238,14 +241,18 @@ function spawnFish(worldX, worldY) {
         fishObj = objPool.fishes.pop();
         fishObj.visible = true;
     } else {
-        fishObj = getCachedSprite("Fish");
+        // ТЕСТ: Легкий спрайт рыбы
+        fishObj = new PIXI.Sprite(PIXI.Texture.WHITE);
+        fishObj.width = 80;
+        fishObj.height = 40;
+        fishObj.tint = 0x00BFFF; // Синий цвет
+        fishObj.anchor.set(0.5);
     }
-    // ГЛАВНОЕ: Безопасно добавляем на сцену
-    if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
     
+    if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
     fishObj.x = worldX - worldOffsetX; 
     fishObj.y = worldY; 
-    if (typeof fishObj.play === "function") fishObj.play(); // Включаем анимацию
+    
     let nextY = getHillY(worldX + 5);
     let prevY = getHillY(worldX - 5);
     fishObj.rotation = Math.atan2(nextY - prevY, 10); 
@@ -399,15 +406,15 @@ window.initGame = function(root, pixiScene) {
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
     for (let i = 0; i < 40; i++) {
-        let c = getCachedSprite("Coin");
+        let c = new PIXI.Sprite(PIXI.Texture.WHITE);
+        c.width = 60; c.height = 60; c.tint = 0xFFD700; c.anchor.set(0.5);
         c.visible = false;
-        if (typeof c.stop === "function") c.stop(); // Жестко глушим анимацию в фоне
         objPool.coins.push(c);
     }
     for (let i = 0; i < 10; i++) {
-        let f = getCachedSprite("Fish");
+        let f = new PIXI.Sprite(PIXI.Texture.WHITE);
+        f.width = 80; f.height = 40; f.tint = 0x00BFFF; f.anchor.set(0.5);
         f.visible = false;
-        if (typeof f.stop === "function") f.stop(); // Жестко глушим анимацию в фоне
         objPool.fishes.push(f);
     }
 
@@ -1560,7 +1567,7 @@ function gameLoop(dt) {
     let playerWorldX = worldOffsetX + player.x;
 
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
-    while (nextCoinX < worldOffsetX + 2600) {
+    while (nextCoinX < worldOffsetX + 1500) {
         if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
         if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
         let patternType = Math.floor(Math.random() * 4); 
@@ -1602,7 +1609,7 @@ function gameLoop(dt) {
         }
     }
 
-    while (nextFishX < worldOffsetX + 2600) {
+    while (nextFishX < worldOffsetX + 1500) {
         let foundDownhill = false;
         for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
             if (Math.abs(scanX - nextSledX) < 1200) continue;
