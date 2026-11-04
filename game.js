@@ -222,7 +222,7 @@ function spawnCoin(worldX, worldY) {
         coinObj.visible = true;
     } else {
         // ТЕСТ: Идеально легкий спрайт Pixi вместо символа Animate
-        coinObj = PIXI.Sprite.from("img/coin.png");
+        coinObj = PIXI.Sprite.from("coin.png");
         coinObj.anchor.set(0.5);
     }
     
@@ -239,7 +239,7 @@ function spawnFish(worldX, worldY) {
         fishObj.visible = true;
     } else {
         // ТЕСТ: Легкий спрайт рыбы
-        fishObj = PIXI.Sprite.from("img/fish.png");
+        fishObj = PIXI.Sprite.from("fish.png");
     fishObj.anchor.set(0.5);
     }
     

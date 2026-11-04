@@ -31,8 +31,8 @@
         
         <script>
             var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            // Даем мобилкам полуторное разрешение (1.5x) вместо шакального 1x. Это отличный баланс между четкостью и ОЗУ.
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+            // На ПК максимум (2), на смартфонах - 1.25 (это уберет шакальное мыло, но снизит нагрузку на GPU почти вдвое)
+            var dpr = isMobile ? 1.25 : Math.min(window.devicePixelRatio || 1, 2);
 
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
