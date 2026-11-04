@@ -89,7 +89,7 @@ let objPool = {
 let maxEnergy = 100;
 let currentEnergy = 100;
 let visualEnergy = 100; 
-let energyDepletionRate = 0.020; // Энергия падает почти в 2 раза медленнее
+let energyDepletionRate = 0.065; // Энергия падает почти в 2 раза медленнее
 let fishes = [];
 let nextFishX = 3000; 
 let comboAnimTimer = 0;
@@ -396,11 +396,13 @@ window.initGame = function(root, pixiScene) {
     for (let i = 0; i < 40; i++) {
         let c = getCachedSprite("Coin");
         c.visible = false;
+        coinsContainer.addChild(c); // ГЛАВНЫЙ ФИКС: Кладем на сцену
         objPool.coins.push(c);
     }
     for (let i = 0; i < 10; i++) {
         let f = getCachedSprite("Fish");
         f.visible = false;
+        coinsContainer.addChild(f); // ГЛАВНЫЙ ФИКС: Кладем на сцену
         objPool.fishes.push(f);
     }
 
