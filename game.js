@@ -222,10 +222,7 @@ function spawnCoin(worldX, worldY) {
         coinObj.visible = true;
     } else {
         // ТЕСТ: Идеально легкий спрайт Pixi вместо символа Animate
-        coinObj = new PIXI.Sprite(PIXI.Texture.WHITE);
-        coinObj.width = 60;
-        coinObj.height = 60;
-        coinObj.tint = 0xFFD700; // Желтый цвет
+        coinObj = PIXI.Sprite.from("images/coin.png");
         coinObj.anchor.set(0.5);
     }
     
@@ -1167,12 +1164,30 @@ function resetGame(startImmediately) {
     }
 
     if (!startImmediately) {
-        if (gameRoot.menuLevelScreen) gameRoot.menuLevelScreen.visible = false;
-        if (gameRoot.menuCharScreen) gameRoot.menuCharScreen.visible = false;
+        if (gameRoot.menuLevelScreen) {
+            gameRoot.menuLevelScreen.visible = false;
+            if (typeof gameRoot.menuLevelScreen.stop === "function") gameRoot.menuLevelScreen.stop();
+        }
+        if (gameRoot.menuCharScreen) {
+            gameRoot.menuCharScreen.visible = false;
+            if (typeof gameRoot.menuCharScreen.stop === "function") gameRoot.menuCharScreen.stop();
+        }
         if (gameRoot.menuScreen) {
             gameRoot.addChild(gameRoot.menuScreen); 
             gameRoot.menuScreen.visible = true;
+            if (typeof gameRoot.menuScreen.play === "function") gameRoot.menuScreen.play(); // ФИКС: Запускаем анимацию меню!
         }
+        
+        // ФИКС ФОНА: Жестко сбрасываем координаты параллакса на старт, чтобы они не застревали
+        let layers = ["sky", "cloudsBack", "mountainsMid", "mountains", "trees", "cloudsFront"];
+        layers.forEach(key => {
+            let bgKey = "bg" + key.charAt(0).toUpperCase() + key.slice(1);
+            let layer = gameRoot[key + "_" + currentBiomeIndex] || gameRoot[bgKey + "_" + currentBiomeIndex];
+            if (layer) {
+                if (layer.initialX !== undefined) layer.x = layer.initialX;
+                if (layer.initialY !== undefined) layer.y = layer.initialY;
+            }
+        });
     }
 }
 
@@ -1567,7 +1582,7 @@ function gameLoop(dt) {
     let playerWorldX = worldOffsetX + player.x;
 
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
-    while (nextCoinX < worldOffsetX + 1500) {
+    while (nextCoinX < worldOffsetX + 5000) {
         if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
         if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
         let patternType = Math.floor(Math.random() * 4); 
@@ -1609,7 +1624,7 @@ function gameLoop(dt) {
         }
     }
 
-    while (nextFishX < worldOffsetX + 1500) {
+    while (nextFishX < worldOffsetX + 5000) {
         let foundDownhill = false;
         for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
             if (Math.abs(scanX - nextSledX) < 1200) continue;
