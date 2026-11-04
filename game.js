@@ -89,7 +89,7 @@ let objPool = {
 let maxEnergy = 100;
 let currentEnergy = 100;
 let visualEnergy = 100; 
-let energyDepletionRate = 0.065; // Энергия падает почти в 2 раза медленнее
+let energyDepletionRate = 0.08; // Энергия падает почти в 2 раза медленнее
 let fishes = [];
 let nextFishX = 3000; 
 let comboAnimTimer = 0;
@@ -1313,7 +1313,8 @@ function gameLoop(dt) {
             if (deathTimer <= 0) {
                 isGameOver = true;
                 if (txtDeathTimer) txtDeathTimer.visible = false;
-                triggerGameOver(distanceMeters);
+                let finalDist = Math.floor(worldOffsetX / 100); // Вычисляем дистанцию прямо здесь
+                triggerGameOver(finalDist);
             }
         } else {
             // Энергия есть (съели рыбу) - прячем таймер
