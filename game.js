@@ -49,6 +49,8 @@ let nextCoinX = 2500;
 let coinsCollected = 0;
 let effects = []; 
 
+let slideParticles = [];
+
 // ПУЛ ОБЪЕКТОВ: Хранилище для переиспользования
 let objPool = {
     coins: [], fishes: [], sleds: {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}, coinFX: [], fishFX: [], comboText: [], comboFlash: []
@@ -206,6 +208,35 @@ function spawnBoostFlash() {
     effects.push({ shape: flash, type: "comboFlash", life: 1.0 });
 }
 
+function spawnSlideParticle(px, py, color) {
+    let p;
+    if (objPool.slideFX && objPool.slideFX.length > 0) {
+        p = objPool.slideFX.pop();
+        p.visible = true;
+    } else {
+        p = new PIXI.Sprite(PIXI.Texture.WHITE);
+        p.width = 12; p.height = 12;
+        p.anchor.set(0.5);
+        if (!objPool.slideFX) objPool.slideFX = [];
+        window.slideParticleContainer.addChild(p);
+    }
+    
+    // Спавним под ногами Кико с легким разбросом
+    p.x = px + (Math.random() * 20 - 10) - worldOffsetX;
+    p.worldX = px + (Math.random() * 20 - 10);
+    p.y = py;
+    
+    p.tint = color; // Красим в цвет земли текущего биома
+    p.alpha = 0.6 + Math.random() * 0.4;
+    p.scale.set(0.5 + Math.random() * 0.8);
+    
+    // Частицы летят в противоположную сторону (назад и чуть вверх)
+    p.vx = -speedX * 0.3 - Math.random() * 10; 
+    p.vy = -2 - Math.random() * 8; 
+    
+    slideParticles.push(p);
+}
+
 function spawnComboText(combo) {
     let textStr = combo === 1 ? "COMBO!" : "COMBO x" + combo + "!";
     let txt;
@@ -216,7 +247,7 @@ function spawnComboText(combo) {
         txt.visible = true;
     } else {
         let style = new PIXI.TextStyle({
-            fontFamily: "Arial Black", fontSize: 40, fontWeight: "bold",
+           fontFamily: "PinglooFont", fontSize: 40, fontWeight: "bold",
             fill: 0xFFD700, dropShadow: true, dropShadowColor: 0xFF4500, dropShadowDistance: 4, dropShadowBlur: 10
         });
         txt = new PIXI.Text(textStr, style);
@@ -433,10 +464,10 @@ window.initGame = function(root, pixiScene) {
     coinsContainer = new PIXI.Container();
 
     // Создаем красный таймер смерти
-    let deathStyle = new PIXI.TextStyle({
-        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 90, fontWeight: "bold",
-        fill: 0xFF0000, stroke: 0xFFFFFF, strokeThickness: 8, dropShadow: true
-    });
+    // let deathStyle = new PIXI.TextStyle({
+    //     fontFamily: "PinglooFont", fontSize: 90, fontWeight: "bold",
+    //     fill: 0xFF0000, stroke: 0xFFFFFF, strokeThickness: 8, dropShadow: true
+    // });
     
     // НОВАЯ СИСТЕМА ГОРЫ (Пул спрайтов)
     window.hillContainer = new PIXI.Container();
@@ -464,6 +495,10 @@ window.initGame = function(root, pixiScene) {
     cameraContainer.addChild(window.hillContainer); // Кладем новую гору поверх игрока
     // cameraContainer.addChild(window.stormContainer); // ДОБАВЛЯЕМ БУРЮ НА СЦЕНУ  
     cameraContainer.addChild(coinsContainer);
+
+    window.slideParticleContainer = new PIXI.Container();
+    cameraContainer.addChild(window.slideParticleContainer);
+    cameraContainer.addChild(player); // Игрок рисуется поверх пыли
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
     for (let i = 0; i < 40; i++) {
@@ -575,12 +610,17 @@ window.initGame = function(root, pixiScene) {
 
     showScreen(""); 
 
-    // Стартовый экран разблокировки звука (PixiJS стиль)
+    // Стартовый экран разблокировки звука (в цвет прелоадера)
     let startOverlay = new PIXI.Container();
     let overlayBg = new PIXI.Graphics();
-    overlayBg.beginFill(0x000000).drawRect(-2000, -2000, 6000, 6000).endFill();
+    // ФИКС ЦВЕТА: Фон #80C5FA (переведенный в hex 0x80C5FA)
+    overlayBg.beginFill(0x80C5FA).drawRect(-2000, -2000, 6000, 6000).endFill();
     
-    let style = new PIXI.TextStyle({ fontFamily: "Arial Black", fontSize: 80, fontWeight: "bold", fill: 0xFFFFFF });
+    let style = new PIXI.TextStyle({ 
+        fontFamily: "PinglooFont", // Твой кастомный шрифт
+        fontSize: 80, 
+        fill: 0xFFFFFF 
+    });
     let overlayTxt = new PIXI.Text("TAP TO START", style);
     overlayTxt.anchor.set(0.5);
     overlayTxt.x = 960; 
@@ -588,6 +628,13 @@ window.initGame = function(root, pixiScene) {
     
     startOverlay.addChild(overlayBg, overlayTxt);
     gameRoot.addChild(startOverlay);
+
+    // ПРЯЧЕМ HTML-ПРЕЛОАДЕР: Pixi загрузился, показываем Tap to Start
+    let preloaderHTML = document.getElementById("game-preloader");
+    if (preloaderHTML) {
+        preloaderHTML.style.opacity = "0";
+        setTimeout(() => { if (preloaderHTML.parentNode) preloaderHTML.remove(); }, 500);
+    }
 
     // Простейшая пульсация через стандартный setInterval (работает всегда и везде без ошибок тикера)
     let pulseTime = 0;
@@ -906,6 +953,15 @@ window.initGame = function(root, pixiScene) {
         requestAnimationFrame(browserLoop);
     }
     requestAnimationFrame(browserLoop);
+
+    // ПРЯЧЕМ ПРЕЛОАДЕР ПОСЛЕ ЗАГРУЗКИ
+    let preloader = document.getElementById("game-preloader");
+    if (preloader) {
+        preloader.style.opacity = "0"; // Запускаем плавное исчезновение
+        setTimeout(() => {
+            if (preloader.parent) preloader.remove(); // Удаляем из DOM через полсекунды
+        }, 500);
+    }
 
     if (typeof yt !== 'undefined' && yt.game) {
         yt.game.ready();
@@ -1276,7 +1332,7 @@ function resumeWithCountdown() {
 
     let count = 3;
     let style = new PIXI.TextStyle({
-        fontFamily: "Arial, Helvetica, sans-serif", fontSize: 150, fontWeight: "bold",
+        fontFamily: "PinglooFont", fontSize: 150, fontWeight: "bold",
         fill: 0xFFD700, stroke: 0xFF4500, strokeThickness: 8, dropShadow: true
     });
     let txt = new PIXI.Text(count, style);
@@ -1555,6 +1611,16 @@ function gameLoop(dt) {
         
         player.y = currentGroundY - currentHitboxOffset;
         let slopeForce = Math.sin(angleRad); 
+
+        // --- ГЕНЕРАЦИЯ ЧАСТИЦ СКОЛЬЖЕНИЯ (Стабильный цикл) ---
+        // Спавним, если едем (скорость > 5), не на санках и не врезаемся в стену
+        if (!hasSled && speedX > 5 && slopeForce > -0.2) {
+            // Убрали зависимость от скорости. Жестко генерируем 1-2 частицы каждый кадр
+            spawnSlideParticle(player.x + worldOffsetX - 20, player.y + 45, currentFillColor);
+            if (Math.random() > 0.5) {
+                spawnSlideParticle(player.x + worldOffsetX - 10, player.y + 50, currentFillColor);
+            }
+        }
         
         if (wasInAir) {
             let isPerfectLanding = (currentJumpHeight > 80 && isDiving && slopeForce > 0.1);
@@ -1762,6 +1828,24 @@ function gameLoop(dt) {
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
         spawnSled(nextSledX, getHillY(nextSledX));
         nextSledX += 24000 + Math.random() * 16000; // ВЕРНУЛИ ЧАСТЫЙ СПАВН (раз в 240-400 м)
+    }
+
+    // --- АНИМАЦИЯ ЧАСТИЦ СКОЛЬЖЕНИЯ ---
+    for (let i = slideParticles.length - 1; i >= 0; i--) {
+        let p = slideParticles[i];
+        p.x = p.worldX - worldOffsetX; // Привязка к миру
+        p.worldX += p.vx * dt; // Летят назад по инерции
+        p.y += p.vy * dt;      // Поднимаются вверх
+        
+        p.alpha -= 0.04 * dt;  // Растворяются
+        p.scale.x -= 0.02 * dt; // Сжимаются
+        p.scale.y -= 0.02 * dt;
+        
+        if (p.alpha <= 0 || p.scale.x <= 0) {
+            p.visible = false;
+            objPool.slideFX.push(p);
+            slideParticles.splice(i, 1);
+        }
     }
 
     for (let i = effects.length - 1; i >= 0; i--) {
