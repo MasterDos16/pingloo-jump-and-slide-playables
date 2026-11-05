@@ -54,6 +54,27 @@ let objPool = {
     coins: [], fishes: [], sleds: {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}, coinFX: [], fishFX: [], comboText: [], comboFlash: []
 };
 
+// --- УМНЫЕ ФУНКЦИИ ДЛЯ ЛАВИНЫ (ВСТАВЛЯТЬ СЮДА) ---
+function colorizeAvalanche(color) {
+    if (!avalanche) return;
+    function tintObj(obj) {
+        if (obj.tint !== undefined) obj.tint = color;
+        if (obj.children) obj.children.forEach(tintObj);
+    }
+    tintObj(avalanche);
+}
+
+function safePlayAvalanche() {
+    if (!avalanche) return;
+    function playObj(obj) {
+        if (typeof obj.gotoAndPlay === "function") obj.gotoAndPlay(0);
+        else if (typeof obj.play === "function") obj.play();
+        if (obj.framerate !== undefined) obj.framerate = 60; 
+        if (obj.children) obj.children.forEach(playObj);
+    }
+    playObj(avalanche);
+}
+
 // window.killPixiObj = function(obj) {
 //     if (!obj) return;
 
@@ -833,7 +854,8 @@ window.initGame = function(root, pixiScene) {
     
     // Стандартные глобальные клики
     window.addEventListener("pointerdown", () => { 
-        if (isPlaying && !window.isEnergyEmpty) isDiving = true; 
+        // ВЕРНУЛИ УПРАВЛЕНИЕ: Игрок может нырять даже без энергии
+        if (isPlaying) isDiving = true; 
     });
     window.addEventListener("pointerup", () => isDiving = false);
 
@@ -1173,6 +1195,13 @@ function resetGame(startImmediately) {
             velocityY = -20;  
             speedX = 25;     
             setPlayerState("fly");
+            
+            // ФИКС АНИМАЦИИ ЛАВИНЫ ПРИ РЕСТАРТЕ
+            if (avalanche) {
+                avalanche.x = -1500;
+                avalanche.visible = true;
+                safePlayAvalanche(); // Принудительно заводим все слои лавины!
+            }
         } else {
             playMusic("BgmMenu"); 
             window.isIntro = false;
@@ -1395,20 +1424,18 @@ function gameLoop(dt) {
             // ОБЕСТОЧИВАНИЕ (Энергия на нуле)
             if (currentEnergy <= 0) {
                 currentEnergy = 0;
-                if (!window.isEnergyEmpty) {
-                    window.isEnergyEmpty = true;
-                    isDiving = false; // Отбираем управление
-                }
+                window.isEnergyEmpty = true;
+                // МЫ БОЛЬШЕ НЕ ОТБИРАЕМ isDiving! Игрок всё ещё управляет Кико.
             } else {
-                // Если съел рыбу - снова полон сил
-                window.isEnergyEmpty = false; 
+                window.isEnergyEmpty = false; // Если поймал рыбу - ожил!
             }
         }
         
-        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Игрок просто обессилел
+        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Игрок теряет скорость, но может барахтаться
         if (window.isEnergyEmpty) {
-            speedX -= 0.5 * dt; // Резкое, но плавное торможение
-            if (speedX < 15) speedX = 15; // Ползет из последних сил (а буря летит минимум 25!)
+            speedX -= 1.5 * dt; // Тяжелая потеря скорости
+            // Мы убрали жесткий лимит 15. Скорость может падать хоть до минимума (2), 
+            // пока лавина не сожрет Кико.
         }
     }
     
@@ -1774,7 +1801,7 @@ function gameLoop(dt) {
 
     let baseMagnet = (window.selectedCharID === 2) ? 200 : 35;
     let coinMagnetBonus = baseMagnet; 
-    let fishHitRadius = 40; // Рыбы собираются строго физическим касанием
+    let fishHitRadius = 100; // Рыбы собираются строго физическим касанием
 
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
@@ -1847,9 +1874,10 @@ function gameLoop(dt) {
         let distX = Math.abs(f.worldX - playerWorldX);
         let distY = Math.abs(f.shape.y - player.y);
 
-        // СБОР РЫБ (Без магнита)
+        // СБОР РЫБ (Физический контакт без магнита)
         if (!f.hit && distX < fishHitRadius && distY < fishHitRadius) {
             f.hit = true;
+            createjs.Sound.play("SfxFish");
         }
     }
 
@@ -1931,18 +1959,16 @@ function gameLoop(dt) {
     // --- ВОЗВРАЩАЕМ ТВОЮ ЛАВИНУ С НОВОЙ ЛОГИКОЙ ---
     let distanceToAvalanche = playerWorldX - avalancheWorldX;
     
-    // Потолок скорости лавины (чтобы не было безвыходного проигрыша)
     avalancheBaseSpeed += 0.002 * dt;
-    if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
+    if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; // Потолок
     
     let currentAvalancheSpeed = avalancheBaseSpeed;
 
-    // "Резинка": лавина дает шанс, но наказывает за ошибки
     if (distanceToAvalanche > 2500) {
         currentAvalancheSpeed = speedX + 1.5; 
     } else if (distanceToAvalanche < 1000) {
         currentAvalancheSpeed = speedX - 2.0; 
-        if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; // Минимальная скорость
+        if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; 
     }
 
     avalancheWorldX += currentAvalancheSpeed * dt; 
@@ -1951,12 +1977,13 @@ function gameLoop(dt) {
         avalanche.visible = true;
         avalanche.x = avalancheWorldX - worldOffsetX; 
         
-        // МАГИЯ ЦВЕТА (красим твою белую лавину под биом)
-        let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xAEAFCE];
-        avalanche.tint = stormColors[currentBiomeIndex] || 0xFFFFFF;
+        // МАГИЯ ЦВЕТА: 0xFFFFFF означает "не красить" (оригинальный цвет)
+        // Нулевой биом (снег) и 7 биом (космос) оставляем белыми
+        let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xFFFFFF];
+        let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+        colorizeAvalanche(targetColor); // Глубокая покраска всех векторов
     }
     
-    // ЗВУК И КОНЕЦ ИГРЫ
     if (distanceToAvalanche < 1500 && !isGameOver) {
         if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
         avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
@@ -1969,7 +1996,7 @@ function gameLoop(dt) {
     if (avalancheWorldX > playerWorldX - 80) {
         if (!isGameOver) {
             if (hasSled) {
-                // Санки спасают 1 раз
+                // САНКИ СПАСАЮТ (Отбрасываем лавину далеко назад!)
                 hasSled = false;
                 nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
                 createjs.Sound.play("SfxSledBreak"); 
@@ -1977,10 +2004,11 @@ function gameLoop(dt) {
                 if (activeSledInstance) activeSledInstance.visible = false;
                 activeSledInstance = null;
                 
-                avalancheWorldX -= 1000; 
-                speedX += 15; 
+                avalancheWorldX -= 1500; // Отбросили лавину на полтора экрана назад!
+                speedX += 15; // Дали игроку спасительный буст
                 spawnBoostFlash();
             } else {
+                // Санков нет = Проигрыш
                 isGameOver = true;
                 let finalDist = Math.floor(worldOffsetX / 100);
                 triggerGameOver(finalDist);
