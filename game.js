@@ -1062,6 +1062,8 @@ function playMusic(trackId) {
 }
 
 function triggerGameOver(finalDistance) {
+    // Убираем остановку анимаций, чтобы он барахтался в лавине
+    /* 
     if (player) {
         if (typeof player.stop === "function") player.stop();
         if (player.animRoll) player.animRoll.stop();
@@ -1069,6 +1071,7 @@ function triggerGameOver(finalDistance) {
         if (player.animFly) player.animFly.stop();
         if (player.animLand) player.animLand.stop();
     }
+    */
     if (avalanche) avalanche.stop();
 
     if (currentBgmInstance) currentBgmInstance.stop();
@@ -1513,11 +1516,10 @@ function gameLoop(dt) {
             }
         }
         
-        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Игрок теряет скорость, но может барахтаться
+        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Мягко отбираем скорость
         if (window.isEnergyEmpty) {
-            speedX -= 1.5 * dt; // Тяжелая потеря скорости
-            // Мы убрали жесткий лимит 15. Скорость может падать хоть до минимума (2), 
-            // пока лавина не сожрет Кико.
+            speedX -= 0.05 * dt; // ОЧЕНЬ плавное падение скорости (было резкое 1.5)
+            if (speedX < 15) speedX = 15; // Минимальная скорость барахтанья (чтобы не замер на месте)
         }
     }
     
@@ -2118,11 +2120,12 @@ function gameLoop(dt) {
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
+        // Мягкая резинка из старого кода
         if (distanceToAvalanche > 2500) {
             currentAvalancheSpeed = speedX + 1.5; 
         } else if (distanceToAvalanche < 1000) {
-            currentAvalancheSpeed = speedX - 2.0; 
-            if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; 
+            currentAvalancheSpeed = speedX - 0.5; // Лавина почти уравнивает с тобой скорость
+            if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; // Но никогда не останавливается
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
@@ -2130,6 +2133,13 @@ function gameLoop(dt) {
         if (avalanche) {
             avalanche.visible = true;
             avalanche.x = avalancheWorldX - worldOffsetX; 
+            
+            // ФИКС АНИМАЦИИ: Принудительно перезапускаем, если она остановилась
+            if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
+                if (avalanche.currentFrame >= avalanche.totalFrames - 1 || !avalanche.playing) {
+                    if (typeof avalanche.gotoAndPlay === "function") avalanche.gotoAndPlay(0);
+                }
+            }
             
             let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
             let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
@@ -2160,6 +2170,8 @@ function gameLoop(dt) {
                     spawnBoostFlash();
                 } else {
                     isGameOver = true;
+                    // МЫ НЕ ОСТАНАВЛИВАЕМ АНИМАЦИЮ ПЕРСОНАЖА ПРИ ПРОИГРЫШЕ, 
+                    // чтобы он красиво утонул в лавине!
                     let finalDist = Math.floor(worldOffsetX / 100);
                     triggerGameOver(finalDist);
                 }
