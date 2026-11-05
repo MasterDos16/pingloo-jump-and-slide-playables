@@ -397,21 +397,23 @@ window.initGame = function(root, pixiScene) {
 
     if (window.playerStartX === undefined) window.playerStartX = player.x;
     
-    // --- ИСКАТЕЛЬ ИДЕАЛЬНОГО СТАРТА ---
+    // --- ИСКАТЕЛЬ ИДЕАЛЬНОГО СТАРТА (Длинный склон) ---
     let isGoodStart = false;
     let px = window.playerStartX || 200; 
     while (!isGoodStart) {
         trackSeed = Math.random() * 100000;
-        let yStart = getHillY(px - 100); 
-        let yMid1 = getHillY(px + 300);  
-        let yMid2 = getHillY(px + 700);  
-        let yEnd = getHillY(px + 1200);  
         
-        // Ищем форму "Чаши": крутой спуск вниз, дно, и крутой подъем вверх
-        if (yStart < baseY - 50 &&       // Старт высоко
-            yMid1 > yStart + 100 &&      // Долгий мощный спуск (набор скорости)
-            yMid2 > yMid1 + 20 &&        // Дно долины
-            yEnd < yMid2 - 80) {         // Мощный трамплин для первого полета
+        let y0 = getHillY(px - 100); 
+        let y400 = getHillY(px + 300);  
+        let y800 = getHillY(px + 700);  
+        let y1200 = getHillY(px + 1100);  
+        
+        // Требуем, чтобы земля уходила только вниз на протяжении всей траектории полета.
+        // Старт высоко, и каждая следующая точка стабильно ниже предыдущей.
+        if (y0 < baseY - 50 &&       
+            y400 > y0 + 60 &&        // Уверенный наклон вниз
+            y800 > y400 + 40 &&      // Спуск продолжается (здесь Кико приземлится)
+            y1200 > y800 + 20) {     // Мягкий выход со склона без резких стен
             isGoodStart = true; 
         }
     }
@@ -427,10 +429,23 @@ window.initGame = function(root, pixiScene) {
     // }
 
     avalanche = root.avalanche; 
-    // ВОЗВРАЩАЕМ ТВОЮ ЛАВИНУ К ЖИЗНИ
     if (avalanche) {
-        avalanche.visible = false; // Пока скроем, она появится сзади
-        if (typeof avalanche.play === "function") avalanche.play();
+        avalanche.visible = true;
+        avalanche.x = avalancheWorldX - worldOffsetX; 
+        
+        // ФИКС АНИМАЦИИ: Принудительно перезапускаем, если она остановилась
+        if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
+            // Если мы достигли последнего кадра ИЛИ анимация не проигрывается
+            if (avalanche.currentFrame >= avalanche.totalFrames - 1 || !avalanche.playing) {
+                if (typeof avalanche.gotoAndPlay === "function") {
+                    avalanche.gotoAndPlay(0);
+                }
+            }
+        }
+        
+        let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
+        let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+        colorizeAvalanche(targetColor); 
     }
 
     // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
@@ -1249,10 +1264,13 @@ function resetGame(startImmediately) {
         if (startImmediately) {
             playMusic("BgmGame"); 
             window.isIntro = true;
-            player.x = -200; 
-            player.y = getHillY(worldOffsetX + player.x) - 100; 
-            velocityY = -20;  
-            speedX = 25;     
+            
+            // ФИНАЛЬНЫЙ ШТРИХ: Вылет по диагонали (вправо-вверх)
+            player.x = -300; // Стартует глубже за левым краем экрана
+            player.y = getHillY(worldOffsetX + player.x) - 50; // Начинает прямо над землей...
+            velocityY = -45;  // ...и получает мощнейший пинок ВВЕРХ
+            speedX = 40;      // ...и быстрый импульс ВПРАВО
+            
             setPlayerState("fly");
             
             // ФИКС АНИМАЦИИ ЛАВИНЫ ПРИ РЕСТАРТЕ
