@@ -1328,24 +1328,20 @@ function gameLoop(dt) {
         if (hasSled) {
             // На санках энергия не тратится
         } else {
-            // ДИНАМИЧЕСКИЙ РАСХОД ЭНЕРГИИ (5 ступеней)
+            // ДИНАМИЧЕСКИЙ РАСХОД ЭНЕРГИИ (С потоковым состоянием)
             let currentRate = energyDepletionRate;
             
             if (speedX < 10) {
-                // 1. КРИТИЧЕСКАЯ: Ползем. Энергия сгорает экстремально.
                 currentRate *= 2.0; 
             } else if (speedX < 25) {
-                // 2. НИЗКАЯ (10-25): Теряем инициативу. Слегка наказываем.
                 currentRate *= 1.2; 
             } else if (speedX < 40) {
-                // 3. КРЕЙСЕРСКАЯ (25-40): Нормальный темп игры. Базовый расход.
                 currentRate *= 1.0; 
-            } else if (speedX < 60) {
-                // 4. ВЫСОКАЯ (40-60): Хороший флоу, пошли комбо. Легкая награда.
-                currentRate *= 0.5; 
+            } else if (speedX < 65) {
+                currentRate *= 0.4; 
             } else {
-                // 5. ТУРБО (>60): Идеальная езда или санки. Энергия почти замирает.
-                currentRate *= 0.1; 
+                // СОСТОЯНИЕ В ПОТОКЕ (>65): Энергия вообще не тратится!
+                currentRate = 0; 
             }
             
             if (!window.isEnergyEmpty) {
@@ -1434,8 +1430,8 @@ function gameLoop(dt) {
 
     // --- НОВАЯ БЕСКОНЕЧНАЯ ГОРА (Без перерисовки графики) ---
     let step = 10; 
-    // Привязываем к сетке, чтобы текстура не дрожала при движении
-    let startX = worldOffsetX - (worldOffsetX % step) - 200; 
+    // ФИКС ОТРИСОВКИ: Сдвигаем на 2000px левее, чтобы скрыть обрыв
+    let startX = worldOffsetX - (worldOffsetX % step) - 2000;
 
     for(let i = 0; i < window.hillSlices.length; i++) {
         let px = startX + (i * step);
@@ -1617,7 +1613,8 @@ function gameLoop(dt) {
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
     while (nextCoinX < worldOffsetX + 5000) {
         if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
-        if (Math.abs(nextCoinX - nextFishX) < 1200) nextCoinX += 1200;
+        // ФИКС НАЛОЖЕНИЯ: Увеличиваем буфер до 1500, чтобы монеты бежали от рыб
+        if (Math.abs(nextCoinX - nextFishX) < 1500) nextCoinX += 1500;
         let patternType = Math.floor(Math.random() * 4); 
         let startX = nextCoinX;
         let skyHeight = 400 + Math.random() * 800; 
@@ -1658,29 +1655,32 @@ function gameLoop(dt) {
     }
 
     if (hasSled) {
-        // На санках рыбы не появляются (толкаем курсор спавна вперед)
+        // На санках рыбы не появляются
         nextFishX = worldOffsetX + 5000; 
     } else {
-        // ТВОЯ ИДЕЯ: Рыба спавнится ТОЛЬКО если энергия начинает падать
         if (currentEnergy > 75) {
-            // Игрок сыт. Искусственно отодвигаем точку спавна, чтобы на горизонте не было рыб
-            if (nextFishX < worldOffsetX + 5000) {
-                nextFishX = worldOffsetX + 5000;
-            }
+            if (nextFishX < worldOffsetX + 5000) nextFishX = worldOffsetX + 5000;
         } else {
-            // Начался "голод". Начинаем генерировать спасительную рыбу на трассе
+            // Начался "голод". Генерируем стайки рыб на трассе
             while (nextFishX < worldOffsetX + 5000) {
                 let foundDownhill = false;
                 for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
-                    if (Math.abs(scanX - nextSledX) < 1200) continue;
+                    if (Math.abs(scanX - nextSledX) < 1500) continue;
+                    // Двойная защита: рыба тоже не спавнится там, где уже намечены монеты
+                    if (Math.abs(scanX - nextCoinX) < 1500) continue; 
+                    
                     let nextY = getHillY(scanX + 10);
                     let prevY = getHillY(scanX - 10);
                     if (nextY - prevY > 4) {
-                        spawnFish(scanX, getHillY(scanX) - 40); 
                         
-                        // РЕЖЕМ ЧАСТОТУ: Теперь рыбы будут в 4 раза реже (раз в 80-120 метров)
-                        // Это заставит реально за них бороться!
-                        nextFishX = scanX + 8000 + Math.random() * 4000; 
+                        // СТАЯ ИЗ 5 РЫБОК ВДОЛЬ СКЛОНА
+                        for (let k = 0; k < 5; k++) {
+                            let fx = scanX + (k * 75); // Расстояние между рыбками
+                            spawnFish(fx, getHillY(fx) - 40); 
+                        }
+                        
+                        // Следующая стая будет не скоро, за нее придется побороться
+                        nextFishX = scanX + 6000 + Math.random() * 4000; 
                         
                         foundDownhill = true;
                         break;
@@ -1731,7 +1731,16 @@ function gameLoop(dt) {
         }
     }
 
-    let magnetBonus = (window.selectedCharID === 2) ? 200 : 30;
+    let baseMagnet = (window.selectedCharID === 2) ? 200 : 30;
+    let speedMagnet = 0;
+
+    // ДИНАМИЧЕСКИЙ МАГНИТ: Чем выше скорость, тем жестче пылесос
+    if (speedX >= 20 && speedX < 40) speedMagnet = 40;
+    else if (speedX >= 40 && speedX < 60) speedMagnet = 100;
+    else if (speedX >= 60 && speedX < 80) speedMagnet = 200;
+    else if (speedX >= 80) speedMagnet = 350;
+
+    let magnetBonus = baseMagnet + speedMagnet;
 
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
