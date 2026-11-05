@@ -359,10 +359,27 @@ window.initGame = function(root, pixiScene) {
     if(ground) ground.visible = false; 
     
     avalanche = root.avalanche; 
-    // ЖЕСТКО ГЛУШИМ ЛАВИНУ
+    // ЖЕСТКО ГЛУШИМ СТАРУЮ ЛАВИНУ ANIMATE
     if (avalanche) {
         avalanche.visible = false;
         if (typeof avalanche.stop === "function") avalanche.stop();
+    }
+
+    // --- СОЗДАЕМ ЛЕГКУЮ ПРОГРАММНУЮ БУРЮ ---
+    window.stormContainer = new PIXI.Container();
+    window.stormParticles = [];
+    
+    // Создаем 60 летящих частиц-линий (снежинки/песок/искры)
+    for(let i = 0; i < 60; i++) {
+        let p = new PIXI.Sprite(PIXI.Texture.WHITE);
+        p.width = 30 + Math.random() * 100; // Длинные шлейфы ветра
+        p.height = 3 + Math.random() * 5;   // Толщина
+        p.x = Math.random() * 2000;
+        p.y = -1000 + Math.random() * 3000;
+        p.baseSpeed = 20 + Math.random() * 30; // У каждой своя скорость полета
+        p.alpha = 0.3 + Math.random() * 0.5;
+        window.stormContainer.addChild(p);
+        window.stormParticles.push(p);
     }
 
     cameraContainer = new PIXI.Container();
@@ -397,7 +414,8 @@ window.initGame = function(root, pixiScene) {
     }
 
     cameraContainer.addChild(player);      
-    cameraContainer.addChild(window.hillContainer); // Кладем новую гору поверх игрока  
+    cameraContainer.addChild(window.hillContainer); // Кладем новую гору поверх игрока
+    cameraContainer.addChild(window.stormContainer); // ДОБАВЛЯЕМ БУРЮ НА СЦЕНУ  
     cameraContainer.addChild(coinsContainer);
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
@@ -1349,21 +1367,22 @@ function gameLoop(dt) {
             }
             
             // ОБЕСТОЧИВАНИЕ (Энергия на нуле)
-            if (currentEnergy <= 0 && !window.isEnergyEmpty) {
+            if (currentEnergy <= 0) {
                 currentEnergy = 0;
-                window.isEnergyEmpty = true;
-                isDiving = false; // Отбираем управление (персонаж больше не ныряет)
+                if (!window.isEnergyEmpty) {
+                    window.isEnergyEmpty = true;
+                    isDiving = false; // Отбираем управление
+                }
+            } else {
+                // Если съел рыбу - снова полон сил
+                window.isEnergyEmpty = false; 
             }
         }
         
-        // ПЛАВНАЯ ОСТАНОВКА И КОНЕЦ ИГРЫ
+        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Игрок просто обессилел
         if (window.isEnergyEmpty) {
-            speedX -= 0.15 * dt; // Инерция плавно угасает
-            if (speedX <= minSpeedX + 1) { // Как только персонаж почти остановился
-                isGameOver = true;
-                let finalDist = Math.floor(worldOffsetX / 100);
-                triggerGameOver(finalDist);
-            }
+            speedX -= 0.5 * dt; // Резкое, но плавное торможение
+            if (speedX < 15) speedX = 15; // Ползет из последних сил (а буря летит минимум 25!)
         }
     }
     
@@ -1731,21 +1750,23 @@ function gameLoop(dt) {
         }
     }
 
-    let baseMagnet = (window.selectedCharID === 2) ? 200 : 30;
+    let baseMagnet = (window.selectedCharID === 2) ? 200 : 35; // У Моми радиус 200, у остальных только касание
     let speedMagnet = 0;
 
-    // ДИНАМИЧЕСКИЙ МАГНИТ: Чем выше скорость, тем жестче пылесос
+    // ДИНАМИЧЕСКИЙ МАГНИТ (ТОЛЬКО ДЛЯ РЫБ): Чем выше скорость, тем жестче пылесос
     if (speedX >= 20 && speedX < 40) speedMagnet = 40;
     else if (speedX >= 40 && speedX < 60) speedMagnet = 100;
     else if (speedX >= 60 && speedX < 80) speedMagnet = 200;
     else if (speedX >= 80) speedMagnet = 350;
 
-    let magnetBonus = baseMagnet + speedMagnet;
+    let fishMagnetBonus = baseMagnet + speedMagnet; // Рыбы всасываются на скорости
+    let coinMagnetBonus = baseMagnet; // МОНЕТЫ НЕ ВСАСЫВАЮТСЯ (работает только база Моми)
 
+    // --- СБОР МОНЕТ ---
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
         c.shape.x = c.worldX - worldOffsetX;
-        c.shape.y = c.worldY; 
+        c.shape.y = c.worldY;
 
         if (c.shape.x < -1500) {
             c.shape.visible = false;
@@ -1765,7 +1786,8 @@ function gameLoop(dt) {
         let distX = Math.abs(c.worldX - playerWorldX);
         let distY = Math.abs(c.shape.y - player.y);
 
-        if (!c.hit && distX < (c.hitRadius + magnetBonus) && distY < (c.hitRadius + magnetBonus)) {
+        // ФИКС: Используем coinMagnetBonus!
+        if (!c.hit && distX < (c.hitRadius + coinMagnetBonus) && distY < (c.hitRadius + coinMagnetBonus)) {
             c.hit = true;
             coinsCollected++;
             createjs.Sound.play("SfxCoin"); 
@@ -1812,7 +1834,8 @@ function gameLoop(dt) {
         let distX = Math.abs(f.worldX - playerWorldX);
         let distY = Math.abs(f.shape.y - player.y);
 
-        if (!f.hit && distX < (f.hitRadius + magnetBonus) && distY < (f.hitRadius + magnetBonus)) {
+        // ФИКС: Используем fishMagnetBonus!
+        if (!f.hit && distX < (f.hitRadius + fishMagnetBonus) && distY < (f.hitRadius + fishMagnetBonus)) {
             f.hit = true;
             createjs.Sound.play("SfxFish"); 
             
@@ -1905,45 +1928,77 @@ function gameLoop(dt) {
         }
     }
     
-    // let distanceToAvalanche = playerWorldX - avalancheWorldX;
-    // avalancheBaseSpeed += 0.002 * dt;
-    // let currentAvalancheSpeed = avalancheBaseSpeed;
-
-    // if (distanceToAvalanche > 2500) currentAvalancheSpeed = speedX + 1.5;
-    // else if (distanceToAvalanche < 1000) {
-    //     currentAvalancheSpeed = speedX - 0.5; 
-    //     if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18;
-    // }
-
-    // avalancheWorldX += currentAvalancheSpeed * dt; 
-    // if (avalanche) avalanche.x = avalancheWorldX - worldOffsetX; 
+    // --- УМНАЯ БУРЯ (Rubber-banding) ---
+    let distanceToAvalanche = playerWorldX - avalancheWorldX;
     
-    // if (distanceToAvalanche < 1500 && !isGameOver) {
-    //     if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
-    //     avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
-    // } else if (avalancheSoundInstance) {
-    //     avalancheSoundInstance.stop();
-    //     avalancheSoundInstance = null;
-    // }
+    // Буря постепенно разгоняется со временем, но имеет ЖЕСТКИЙ ПОТОЛОК (45)
+    avalancheBaseSpeed += 0.002 * dt;
+    if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
     
-    // if (avalancheWorldX > playerWorldX - 80) {
-    //     if (!isGameOver) {
-    //         if (hasSled) {
-    //             hasSled = false;
-    //             nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
-    //             createjs.Sound.play("SfxSledBreak"); 
-    //             player.y += 35;
-    //             if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
-    //             activeSledInstance = null;
-    //             avalancheWorldX -= 700; 
-    //             speedX += 10; 
-    //             spawnBoostFlash();
-    //         } else {
-    //             isGameOver = true;
-    //             triggerGameOver(distanceMeters);
-    //         }
-    //     }
-    // }
+    let currentAvalancheSpeed = avalancheBaseSpeed;
+
+    // Резинка: не даем буре отстать слишком далеко или убить мгновенно
+    if (distanceToAvalanche > 2500) {
+        currentAvalancheSpeed = speedX + 1.5; 
+    } else if (distanceToAvalanche < 1000) {
+        currentAvalancheSpeed = speedX - 2.0; 
+        if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; // Минимальная скорость настигания
+    }
+
+    avalancheWorldX += currentAvalancheSpeed * dt; 
+    
+    // АНИМАЦИЯ ЧАСТИЦ БУРИ
+    if (window.stormContainer) {
+        // Буря ползет за нами (частицы занимают 2000px позади фронта)
+        window.stormContainer.x = avalancheWorldX - worldOffsetX - 2000; 
+        
+        // Цвета бури под биом (0:Снег, 1:Лед, 2:Лес, 3-4:Песок, 5:Вода, 6:Пустыня, 7:Космос)
+        let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xAEAFCE];
+        let stormColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+
+        for(let i = 0; i < window.stormParticles.length; i++) {
+            let p = window.stormParticles[i];
+            p.x += p.baseSpeed * dt; // Частицы летят вправо
+            p.tint = stormColor;
+            
+            // Если частица улетела за фронт бури, возвращаем ее назад
+            if (p.x > 2000) {
+                p.x = 0;
+                p.y = player.y - 1000 + Math.random() * 2000; // Летают вокруг высоты игрока
+            }
+        }
+    }
+    
+    // ЗВУК И КОНЕЦ ИГРЫ
+    if (distanceToAvalanche < 1500 && !isGameOver) {
+        if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
+        avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
+    } else if (avalancheSoundInstance) {
+        avalancheSoundInstance.stop();
+        avalancheSoundInstance = null;
+    }
+    
+    // БУРЯ НАСТИГЛА ИГРОКА
+    if (avalancheWorldX > playerWorldX - 80) {
+        if (!isGameOver) {
+            if (hasSled) {
+                // Санки спасают от бури ОДИН раз, разбиваясь!
+                hasSled = false;
+                nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
+                createjs.Sound.play("SfxSledBreak"); 
+                player.y += 35;
+                if (activeSledInstance) activeSledInstance.visible = false;
+                activeSledInstance = null;
+                
+                avalancheWorldX -= 1000; // Бурю отбрасывает назад
+                speedX += 15; // Даем толчок для спасения
+                spawnBoostFlash();
+            } else {
+                isGameOver = true;
+                triggerGameOver(distanceMeters);
+            }
+        }
+    }
     
     if (distFromGround > 0 && hasTouchedGroundOnce) {
         let currentAirHeight = Math.floor(distFromGround / 10);
