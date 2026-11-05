@@ -1333,19 +1333,19 @@ function gameLoop(dt) {
             
             if (speedX < 10) {
                 // 1. КРИТИЧЕСКАЯ: Ползем. Энергия сгорает экстремально.
-                currentRate *= 3.0; 
+                currentRate *= 2.0; 
             } else if (speedX < 25) {
                 // 2. НИЗКАЯ (10-25): Теряем инициативу. Слегка наказываем.
-                currentRate *= 2.0; 
+                currentRate *= 1.2; 
             } else if (speedX < 40) {
                 // 3. КРЕЙСЕРСКАЯ (25-40): Нормальный темп игры. Базовый расход.
-                currentRate *= 1.2; 
+                currentRate *= 1.0; 
             } else if (speedX < 60) {
                 // 4. ВЫСОКАЯ (40-60): Хороший флоу, пошли комбо. Легкая награда.
-                currentRate *= 0.8; 
+                currentRate *= 0.5; 
             } else {
                 // 5. ТУРБО (>60): Идеальная езда или санки. Энергия почти замирает.
-                currentRate *= 0.3; 
+                currentRate *= 0.1; 
             }
             
             if (!window.isEnergyEmpty) {
