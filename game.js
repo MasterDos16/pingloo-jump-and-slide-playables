@@ -221,9 +221,13 @@ function spawnCoin(worldX, worldY) {
         coinObj = objPool.coins.pop();
         coinObj.visible = true;
     } else {
-        coinObj = PIXI.Sprite.from("coin.png"); // Только картинка!
+        coinObj = PIXI.Sprite.from("img/coin.png"); 
         coinObj.anchor.set(0.5);
     }
+    
+    // ГЛАВНЫЙ ФИКС: Возвращаем размер и видимость после пула
+    coinObj.scale.set(1);
+    coinObj.alpha = 1;
     
     if (coinObj.parent !== coinsContainer) coinsContainer.addChild(coinObj); 
     coinObj.x = worldX - worldOffsetX; 
@@ -237,9 +241,13 @@ function spawnFish(worldX, worldY) {
         fishObj = objPool.fishes.pop();
         fishObj.visible = true;
     } else {
-        fishObj = PIXI.Sprite.from("fish.png"); // Только картинка!
+        fishObj = PIXI.Sprite.from("img/fish.png"); 
         fishObj.anchor.set(0.5);
     }
+    
+    // ГЛАВНЫЙ ФИКС: Возвращаем размер и видимость
+    fishObj.scale.set(1);
+    fishObj.alpha = 1;
     
     if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
     fishObj.x = worldX - worldOffsetX; 
@@ -376,9 +384,9 @@ window.initGame = function(root, pixiScene) {
     window.hillStrokes = [];
     
     /// Создаем 160 полосок один раз навсегда
-    for(let i = 0; i < 160; i++) {
+    for(let i = 0; i < 900; i++) {
         let fill = new PIXI.Sprite(PIXI.Texture.WHITE);
-        fill.width = 27; // Шаг 25px + 2px нахлест
+        fill.width = 12; // Шаг 25px + 2px нахлест
         fill.height = 2000;
         
         let stroke = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -892,13 +900,21 @@ function getHillY(x) {
     let wave3 = Math.cos(rx * 0.0033) * 30;  
     let macroWave = Math.sin(rx * 0.00015) * 80;
     
-    let startRamp = 0;
-    if (x < 3000) {
-        let progress = Math.max(0, 3000 - x) / 3000;
-        startRamp = progress * progress * progress * 700; 
+    let rawY = baseY + wave1 + wave2 + wave3 + macroWave;
+    
+    // СТАРТОВЫЙ СКЛОН: Плавный съезд на первых 1500 метрах
+    if (x < 1500) {
+        // Защита от отрицательных X (когда Кико только вылетает в кадр)
+        let progress = Math.max(0, x) / 1500; 
+        
+        // Математика плавного изгиба (кубический ease-in-out)
+        let ease = progress * progress * (3 - 2 * progress); 
+        
+        // На старте высота ровно 300, затем плавно переходит в бесконечные холмы (rawY)
+        return 300 + (rawY - 300) * ease;
     }
     
-    return baseY + wave1 + wave2 + wave3 + macroWave - startRamp;
+    return rawY;
 }
 
 function playMusic(trackId) {
@@ -1414,7 +1430,7 @@ function gameLoop(dt) {
     // hillShape.x = -worldOffsetX;
 
     // --- НОВАЯ БЕСКОНЕЧНАЯ ГОРА (Без перерисовки графики) ---
-    let step = 25; 
+    let step = 10; 
     // Привязываем к сетке, чтобы текстура не дрожала при движении
     let startX = worldOffsetX - (worldOffsetX % step) - 200; 
 
