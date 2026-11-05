@@ -400,11 +400,16 @@ window.initGame = function(root, pixiScene) {
     let isGoodStart = false;
     while (!isGoodStart) {
         trackSeed = Math.random() * 100000;
-        let px = player.x; 
-        let y0 = getHillY(px);         
-        let y100 = getHillY(px + 100); 
-        let y200 = getHillY(px + 200); 
-        if (y0 < baseY - 50 && y100 > y0 + 15 && y200 > y100 + 15) isGoodStart = true; 
+        let y0 = getHillY(0);         
+        let y200 = getHillY(200); 
+        let y400 = getHillY(400); 
+        let y600 = getHillY(600);
+        let y800 = getHillY(800);
+        
+        // Ищем кусок математики, где холм плавно и долго спускается ВНИЗ на протяжении 800 метров
+        if (y0 < baseY - 50 && y200 > y0 + 30 && y400 > y200 + 30 && y600 > y400 + 20 && y800 > y600 + 10) {
+            isGoodStart = true; 
+        }
     }
     
     ground = root.ground;
@@ -1015,33 +1020,19 @@ function setPlayerState(state) {
 function getHillY(x) {
     let rx = x + trackSeed;
     let globalAmplitude = 1 + Math.sin(rx * 0.0004) * 0.4; 
-
-    // --- ОСОБЕННОСТИ БИОМОВ (ВЫСОТА ХОЛМОВ) ---
-    let hMod = 1.0;
-    if (currentBiomeIndex === 2) hMod = 0.85; // Биом 2 (Луга): Холмы чуть ниже
-    else if (currentBiomeIndex === 3 || currentBiomeIndex === 5) hMod = 0.6; // Биомы 3 и 5 (Пляж и Ванна): Холмы сильно ниже
     
-    // Применяем модификатор ко всем волнам
+    // БИОМ 3 (Пляж) теперь такой же высоты, как Биом 2 (Луга)
+    let hMod = 1.0;
+    if (currentBiomeIndex === 2 || currentBiomeIndex === 3) hMod = 0.85; 
+    else if (currentBiomeIndex === 5) hMod = 0.6; // Ванна остается плоской
+    
     let wave1 = Math.sin(rx * 0.0022) * (150 * globalAmplitude * hMod); 
     let wave2 = Math.cos(rx * 0.0011) * (100 * hMod);  
     let wave3 = Math.cos(rx * 0.0033) * (30 * hMod);  
     let macroWave = Math.sin(rx * 0.00015) * (80 * hMod);
     
-    let rawY = baseY + wave1 + wave2 + wave3 + macroWave;
-    
-    // СТАРТОВЫЙ СКЛОН: Плавный съезд на первых 1500 метрах
-    if (x < 1500) {
-        // Защита от отрицательных X (когда Кико только вылетает в кадр)
-        let progress = Math.max(0, x) / 1500; 
-        
-        // Математика плавного изгиба (кубический ease-in-out)
-        let ease = progress * progress * (3 - 2 * progress); 
-        
-        // На старте высота ровно 300, затем плавно переходит в бесконечные холмы (rawY)
-        return 300 + (rawY - 300) * ease;
-    }
-    
-    return rawY;
+    // Возвращаем чистую математику без искусственного сплющивания на старте!
+    return baseY + wave1 + wave2 + wave3 + macroWave; 
 }
 
 function playMusic(trackId) {
@@ -1846,8 +1837,8 @@ function gameLoop(dt) {
                         }
                         
                         let baseDist = 4000 + Math.random() * 3000;
-                        if (currentBiomeIndex === 2) baseDist *= 1.5; // БИОМ 2: Рыб меньше (реже)
-                        else if (currentBiomeIndex === 4) baseDist *= 0.5; // БИОМ 4: Рыб в 2 раза больше (чаще)
+                        if (currentBiomeIndex === 2) baseDist *= 1.5; 
+                        else if (currentBiomeIndex === 4) baseDist *= 0.25; // Рыб в подводном биоме в 4 РАЗА больше!
                         
                         nextFishX = scanX + baseDist; 
                         
@@ -1918,7 +1909,7 @@ function gameLoop(dt) {
         }
     }
 
-    let baseMagnet = (window.selectedCharID === 2) ? 200 : 35;
+    let baseMagnet = (window.selectedCharID === 2) ? 280 : 35; // Моми стала мощнее
     // МОМИ (ID 2): Единственная имеет магнит для монет
     let coinMagnetBonus = (window.selectedCharID === 2) ? 150 : 35; 
     let fishHitRadius = 100; // Рыбы без магнита для всех
@@ -2001,7 +1992,7 @@ function gameLoop(dt) {
             
             // 1. ВОЗВРАЩАЕМ ЭНЕРГИЮ
             // Папи получает 24, остальные 16
-            currentEnergy += (window.selectedCharID === 3) ? 24 : 16; 
+            currentEnergy += (window.selectedCharID === 3) ? 30 : 16;
             if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
             
             // 2. ВОЗВРАЩАЕМ АНИМАЦИЮ ВСАСЫВАНИЯ
@@ -2113,13 +2104,6 @@ function gameLoop(dt) {
     if (avalanche) {
         avalanche.visible = true;
         avalanche.x = avalancheWorldX - worldOffsetX; 
-        
-        // ПРИНУДИТЕЛЬНЫЙ ЦИКЛ: Если таймлайн Animate дошел до конца, кидаем его на старт
-        if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
-            if (avalanche.currentFrame >= avalanche.totalFrames - 1) {
-                avalanche.gotoAndPlay(0);
-            }
-        }
         
         // МАГИЯ ЦВЕТА ПО НАСТРОЙКАМ
         // Биомы: 0:Белый, 1:#ABEFFF, 2:Белый, 3:#FAE08C, 4:#FEEDB5, 5:#3985A6, 6:#FAE08C, 7:#99A3BF

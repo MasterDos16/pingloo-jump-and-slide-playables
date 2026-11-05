@@ -29,10 +29,9 @@
         <!-- 1. Скрытый блок для форсированной загрузки шрифта в кэш -->
     <div style="font-family: 'PinglooFont'; position: absolute; left: -9999px; visibility: hidden;">preload</div>
 
-    <!-- 2. HTML-Прелоадер игры -->
-    <div id="game-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #80C5FA; z-index: 9999; display: flex; justify-content: center; align-items: center; font-family: 'PinglooFont', sans-serif; color: white; transition: opacity 0.5s ease;">
-        <!-- Текст загрузки с процентами -->
-        <div id="preloader-text" style="font-size: 60px; text-align: center;">LOADING 0%</div>
+    <!-- 2. HTML-Прелоадер игры (Минимализм) -->
+    <div id="game-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #80C5FA; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'PinglooFont', sans-serif; color: white; transition: opacity 0.5s ease;">
+        <div id="preloader-text" style="font-size: 60px; text-align: center;">LOADING...</div>
     </div>
 
     <!-- 3. Экран требования поворота (Orientation Lock) -->
@@ -88,20 +87,8 @@
                 resolution: dpr 
             });
 
-            // ФИКС ЗАГРУЗКИ: Безопасно цепляемся к глобальному лоадеру PixiJS для процентов
-            var pixiLoader = PIXI.Loader ? PIXI.Loader.shared : PIXI.loader;
-            if (pixiLoader) {
-                pixiLoader.onProgress.add(function(l) {
-                    var pText = document.getElementById("preloader-text");
-                    if (pText) pText.innerText = "LOADING " + Math.floor(l.progress) + "%";
-                });
-            }
-
-            // ОРИГИНАЛЬНЫЙ ВЫЗОВ (без 3-го параметра, чтобы не ломать пути к ассетам)
+            // Сразу загружаем библиотеку и стартуем игру (Без процентов)
             gameScene.load(lib.pingloo_wings_game_v02, function(instance) {
-                var pText = document.getElementById("preloader-text");
-                if (pText) pText.innerText = "LOADING 100%";
-                
                 if (typeof window.initGame === 'function') {
                     window.initGame(instance, gameScene);
                 }
