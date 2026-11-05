@@ -89,7 +89,7 @@ let objPool = {
 let maxEnergy = 100;
 let currentEnergy = 100;
 let visualEnergy = 100; 
-let energyDepletionRate = 0.09; // Энергия падает почти в 2 раза медленнее
+let energyDepletionRate = 0.12;
 let fishes = [];
 let nextFishX = 3000; 
 let comboAnimTimer = 0;
@@ -426,7 +426,7 @@ window.initGame = function(root, pixiScene) {
 
     switchBiome(window.selectedBiomeID || 0);
 
-    let uiList = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS"];
+    let uiList = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "txtSpeed"];
     uiList.forEach(name => {
         if (gameRoot[name]) {
             gameRoot[name].initY = gameRoot[name].y;
@@ -941,7 +941,7 @@ function triggerGameOver(finalDistance) {
     createjs.Sound.play("SfxCrash");
 
     let fadeTime = 500; 
-    let uiList = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS"];
+    let uiList = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "txtSpeed"];
     uiList.forEach(name => {
         if (gameRoot[name]) addTween(gameRoot[name], {alpha: 0}, fadeTime);
     });
@@ -1085,7 +1085,7 @@ function resetGame(startImmediately) {
         cameraContainer.visible = startImmediately;
     }
     
-    let uiList = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS"];
+    let uiList = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "txtSpeed"];
     uiList.forEach(name => {
         if (gameRoot[name]) {
             gameRoot[name].alpha = 1;
@@ -1155,7 +1155,7 @@ function resetGame(startImmediately) {
         gameRoot.y = 0;
     }
 
-    let uiListUpdate = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "pauseScreen", "gameOverScreen"];
+    let uiListUpdate = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "txtSpeed", "pauseScreen", "gameOverScreen"];
     uiListUpdate.forEach(name => {
         let el = gameRoot[name];
         if (el && el.initY !== undefined) {
@@ -1330,8 +1330,14 @@ function gameLoop(dt) {
         } else {
             // ДИНАМИЧЕСКИЙ РАСХОД ЭНЕРГИИ
             let currentRate = energyDepletionRate;
-            if (speedX < 20) currentRate *= 2.5; // Штраф за низкую скорость (сгорает быстрее)
-            else if (speedX > 35) currentRate *= 0.5; // Бонус за высокую скорость (хватает надолго)
+            
+            if (speedX < 23) {
+                currentRate *= 4.0; // Низкая скорость: Энергия сгорает экстремально быстро
+            } else if (speedX > 38) {
+                currentRate *= 0.4; // Высокая скорость: Энергия экономится (награда)
+            } else {
+                currentRate *= 1.5; // Средняя скорость: Энергия тратится быстрее базовой
+            }
             
             if (!window.isEnergyEmpty) {
                 currentEnergy -= currentRate * dt;
@@ -1490,12 +1496,16 @@ function gameLoop(dt) {
                 
             } else {
                 createjs.Sound.play("SfxLand");
+                
+                // УСИЛЕННЫЙ ШТРАФ ЗА ПЛОХОЕ ПРИЗЕМЛЕНИЕ И ПОТЕРЮ КОМБО
+                let speedPenalty = 8; // Базовый жесткий штраф за удар о склон
                 if (comboCount > 0) {
-                    let speedPenalty = comboCount * 3; 
-                    if (!hasSled) speedX -= speedPenalty; 
+                    speedPenalty += (comboCount * 5); // Доп. штраф за сброс накопленного комбо
                     isComboSliding = false;
                     comboCount = 0; 
                 }
+                
+                if (!hasSled) speedX -= speedPenalty; 
                 
                 if (currentJumpHeight > 250) { 
                     if (!hasSled) setPlayerState("land"); 
@@ -1623,20 +1633,25 @@ function gameLoop(dt) {
         }
     }
 
-    while (nextFishX < worldOffsetX + 5000) {
-        let foundDownhill = false;
-        for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
-            if (Math.abs(scanX - nextSledX) < 1200) continue;
-            let nextY = getHillY(scanX + 10);
-            let prevY = getHillY(scanX - 10);
-            if (nextY - prevY > 4) {
-                spawnFish(scanX, getHillY(scanX) - 40); 
-                nextFishX = scanX + 1500 + Math.random() * 2000; 
-                foundDownhill = true;
-                break;
+    if (hasSled) {
+        // Толкаем точку спавна далеко вперед, чтобы рыбы не появлялись, пока мы едем
+        nextFishX = worldOffsetX + 5000; 
+    } else {
+        while (nextFishX < worldOffsetX + 5000) {
+            let foundDownhill = false;
+            for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
+                if (Math.abs(scanX - nextSledX) < 1200) continue;
+                let nextY = getHillY(scanX + 10);
+                let prevY = getHillY(scanX - 10);
+                if (nextY - prevY > 4) {
+                    spawnFish(scanX, getHillY(scanX) - 40); 
+                    nextFishX = scanX + 1500 + Math.random() * 2000; 
+                    foundDownhill = true;
+                    break;
+                }
             }
+            if (!foundDownhill) nextFishX += 2000; 
         }
-        if (!foundDownhill) nextFishX += 2000; 
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
@@ -1936,7 +1951,7 @@ function gameLoop(dt) {
     let cameraZoom = gameRoot.scale.x / baseHScale;
     let invZoom = 1 / cameraZoom;
     
-    let uiListUpdate = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "pauseScreen", "gameOverScreen"];
+    let uiListUpdate = ["txtDistance", "txtCoins", "btnPause", "mcEnergyBar", "iconCoin", "iconDistance", "txtFPS", "txtSpeed", "pauseScreen", "gameOverScreen"];
     
     for (let i = 0; i < uiListUpdate.length; i++) {
         let el = gameRoot[uiListUpdate[i]];
@@ -1953,6 +1968,7 @@ function gameLoop(dt) {
     if (gameRoot.txtDistance && gameRoot.txtDistance.text != displayDist) gameRoot.txtDistance.text = displayDist;
     if (gameRoot.txtCoins && gameRoot.txtCoins.text != coinsCollected) gameRoot.txtCoins.text = coinsCollected;
     if (gameRoot.txtFPS && gameRoot.txtFPS.text !== "FPS: 60") gameRoot.txtFPS.text = "FPS: 60";
+    if (gameRoot.txtSpeed) gameRoot.txtSpeed.text = "SPEED: " + Math.floor(speedX);
 
     if (gameRoot.mcEnergyBar) {
         visualEnergy += (currentEnergy - visualEnergy) * 0.08 * dt; 
@@ -1963,10 +1979,10 @@ function gameLoop(dt) {
             gameRoot.mcEnergyBar.gotoAndStop(targetFrame);
         }
         
-        // ВИЗУАЛЬНАЯ УГРОЗА: Пульсация при энергии < 20%
+        // ВИЗУАЛЬНАЯ УГРОЗА: Интенсивная пульсация при энергии < 20%
         if (percent < 0.20 && currentEnergy > 0 && !window.isEnergyEmpty) {
-            // Плавно меняем прозрачность от 0.4 до 1.0 на основе времени
-            gameRoot.mcEnergyBar.alpha = 0.4 + Math.abs(Math.sin(performance.now() * 0.005)) * 0.6;
+            // Быстрое и резкое мигание (частота 0.015, размах от 0.1 до 1.0)
+            gameRoot.mcEnergyBar.alpha = 0.1 + Math.abs(Math.sin(performance.now() * 0.015)) * 0.9;
         } else {
             gameRoot.mcEnergyBar.alpha = 1;
         }

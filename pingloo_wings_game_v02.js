@@ -514929,7 +514929,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[241]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.632, -763.198, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new Graphic415(MovieClip.SYNCHED)
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new Graphic414(MovieClip.SYNCHED)
@@ -516088,7 +516088,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[244]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.567, -763.19, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new Graphic425(MovieClip.SYNCHED)
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new Graphic424(MovieClip.SYNCHED)
@@ -535763,7 +535763,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[241]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.632, -763.198, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new Graphic437(MovieClip.SYNCHED)
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new Graphic436(MovieClip.SYNCHED)
@@ -542218,7 +542218,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[241]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.632, -763.198, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new Graphic447(MovieClip.SYNCHED)
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new Graphic446(MovieClip.SYNCHED)
@@ -542810,7 +542810,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[244]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.567, -763.19, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new Graphic458(MovieClip.SYNCHED)
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new Graphic457(MovieClip.SYNCHED)
@@ -542871,7 +542871,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[241]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.632, -763.198, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new lib.Graphic462()
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new lib.Graphic461()
@@ -543652,7 +543652,7 @@
             .drawCommands(shapes.pingloo_wings_game_v02[241]);
         var instance5 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[35])
-            .setTransform(-120.632, -763.198, 0.489, 0.429, 0, -0.194, 0.251);
+            .setTransform(-120.599, -763.194, 0.489, 0.429, 0, -0.194, 0.251);
         var instance4 = new Graphic477(MovieClip.SYNCHED)
             .setTransform(55, -59.6, 0.656, 0.656, 0.126);
         var instance3 = new Graphic476(MovieClip.SYNCHED)
@@ -855253,144 +855253,144 @@
             duration: 1,
             framerate: 60
         });
-        var instance59 = new lib.Sled_0()
+        var instance60 = new lib.Sled_0()
             .setTransform(-12.35, 1762.6);
-        this[instance59.name = "Sled_0"] = instance59;
-        var instance58 = new lib.Sled1()
+        this[instance60.name = "Sled_0"] = instance60;
+        var instance59 = new lib.Sled1()
             .setTransform(-12.35, 1853.4);
-        this[instance58.name = "Sled_1"] = instance58;
-        var instance57 = new lib.Sled_2()
+        this[instance59.name = "Sled_1"] = instance59;
+        var instance58 = new lib.Sled_2()
             .setTransform(243.05, 1853.4);
-        this[instance57.name = "Sled_2"] = instance57;
-        var instance56 = new lib.Sled_3()
+        this[instance58.name = "Sled_2"] = instance58;
+        var instance57 = new lib.Sled_3()
             .setTransform(427.35, 1853.4);
-        this[instance56.name = "Sled_3"] = instance56;
-        var instance55 = new lib.Sled_4()
+        this[instance57.name = "Sled_3"] = instance57;
+        var instance56 = new lib.Sled_4()
             .setTransform(-12.35, 1945.5);
-        this[instance55.name = "Sled_4"] = instance55;
-        var instance54 = new lib.Sled_5()
+        this[instance56.name = "Sled_4"] = instance56;
+        var instance55 = new lib.Sled_5()
             .setTransform(117.35, 2019);
-        this[instance54.name = "Sled_5"] = instance54;
-        var instance53 = new lib.Sled_6()
+        this[instance55.name = "Sled_5"] = instance55;
+        var instance54 = new lib.Sled_6()
             .setTransform(437.65, 1945.5);
-        this[instance53.name = "Sled_6"] = instance53;
-        var instance52 = new lib.Sled_7()
+        this[instance54.name = "Sled_6"] = instance54;
+        var instance53 = new lib.Sled_7()
             .setTransform(660.9, 1944.95);
-        this[instance52.name = "Sled_7"] = instance52;
-        var instance51 = new lib.bgSky()
+        this[instance53.name = "Sled_7"] = instance53;
+        var instance52 = new lib.bgSky()
             .setTransform(952.05, 539.85);
-        this[instance51.name = "bgSky_0"] = instance51;
-        var instance50 = new lib.bgCloudsBack()
+        this[instance52.name = "bgSky_0"] = instance52;
+        var instance51 = new lib.bgCloudsBack()
             .setTransform(1942.95, 94.35);
-        this[instance50.name = "bgCloudsBack_0"] = instance50;
-        var instance49 = new lib.mountains2()
+        this[instance51.name = "bgCloudsBack_0"] = instance51;
+        var instance50 = new lib.mountains2()
             .setTransform(0, -341.5);
-        this[instance49.name = "bgMountains_0"] = instance49;
-        var instance48 = new lib.forest2()
+        this[instance50.name = "bgMountains_0"] = instance50;
+        var instance49 = new lib.forest2()
             .setTransform(0.3, -93.55);
-        this[instance48.name = "bgTrees_0"] = instance48;
-        var instance47 = new lib.bgCloudsFront()
+        this[instance49.name = "bgTrees_0"] = instance49;
+        var instance48 = new lib.bgCloudsFront()
             .setTransform(1899.6, -501.9);
-        this[instance47.name = "bgCloudsFront_0"] = instance47;
-        var instance46 = new lib.bgSky_1()
+        this[instance48.name = "bgCloudsFront_0"] = instance48;
+        var instance47 = new lib.bgSky_1()
             .setTransform(952.05, 539.85);
-        this[instance46.name = "bgSky_1"] = instance46;
-        var instance45 = new lib.bgCloudsBack_1()
+        this[instance47.name = "bgSky_1"] = instance47;
+        var instance46 = new lib.bgCloudsBack_1()
             .setTransform(23.3, 94.35);
-        this[instance45.name = "bgCloudsBack_1"] = instance45;
-        var instance44 = new lib.mountains2_1()
+        this[instance46.name = "bgCloudsBack_1"] = instance46;
+        var instance45 = new lib.mountains2_1()
             .setTransform(-1696.85, -374.35);
-        this[instance44.name = "bgMountains_1"] = instance44;
-        var instance43 = new lib.forest2_1()
+        this[instance45.name = "bgMountains_1"] = instance45;
+        var instance44 = new lib.forest2_1()
             .setTransform(-1853.35, 787.65);
-        this[instance43.name = "bgTrees_1"] = instance43;
-        var instance42 = new lib.bgCloudsFront_1()
+        this[instance44.name = "bgTrees_1"] = instance44;
+        var instance43 = new lib.bgCloudsFront_1()
             .setTransform(1897.1, -503.45);
-        this[instance42.name = "bgCloudsFront_1"] = instance42;
-        var instance41 = new lib.bgSky_2()
+        this[instance43.name = "bgCloudsFront_1"] = instance43;
+        var instance42 = new lib.bgSky_2()
             .setTransform(952.05, 539.85);
-        this[instance41.name = "bgSky_2"] = instance41;
-        var instance40 = new lib.bgCloudsBack_2()
+        this[instance42.name = "bgSky_2"] = instance42;
+        var instance41 = new lib.bgCloudsBack_2()
             .setTransform(23.3, 94.35);
-        this[instance40.name = "bgCloudsBack_2"] = instance40;
-        var instance39 = new lib.mountains_2()
+        this[instance41.name = "bgCloudsBack_2"] = instance41;
+        var instance40 = new lib.mountains_2()
             .setTransform(-1696.85, -428.7);
-        this[instance39.name = "bgMountains_2"] = instance39;
-        var instance38 = new lib.forest_2()
+        this[instance40.name = "bgMountains_2"] = instance40;
+        var instance39 = new lib.forest_2()
             .setTransform(-1853.35, -52.55);
-        this[instance38.name = "bgTrees_2"] = instance38;
-        var instance37 = new lib.bgCloudsFront_2()
+        this[instance39.name = "bgTrees_2"] = instance39;
+        var instance38 = new lib.bgCloudsFront_2()
             .setTransform(-19.6, -503.45);
-        this[instance37.name = "bgCloudsFront_2"] = instance37;
-        var instance36 = new lib.bgSky_3()
+        this[instance38.name = "bgCloudsFront_2"] = instance38;
+        var instance37 = new lib.bgSky_3()
             .setTransform(952.05, 539.85);
-        this[instance36.name = "bgSky_3"] = instance36;
-        var instance35 = new lib.bgCloudsBack_3()
+        this[instance37.name = "bgSky_3"] = instance37;
+        var instance36 = new lib.bgCloudsBack_3()
             .setTransform(23.3, 94.35);
-        this[instance35.name = "bgCloudsBack_3"] = instance35;
-        var instance34 = new lib.mountains_3()
+        this[instance36.name = "bgCloudsBack_3"] = instance36;
+        var instance35 = new lib.mountains_3()
             .setTransform(-1696.85, -428.7);
-        this[instance34.name = "bgMountains_3"] = instance34;
-        var instance33 = new lib.forest_3()
+        this[instance35.name = "bgMountains_3"] = instance35;
+        var instance34 = new lib.forest_3()
             .setTransform(-1853.35, -52.55);
-        this[instance33.name = "bgTrees_3"] = instance33;
-        var instance32 = new lib.bgCloudsFront_3()
+        this[instance34.name = "bgTrees_3"] = instance34;
+        var instance33 = new lib.bgCloudsFront_3()
             .setTransform(-19.6, -503.45);
-        this[instance32.name = "bgCloudsFront_3"] = instance32;
-        var instance31 = new lib.Sky_4()
+        this[instance33.name = "bgCloudsFront_3"] = instance33;
+        var instance32 = new lib.Sky_4()
             .setTransform(952.05, 539.85);
-        this[instance31.name = "bgSky_4"] = instance31;
-        var instance30 = new lib.Mountains_4()
+        this[instance32.name = "bgSky_4"] = instance32;
+        var instance31 = new lib.Mountains_4()
             .setTransform(-1696.85, -428.7);
-        this[instance30.name = "bgMountains_4"] = instance30;
-        var instance29 = new lib.Trees_4()
+        this[instance31.name = "bgMountains_4"] = instance31;
+        var instance30 = new lib.Trees_4()
             .setTransform(-1853.35, -52.55);
-        this[instance29.name = "bgTrees_4"] = instance29;
-        var instance28 = new lib.Sky_5()
+        this[instance30.name = "bgTrees_4"] = instance30;
+        var instance29 = new lib.Sky_5()
             .setTransform(952.05, 539.85);
-        this[instance28.name = "bgSky_5"] = instance28;
-        var instance27 = new lib.Mountains_5()
+        this[instance29.name = "bgSky_5"] = instance29;
+        var instance28 = new lib.Mountains_5()
             .setTransform(-1696.85, -428.7);
-        this[instance27.name = "bgMountains_5"] = instance27;
-        var instance26 = new lib.Trees_5()
+        this[instance28.name = "bgMountains_5"] = instance28;
+        var instance27 = new lib.Trees_5()
             .setTransform(-1853.35, -52.55);
-        this[instance26.name = "bgTrees_5"] = instance26;
-        var instance25 = new lib.bgSky_6()
+        this[instance27.name = "bgTrees_5"] = instance27;
+        var instance26 = new lib.bgSky_6()
             .setTransform(952.05, 539.85);
-        this[instance25.name = "bgSky_6"] = instance25;
-        var instance24 = new lib.bgCloudsBack_6()
+        this[instance26.name = "bgSky_6"] = instance26;
+        var instance25 = new lib.bgCloudsBack_6()
             .setTransform(23.3, 94.35);
-        this[instance24.name = "bgCloudsBack_6"] = instance24;
-        var instance23 = new lib.mountains_6()
+        this[instance25.name = "bgCloudsBack_6"] = instance25;
+        var instance24 = new lib.mountains_6()
             .setTransform(-1696.85, -428.7);
-        this[instance23.name = "bgMountains_6"] = instance23;
-        var instance22 = new lib.forest_6()
+        this[instance24.name = "bgMountains_6"] = instance24;
+        var instance23 = new lib.forest_6()
             .setTransform(-1853.35, -52.55);
-        this[instance22.name = "bgTrees_6"] = instance22;
-        var instance21 = new lib.bgCloudsFront_6()
+        this[instance23.name = "bgTrees_6"] = instance23;
+        var instance22 = new lib.bgCloudsFront_6()
             .setTransform(-19.6, -503.45);
-        this[instance21.name = "bgCloudsFront_6"] = instance21;
-        var instance20 = new lib.bgSky_7()
+        this[instance22.name = "bgCloudsFront_6"] = instance22;
+        var instance21 = new lib.bgSky_7()
             .setTransform(952.05, 539.85);
-        this[instance20.name = "bgSky_7"] = instance20;
-        var instance19 = new lib.mountains_7()
+        this[instance21.name = "bgSky_7"] = instance21;
+        var instance20 = new lib.mountains_7()
             .setTransform(-1696.85, -428.7);
-        this[instance19.name = "bgMountains_7"] = instance19;
-        var instance18 = new lib.forest_7()
+        this[instance20.name = "bgMountains_7"] = instance20;
+        var instance19 = new lib.forest_7()
             .setTransform(-1853.35, -52.55);
-        this[instance18.name = "bgTrees_7"] = instance18;
-        var instance17 = new lib.bgHolder();
-        this[instance17.name = "bgContainerMC"] = instance17;
-        var instance16 = new lib.Ground_mc()
+        this[instance19.name = "bgTrees_7"] = instance19;
+        var instance18 = new lib.bgHolder();
+        this[instance18.name = "bgContainerMC"] = instance18;
+        var instance17 = new lib.Ground_mc()
             .setTransform(962.45, 817.35, 1.001, 1.001);
-        this[instance16.name = "ground"] = instance16;
-        var instance15 = new lib.player()
+        this[instance17.name = "ground"] = instance17;
+        var instance16 = new lib.player()
             .setTransform(913.95, 391.55);
-        this[instance15.name = "player"] = instance15;
-        var instance14 = new lib.avalanche()
+        this[instance16.name = "player"] = instance16;
+        var instance15 = new lib.avalanche()
             .setTransform(-1364.2, 549.3);
-        this[instance14.name = "avalanche"] = instance14;
-        var instance13 = new Text("0")
+        this[instance15.name = "avalanche"] = instance15;
+        var instance14 = new Text("0")
             .setStyle({
                 fontFamily: "Titan One",
                 fontSize: 70,
@@ -855400,8 +855400,8 @@
                 wordWrapWidth: 104
             })
             .setTransform(181.85, 170.4, 0.671, 0.671);
-        this[instance13.name = "txtDistance"] = instance13;
-        var instance12 = new Text("0")
+        this[instance14.name = "txtDistance"] = instance14;
+        var instance13 = new Text("0")
             .setStyle({
                 fontFamily: "Titan One",
                 fontSize: 70,
@@ -855411,17 +855411,17 @@
                 wordWrapWidth: 100.1
             })
             .setTransform(177.7, 262.3, 0.711, 0.711);
-        this[instance12.name = "txtCoins"] = instance12;
-        var instance11 = new lib.btnPause()
+        this[instance13.name = "txtCoins"] = instance13;
+        var instance12 = new lib.btnPause()
             .setTransform(108.15, 85.45, 0.791, 0.791);
-        this[instance11.name = "btnPause"] = instance11;
-        var instance10 = new lib.Coin_static()
+        this[instance12.name = "btnPause"] = instance12;
+        var instance11 = new lib.Coin_static()
             .setTransform(110.9, 291.65, 1.331, 1.331);
-        this[instance10.name = "iconCoin"] = instance10;
-        var instance9 = new lib.iconDistance()
+        this[instance11.name = "iconCoin"] = instance11;
+        var instance10 = new lib.iconDistance()
             .setTransform(121.05, 197.4, 1.331, 1.331);
-        this[instance9.name = "iconDistance"] = instance9;
-        var instance8 = new Text("0")
+        this[instance10.name = "iconDistance"] = instance10;
+        var instance9 = new Text("0")
             .setStyle({
                 fontFamily: "Arial",
                 fontSize: 96,
@@ -855430,11 +855430,22 @@
                 wordWrap: true,
                 wordWrapWidth: 150.95
             })
-            .setTransform(1846.35, 15.9, 0.504, 0.504);
-        this[instance8.name = "txtFPS"] = instance8;
-        var instance7 = new lib.mcEnergyBar()
+            .setTransform(1807.2, 15.9, 0.504, 0.504);
+        this[instance9.name = "txtFPS"] = instance9;
+        var instance8 = new lib.mcEnergyBar()
             .setTransform(393, 86.3, 1.409, 1.492);
-        this[instance7.name = "mcEnergyBar"] = instance7;
+        this[instance8.name = "mcEnergyBar"] = instance8;
+        var instance7 = new Text("0")
+            .setStyle({
+                fontFamily: "Arial",
+                fontSize: 96,
+                fill: "#f6f",
+                leading: 2,
+                wordWrap: true,
+                wordWrapWidth: 150.95
+            })
+            .setTransform(1807.2, 105, 0.504, 0.504);
+        this[instance7.name = "txtSpeed"] = instance7;
         var instance6 = new lib.Menu()
             .setTransform(961.1, 541.65);
         this[instance6.name = "menuScreen"] = instance6;
@@ -855452,7 +855463,7 @@
         this[instance2.name = "gameOverScreen"] = instance2;
         var instance1 = new Graphics()
             .drawCommands(shapes.pingloo_wings_game_v02[0]);
-        this.addChild(instance59, instance58, instance57, instance56, instance55, instance54, instance53, instance52, instance51, instance50, instance49, instance48, instance47, instance46, instance45, instance44, instance43, instance42, instance41, instance40, instance39, instance38, instance37, instance36, instance35, instance34, instance33, instance32, instance31, instance30, instance29, instance28, instance27, instance26, instance25, instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
+        this.addChild(instance60, instance59, instance58, instance57, instance56, instance55, instance54, instance53, instance52, instance51, instance50, instance49, instance48, instance47, instance46, instance45, instance44, instance43, instance42, instance41, instance40, instance39, instance38, instance37, instance36, instance35, instance34, instance33, instance32, instance31, instance30, instance29, instance28, instance27, instance26, instance25, instance24, instance23, instance22, instance21, instance20, instance19, instance18, instance17, instance16, instance15, instance14, instance13, instance12, instance11, instance10, instance9, instance8, instance7, instance6, instance5, instance4, instance3, instance2, instance1);
         this.addAction(function () {
             this.stop();
         }, 0);
