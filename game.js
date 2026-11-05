@@ -1015,10 +1015,17 @@ function setPlayerState(state) {
 function getHillY(x) {
     let rx = x + trackSeed;
     let globalAmplitude = 1 + Math.sin(rx * 0.0004) * 0.4; 
-    let wave1 = Math.sin(rx * 0.0022) * (150 * globalAmplitude); 
-    let wave2 = Math.cos(rx * 0.0011) * 100;  
-    let wave3 = Math.cos(rx * 0.0033) * 30;  
-    let macroWave = Math.sin(rx * 0.00015) * 80;
+
+    // --- ОСОБЕННОСТИ БИОМОВ (ВЫСОТА ХОЛМОВ) ---
+    let hMod = 1.0;
+    if (currentBiomeIndex === 2) hMod = 0.85; // Биом 2 (Луга): Холмы чуть ниже
+    else if (currentBiomeIndex === 3 || currentBiomeIndex === 5) hMod = 0.6; // Биомы 3 и 5 (Пляж и Ванна): Холмы сильно ниже
+    
+    // Применяем модификатор ко всем волнам
+    let wave1 = Math.sin(rx * 0.0022) * (150 * globalAmplitude * hMod); 
+    let wave2 = Math.cos(rx * 0.0011) * (100 * hMod);  
+    let wave3 = Math.cos(rx * 0.0033) * (30 * hMod);  
+    let macroWave = Math.sin(rx * 0.00015) * (80 * hMod);
     
     let rawY = baseY + wave1 + wave2 + wave3 + macroWave;
     
@@ -1472,6 +1479,9 @@ function gameLoop(dt) {
                 // СОСТОЯНИЕ В ПОТОКЕ (>65): Энергия вообще не тратится!
                 currentRate = 0; 
             }
+
+            // ОСОБЕННОСТЬ БИОМА 2 (Луга): Энергия тратится на 30% медленнее
+            if (currentBiomeIndex === 2) currentRate *= 0.7;
             
             if (!window.isEnergyEmpty) {
                 currentEnergy -= currentRate * dt;
@@ -1588,6 +1598,9 @@ function gameLoop(dt) {
     let diveGrav = (window.selectedCharID === 1) ? 2.0 : (window.selectedCharID === 3) ? 3.5 : 2.5;
     
     let currentGravity = isDiving ? diveGrav : baseGrav;
+
+    // ОСОБЕННОСТЬ БИОМА 7 (Космос): Гравитация слабее на 35%. Игрок парит.
+    if (currentBiomeIndex === 7) currentGravity *= 0.65;
     
     velocityY += currentGravity * dt;
     player.y += velocityY * dt;
@@ -1752,19 +1765,25 @@ function gameLoop(dt) {
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
     while (nextCoinX < worldOffsetX + 5000) {
         if (Math.abs(nextCoinX - nextSledX) < 1200) nextCoinX += 1200;
-        // ФИКС НАЛОЖЕНИЯ: Увеличиваем буфер до 1500, чтобы монеты бежали от рыб
         if (Math.abs(nextCoinX - nextFishX) < 1500) nextCoinX += 1500;
+        
         let patternType = Math.floor(Math.random() * 4); 
+        
+        // ОСОБЕННОСТЬ БИОМА 6 (Пирамиды): Только цепочки на земле (0) и пирамиды/треугольники (3)
+        if (currentBiomeIndex === 6) patternType = (Math.random() > 0.5) ? 0 : 3;
+        
         let startX = nextCoinX;
         let skyHeight = 400 + Math.random() * 800; 
 
         if (patternType === 0) {
             let numCoins = 6 + Math.floor(Math.random() * 6);
+            // Пирамиды: Цепочки на земле в 2 раза длиннее
+            if (currentBiomeIndex === 6) numCoins = 15 + Math.floor(Math.random() * 10); 
             let spacing = 90;
             for (let i = 0; i < numCoins; i++) spawnCoin(startX + (i * spacing), getHillY(startX + (i * spacing)) - 80);
             nextCoinX += (numCoins * spacing) + 3000 + Math.random() * 2000;
         } 
-        else if (patternType === 1) {
+        else if (patternType === 1) { // ... квадраты без изменений
             let cy = getHillY(startX) - skyHeight; 
             let spacing = 70;
             for (let row = 0; row < 5; row++) {
@@ -1790,6 +1809,7 @@ function gameLoop(dt) {
                 for (let c = 0; c < coinsInRow; c++) spawnCoin(startX + startOffsetX + (c * spacing), cy + (r * spacing));
             }
             nextCoinX += 3500 + Math.random() * 2000;
+            if (currentBiomeIndex === 7) nextCoinX += 3500;
         }
     }
 
@@ -1805,17 +1825,31 @@ function gameLoop(dt) {
                 let foundDownhill = false;
                 for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
                     if (Math.abs(scanX - nextSledX) < 1500) continue;
-                    // Двойная защита: рыба тоже не спавнится там, где уже намечены монеты
                     if (Math.abs(scanX - nextCoinX) < 1500) continue; 
                     
                     let nextY = getHillY(scanX + 10);
                     let prevY = getHillY(scanX - 10);
-                    if (nextY - prevY > 4) {
-                        // Спавн строго ОДНОЙ рыбы
-                        spawnFish(scanX, getHillY(scanX) - 40); 
+                    
+                    // БИОМ 4 (Вода): Спавним в воздухе, игнорируем наклон холма
+                    let isValidSpawn = (currentBiomeIndex === 4) ? true : (nextY - prevY > 4);
+                    
+                    if (isValidSpawn) {
+                        let fishCount = (currentBiomeIndex === 3) ? 3 : 1; // БИОМ 3 (Пляж): Стайки по 3
                         
-                        // Следующая одиночная рыба через 40-70 метров
-                        nextFishX = scanX + 4000 + Math.random() * 3000; 
+                        let fishY = (currentBiomeIndex === 4) 
+                            ? getHillY(scanX) - 300 - Math.random() * 200 // БИОМ 4: Рыба высоко в воздухе
+                            : getHillY(scanX) - 40; // Обычная рыба над землей
+                        
+                        // Спавним рыбу (или стайку)
+                        for (let k = 0; k < fishCount; k++) {
+                            spawnFish(scanX + k * 80, fishY); 
+                        }
+                        
+                        let baseDist = 4000 + Math.random() * 3000;
+                        if (currentBiomeIndex === 2) baseDist *= 1.5; // БИОМ 2: Рыб меньше (реже)
+                        else if (currentBiomeIndex === 4) baseDist *= 0.5; // БИОМ 4: Рыб в 2 раза больше (чаще)
+                        
+                        nextFishX = scanX + baseDist; 
                         
                         foundDownhill = true;
                         break;

@@ -78,32 +78,34 @@
         
         <script>
             var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            // На ПК максимум (2), на смартфонах - 1.25 (это уберет шакальное мыло, но снизит нагрузку на GPU почти вдвое)
+            // На ПК максимум (2), на смартфонах - 1.25
             var dpr = isMobile ? 1.25 : Math.min(window.devicePixelRatio || 1, 2);
 
             var gameScene = new PIXI.animate.Scene(1920, 1080, {
                 view: document.getElementById("stage"),
                 backgroundColor: 0x000000,
                 antialias: !isMobile,
-                resolution: dpr // Задаем четкость на ПК один раз при старте
+                resolution: dpr 
             });
 
-            // Подключаем прогресс загрузки к тексту
-            PIXI.animate.Animator.stop(); // Глушим анимации на время загрузки
-            
-            gameScene.load(lib.pingloo_wings_game_v02, 
-                // Callback по завершению
-                function(instance) {
-                    let pText = document.getElementById("preloader-text");
-                    if (pText) pText.innerText = "LOADING 100%";
-                    if (typeof window.initGame === 'function') window.initGame(instance, gameScene);
-                },
-                // Callback прогресса (от PixiJS)
-                function(loader, resource) {
-                    let pText = document.getElementById("preloader-text");
-                    if (pText) pText.innerText = "LOADING " + Math.floor(loader.progress) + "%";
+            // ФИКС ЗАГРУЗКИ: Безопасно цепляемся к глобальному лоадеру PixiJS для процентов
+            var pixiLoader = PIXI.Loader ? PIXI.Loader.shared : PIXI.loader;
+            if (pixiLoader) {
+                pixiLoader.onProgress.add(function(l) {
+                    var pText = document.getElementById("preloader-text");
+                    if (pText) pText.innerText = "LOADING " + Math.floor(l.progress) + "%";
+                });
+            }
+
+            // ОРИГИНАЛЬНЫЙ ВЫЗОВ (без 3-го параметра, чтобы не ломать пути к ассетам)
+            gameScene.load(lib.pingloo_wings_game_v02, function(instance) {
+                var pText = document.getElementById("preloader-text");
+                if (pText) pText.innerText = "LOADING 100%";
+                
+                if (typeof window.initGame === 'function') {
+                    window.initGame(instance, gameScene);
                 }
-            );
+            });
         </script>
     </body>
 </html>
