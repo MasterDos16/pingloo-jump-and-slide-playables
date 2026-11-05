@@ -365,19 +365,29 @@ window.initGame = function(root, pixiScene) {
         if (typeof avalanche.stop === "function") avalanche.stop();
     }
 
-    // --- СОЗДАЕМ ЛЕГКУЮ ПРОГРАММНУЮ БУРЮ ---
+    // --- СОЗДАЕМ ОБЪЕМНУЮ БУРЮ (Завихрения) ---
     window.stormContainer = new PIXI.Container();
     window.stormParticles = [];
     
-    // Создаем 60 летящих частиц-линий (снежинки/песок/искры)
-    for(let i = 0; i < 60; i++) {
-        let p = new PIXI.Sprite(PIXI.Texture.WHITE);
-        p.width = 30 + Math.random() * 100; // Длинные шлейфы ветра
-        p.height = 3 + Math.random() * 5;   // Толщина
-        p.x = Math.random() * 2000;
-        p.y = -1000 + Math.random() * 3000;
-        p.baseSpeed = 20 + Math.random() * 30; // У каждой своя скорость полета
-        p.alpha = 0.3 + Math.random() * 0.5;
+    // Создаем 40 крупных сфер, которые накладываются друг на друга
+    for(let i = 0; i < 40; i++) {
+        let p = new PIXI.Graphics();
+        p.beginFill(0xFFFFFF);
+        p.drawCircle(0, 0, 150 + Math.random() * 100); // Огромные пухлые сферы
+        p.endFill();
+        
+        p.offsetX = Math.random() * 1200; // Глубина фронта бури
+        p.baseY = -500 + Math.random() * 2000; 
+        
+        p.alpha = 0.15 + Math.random() * 0.2; // Полупрозрачные, вместе дают плотность
+        
+        p.angle = Math.random() * Math.PI * 2;
+        p.orbitSpeed = 0.02 + Math.random() * 0.04;
+        p.orbitRadius = 50 + Math.random() * 200;
+        
+        p.scaleTime = Math.random() * 100;
+        p.scaleSpeed = 0.02 + Math.random() * 0.03;
+        
         window.stormContainer.addChild(p);
         window.stormParticles.push(p);
     }
@@ -1691,15 +1701,11 @@ function gameLoop(dt) {
                     let nextY = getHillY(scanX + 10);
                     let prevY = getHillY(scanX - 10);
                     if (nextY - prevY > 4) {
+                        // Спавн строго ОДНОЙ рыбы
+                        spawnFish(scanX, getHillY(scanX) - 40); 
                         
-                        // СТАЯ ИЗ 5 РЫБОК ВДОЛЬ СКЛОНА
-                        for (let k = 0; k < 5; k++) {
-                            let fx = scanX + (k * 75); // Расстояние между рыбками
-                            spawnFish(fx, getHillY(fx) - 40); 
-                        }
-                        
-                        // Следующая стая будет не скоро, за нее придется побороться
-                        nextFishX = scanX + 6000 + Math.random() * 4000; 
+                        // Следующая одиночная рыба через 40-70 метров
+                        nextFishX = scanX + 4000 + Math.random() * 3000; 
                         
                         foundDownhill = true;
                         break;
@@ -1750,19 +1756,10 @@ function gameLoop(dt) {
         }
     }
 
-    let baseMagnet = (window.selectedCharID === 2) ? 200 : 35; // У Моми радиус 200, у остальных только касание
-    let speedMagnet = 0;
+    let baseMagnet = (window.selectedCharID === 2) ? 200 : 35;
+    let coinMagnetBonus = baseMagnet; 
+    let fishHitRadius = 40; // Рыбы собираются строго физическим касанием
 
-    // ДИНАМИЧЕСКИЙ МАГНИТ (ТОЛЬКО ДЛЯ РЫБ): Чем выше скорость, тем жестче пылесос
-    if (speedX >= 20 && speedX < 40) speedMagnet = 40;
-    else if (speedX >= 40 && speedX < 60) speedMagnet = 100;
-    else if (speedX >= 60 && speedX < 80) speedMagnet = 200;
-    else if (speedX >= 80) speedMagnet = 350;
-
-    let fishMagnetBonus = baseMagnet + speedMagnet; // Рыбы всасываются на скорости
-    let coinMagnetBonus = baseMagnet; // МОНЕТЫ НЕ ВСАСЫВАЮТСЯ (работает только база Моми)
-
-    // --- СБОР МОНЕТ ---
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
         c.shape.x = c.worldX - worldOffsetX;
@@ -1786,7 +1783,7 @@ function gameLoop(dt) {
         let distX = Math.abs(c.worldX - playerWorldX);
         let distY = Math.abs(c.shape.y - player.y);
 
-        // ФИКС: Используем coinMagnetBonus!
+        // СБОР МОНЕТ (С учетом бонуса Моми)
         if (!c.hit && distX < (c.hitRadius + coinMagnetBonus) && distY < (c.hitRadius + coinMagnetBonus)) {
             c.hit = true;
             coinsCollected++;
@@ -1834,24 +1831,9 @@ function gameLoop(dt) {
         let distX = Math.abs(f.worldX - playerWorldX);
         let distY = Math.abs(f.shape.y - player.y);
 
-        // ФИКС: Используем fishMagnetBonus!
-        if (!f.hit && distX < (f.hitRadius + fishMagnetBonus) && distY < (f.hitRadius + fishMagnetBonus)) {
+        // СБОР РЫБ (Без магнита)
+        if (!f.hit && distX < fishHitRadius && distY < fishHitRadius) {
             f.hit = true;
-            createjs.Sound.play("SfxFish"); 
-            
-            currentEnergy += (window.selectedCharID === 3) ? 24 : 16; 
-            if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
-            
-            let startScale = f.shape.scale.x;
-            addTween(f.shape, { x: player.x, y: player.y - 20, alpha: 0 }, 250, () => {
-                f.shape.visible = false;
-                f.shape.alpha = 1;
-                f.shape.scale.set(startScale);
-                objPool.fishes.push(f.shape);
-            });
-            addTween(f.shape.scale, { x: 0, y: 0 }, 250);
-            
-            fishes.splice(i, 1);
         }
     }
 
@@ -1949,23 +1931,25 @@ function gameLoop(dt) {
     
     // АНИМАЦИЯ ЧАСТИЦ БУРИ
     if (window.stormContainer) {
-        // Буря ползет за нами (частицы занимают 2000px позади фронта)
-        window.stormContainer.x = avalancheWorldX - worldOffsetX - 2000; 
+        // Буря ползет за нами (фронт надвигается слева, перекрывая Кико при проигрыше)
+        window.stormContainer.x = avalancheWorldX - worldOffsetX - 500; 
         
-        // Цвета бури под биом (0:Снег, 1:Лед, 2:Лес, 3-4:Песок, 5:Вода, 6:Пустыня, 7:Космос)
         let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xAEAFCE];
         let stormColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
 
         for(let i = 0; i < window.stormParticles.length; i++) {
             let p = window.stormParticles[i];
-            p.x += p.baseSpeed * dt; // Частицы летят вправо
             p.tint = stormColor;
             
-            // Если частица улетела за фронт бури, возвращаем ее назад
-            if (p.x > 2000) {
-                p.x = 0;
-                p.y = player.y - 1000 + Math.random() * 2000; // Летают вокруг высоты игрока
-            }
+            // Буря клубится (вращение элементов по орбитам)
+            p.angle += p.orbitSpeed * dt;
+            p.x = p.offsetX + Math.cos(p.angle) * p.orbitRadius;
+            p.y = p.baseY + Math.sin(p.angle) * p.orbitRadius;
+            
+            // Дыхание/пульсация размера облаков
+            p.scaleTime += p.scaleSpeed * dt;
+            let s = 1.0 + Math.sin(p.scaleTime) * 0.3;
+            p.scale.set(s);
         }
     }
     
