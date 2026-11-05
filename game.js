@@ -1564,10 +1564,12 @@ function gameLoop(dt) {
                 speedX += slopeForce * (hasSled ? 0.3 : 0.6) * dt; 
             }
             
+            let airFriction = speedX * 0.003; 
+            
             if (inactivityFrames > 300) {
-                speedX -= (hasSled ? 0.03 : 0.15) * dt; 
+                speedX -= (hasSled ? airFriction * 0.5 : airFriction * 2.5) * dt; 
             } else {
-                speedX -= (hasSled ? 0.01 : 0.05) * dt; 
+                speedX -= (hasSled ? airFriction * 0.2 : airFriction) * dt; 
             }
         }
 
@@ -1677,8 +1679,8 @@ function gameLoop(dt) {
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
-        spawnSled(nextSledX, getHillY(nextSledX)); // Увеличивай 50, чтобы поднять выше
-        nextSledX += 24000 + Math.random() * 16000; 
+        spawnSled(nextSledX, getHillY(nextSledX)); 
+        nextSledX += 80000 + Math.random() * 40000; // Спавн раз в 800-1200 метров
     }
 
     for (let i = effects.length - 1; i >= 0; i--) {
@@ -1865,7 +1867,8 @@ function gameLoop(dt) {
             s.hit = true;
             hasSled = true;
             sledTimer = (window.selectedCharID === 1) ? 1200 : 900;
-            speedX += 25; 
+            // Умный разгон: не кидаем в космос, если скорость уже огромная
+            speedX = speedX < 45 ? 60 : speedX + 10; 
             spawnBoostFlash();
             spawnComboText("TURBO SLED!");
             createjs.Sound.play("SfxSledPickup");
