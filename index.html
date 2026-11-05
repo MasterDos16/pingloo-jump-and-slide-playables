@@ -30,14 +30,13 @@
     <div style="font-family: 'PinglooFont'; position: absolute; left: -9999px; visibility: hidden;">preload</div>
 
     <!-- 2. HTML-Прелоадер игры -->
-    <div id="game-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #80C5FA; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'PinglooFont', sans-serif; color: white; transition: opacity 0.5s ease;">
-        <img src="img/preloader.gif" style="width: 150px; height: auto; margin-bottom: 20px;">
-        <div id="preloader-text" style="font-size: 50px;">LOADING...</div>
+    <div id="game-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #80C5FA; z-index: 9999; display: flex; justify-content: center; align-items: center; font-family: 'PinglooFont', sans-serif; color: white; transition: opacity 0.5s ease;">
+        <!-- Текст загрузки с процентами -->
+        <div id="preloader-text" style="font-size: 60px; text-align: center;">LOADING 0%</div>
     </div>
 
     <!-- 3. Экран требования поворота (Orientation Lock) -->
-    <div id="orientation-lock" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; font-family: 'PinglooFont', sans-serif;">
-        <!-- Можно вставить сюда картинку -->
+    <div id="orientation-lock" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #80C5FA; z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; font-family: 'PinglooFont', sans-serif;">
         <div style="font-size: 60px; text-align: center; line-height: 1.2;">PLEASE<br>ROTATE<br>DEVICE</div>
     </div>
 
@@ -89,12 +88,22 @@
                 resolution: dpr // Задаем четкость на ПК один раз при старте
             });
 
-            // Сразу загружаем библиотеку и стартуем игру
-            gameScene.load(lib.pingloo_wings_game_v02, function(instance) {
-                if (typeof window.initGame === 'function') {
-                    window.initGame(instance, gameScene);
+            // Подключаем прогресс загрузки к тексту
+            PIXI.animate.Animator.stop(); // Глушим анимации на время загрузки
+            
+            gameScene.load(lib.pingloo_wings_game_v02, 
+                // Callback по завершению
+                function(instance) {
+                    let pText = document.getElementById("preloader-text");
+                    if (pText) pText.innerText = "LOADING 100%";
+                    if (typeof window.initGame === 'function') window.initGame(instance, gameScene);
+                },
+                // Callback прогресса (от PixiJS)
+                function(loader, resource) {
+                    let pText = document.getElementById("preloader-text");
+                    if (pText) pText.innerText = "LOADING " + Math.floor(loader.progress) + "%";
                 }
-            });
+            );
         </script>
     </body>
 </html>

@@ -227,7 +227,7 @@ function spawnSlideParticle(px, py, color) {
     p.y = py;
     
     p.tint = color; // Красим в цвет земли текущего биома
-    p.alpha = 0.6 + Math.random() * 0.4;
+    p.alpha = 1.0;
     p.scale.set(0.5 + Math.random() * 0.8);
     
     // Частицы летят в противоположную сторону (назад и чуть вверх)
@@ -1583,8 +1583,9 @@ function gameLoop(dt) {
         stroke.width = Math.sqrt(step * step + (nextY - py) * (nextY - py)) + 2; 
     }
 
-    let baseGrav = (window.selectedCharID === 1) ? 0.40 : (window.selectedCharID === 3) ? 0.55 : 0.45;
-    let diveGrav = (window.selectedCharID === 1) ? 2.2 : (window.selectedCharID === 3) ? 3.0 : 2.5;
+    let baseGrav = (window.selectedCharID === 1) ? 0.35 : (window.selectedCharID === 3) ? 0.60 : 0.45;
+    // СИЛА ДАЙВА (ПРИ НАЖАТИИ)
+    let diveGrav = (window.selectedCharID === 1) ? 2.0 : (window.selectedCharID === 3) ? 3.5 : 2.5;
     
     let currentGravity = isDiving ? diveGrav : baseGrav;
     
@@ -1679,14 +1680,14 @@ function gameLoop(dt) {
         }
 
         if (isDiving) {
-            if (playerAnimLock <= 0 && !hasSled) {
-                setPlayerState(isComboSliding ? "combo" : "dive"); 
-            }
+            if (playerAnimLock <= 0 && !hasSled) setPlayerState(isComboSliding ? "combo" : "dive"); 
             if (slopeForce > 0) {
-                let normalBoost = (window.selectedCharID === 2) ? 2.5 : 1.8; 
+                // РАЗГОН ВНИЗ ПО СКЛОНУ
+                // Папи(3) разгоняется быстрее (2.2). Моми(2) слабее (1.4). Остальные (1.8).
+                let normalBoost = (window.selectedCharID === 3) ? 2.2 : (window.selectedCharID === 2) ? 1.4 : 1.8; 
                 speedX += slopeForce * (hasSled ? 3.0 : normalBoost) * dt;
             } else {
-                speedX += slopeForce * (hasSled ? 1.2 : 2.5) * dt; 
+                speedX += slopeForce * (hasSled ? 1.2 : 2.5) * dt;
             }
         } else {
          if (playerAnimLock <= 0 && !hasSled) { 
@@ -1837,9 +1838,9 @@ function gameLoop(dt) {
         p.worldX += p.vx * dt; // Летят назад по инерции
         p.y += p.vy * dt;      // Поднимаются вверх
         
-        p.alpha -= 0.04 * dt;  // Растворяются
-        p.scale.x -= 0.02 * dt; // Сжимаются
-        p.scale.y -= 0.02 * dt;
+        p.alpha -= 0.02 * dt;  // Растворяются медленнее (было 0.04)
+        p.scale.x -= 0.01 * dt; // Сжимаются медленнее
+        p.scale.y -= 0.01 * dt;
         
         if (p.alpha <= 0 || p.scale.x <= 0) {
             p.visible = false;
@@ -1884,8 +1885,9 @@ function gameLoop(dt) {
     }
 
     let baseMagnet = (window.selectedCharID === 2) ? 200 : 35;
-    let coinMagnetBonus = baseMagnet; 
-    let fishHitRadius = 100; // Рыбы собираются строго физическим касанием
+    // МОМИ (ID 2): Единственная имеет магнит для монет
+    let coinMagnetBonus = (window.selectedCharID === 2) ? 150 : 35; 
+    let fishHitRadius = 100; // Рыбы без магнита для всех
 
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
@@ -1964,6 +1966,7 @@ function gameLoop(dt) {
             createjs.Sound.play("SfxFish"); 
             
             // 1. ВОЗВРАЩАЕМ ЭНЕРГИЮ
+            // Папи получает 24, остальные 16
             currentEnergy += (window.selectedCharID === 3) ? 24 : 16; 
             if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
             
