@@ -1062,16 +1062,6 @@ function playMusic(trackId) {
 }
 
 function triggerGameOver(finalDistance) {
-    // Убираем остановку анимаций, чтобы он барахтался в лавине
-    /* 
-    if (player) {
-        if (typeof player.stop === "function") player.stop();
-        if (player.animRoll) player.animRoll.stop();
-        if (player.animDive) player.animDive.stop();
-        if (player.animFly) player.animFly.stop();
-        if (player.animLand) player.animLand.stop();
-    }
-    */
     if (avalanche) avalanche.stop();
 
     if (currentBgmInstance) currentBgmInstance.stop();
