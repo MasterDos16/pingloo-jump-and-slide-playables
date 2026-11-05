@@ -134,10 +134,10 @@ let initialUI_Y = {};
 let globalCoins = parseInt(localStorage.getItem("pinglooTotalCoins")) || 0;
 let savedBiomes = localStorage.getItem("pinglooUnlockedBiomes");
 let unlockedBiomes = savedBiomes ? JSON.parse(savedBiomes) : [0]; // По умолчанию открыт только 0 (первый биом)
-let biomeCosts = [0, 100, 100, 100, 100, 100, 100, 100]; // Цены биомов по порядку
+let biomeCosts = [0, 10, 10, 10, 10, 10, 10, 10]; // Цены биомов по порядку
 let savedChars = localStorage.getItem("pinglooUnlockedChars");
 let unlockedChars = savedChars ? JSON.parse(savedChars) : [0]; 
-let charCosts = [0, 100, 100, 100]; // Впиши свои цены
+let charCosts = [0, 10, 10, 10]; // Впиши свои цены
 window.selectedCharID = parseInt(localStorage.getItem("pinglooSelectedChar")) || 0; 
 
 function updateGlobalUI() {
@@ -1877,7 +1877,23 @@ function gameLoop(dt) {
         // СБОР РЫБ (Физический контакт без магнита)
         if (!f.hit && distX < fishHitRadius && distY < fishHitRadius) {
             f.hit = true;
-            createjs.Sound.play("SfxFish");
+            createjs.Sound.play("SfxFish"); 
+            
+            // 1. ВОЗВРАЩАЕМ ЭНЕРГИЮ
+            currentEnergy += (window.selectedCharID === 3) ? 24 : 16; 
+            if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
+            
+            // 2. ВОЗВРАЩАЕМ АНИМАЦИЮ ВСАСЫВАНИЯ
+            let startScale = f.shape.scale.x;
+            addTween(f.shape, { x: player.x, y: player.y - 20, alpha: 0 }, 250, () => {
+                f.shape.visible = false;
+                f.shape.alpha = 1;
+                f.shape.scale.set(startScale);
+                objPool.fishes.push(f.shape);
+            });
+            addTween(f.shape.scale, { x: 0, y: 0 }, 250);
+            
+            fishes.splice(i, 1);
         }
     }
 
@@ -1977,11 +1993,18 @@ function gameLoop(dt) {
         avalanche.visible = true;
         avalanche.x = avalancheWorldX - worldOffsetX; 
         
-        // МАГИЯ ЦВЕТА: 0xFFFFFF означает "не красить" (оригинальный цвет)
-        // Нулевой биом (снег) и 7 биом (космос) оставляем белыми
-        let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xFFFFFF];
+        // ПРИНУДИТЕЛЬНЫЙ ЦИКЛ: Если таймлайн Animate дошел до конца, кидаем его на старт
+        if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
+            if (avalanche.currentFrame >= avalanche.totalFrames - 1) {
+                avalanche.gotoAndPlay(0);
+            }
+        }
+        
+        // МАГИЯ ЦВЕТА ПО НАСТРОЙКАМ
+        // Биомы: 0:Белый, 1:#ABEFFF, 2:Белый, 3:#FAE08C, 4:#FEEDB5, 5:#3985A6, 6:#FAE08C, 7:#99A3BF
+        let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
         let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-        colorizeAvalanche(targetColor); // Глубокая покраска всех векторов
+        colorizeAvalanche(targetColor); 
     }
     
     if (distanceToAvalanche < 1500 && !isGameOver) {
