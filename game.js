@@ -1265,11 +1265,13 @@ function resetGame(startImmediately) {
             playMusic("BgmGame"); 
             window.isIntro = true;
             
-            // ФИНАЛЬНЫЙ ШТРИХ: Вылет по диагонали (вправо-вверх)
-            player.x = -300; // Стартует глубже за левым краем экрана
-            player.y = getHillY(worldOffsetX + player.x) - 50; // Начинает прямо над землей...
-            velocityY = -45;  // ...и получает мощнейший пинок ВВЕРХ
-            speedX = 40;      // ...и быстрый импульс ВПРАВО
+            // МЯГКИЙ ВЫЛЕТ ПО ДИАГОНАЛИ
+            player.x = -250; // Начинаем чуть ближе к видимому экрану
+            player.y = getHillY(worldOffsetX + player.x) - 50; 
+            
+            // Успокаиваем физику:
+            velocityY = -25;  // Было -45. Даем адекватный прыжок, а не старт ракеты
+            speedX = 28;      // Было 40. Уверенная, но контролируемая начальная скорость
             
             setPlayerState("fly");
             
