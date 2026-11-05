@@ -358,11 +358,18 @@ window.initGame = function(root, pixiScene) {
     ground = root.ground;
     if(ground) ground.visible = false; 
     
+    // avalanche = root.avalanche; 
+    // // ЖЕСТКО ГЛУШИМ СТАРУЮ ЛАВИНУ ANIMATE
+    // if (avalanche) {
+    //     avalanche.visible = false;
+    //     if (typeof avalanche.stop === "function") avalanche.stop();
+    // }
+
     avalanche = root.avalanche; 
-    // ЖЕСТКО ГЛУШИМ СТАРУЮ ЛАВИНУ ANIMATE
+    // ВОЗВРАЩАЕМ ТВОЮ ЛАВИНУ К ЖИЗНИ
     if (avalanche) {
-        avalanche.visible = false;
-        if (typeof avalanche.stop === "function") avalanche.stop();
+        avalanche.visible = false; // Пока скроем, она появится сзади
+        if (typeof avalanche.play === "function") avalanche.play();
     }
 
     // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
@@ -434,7 +441,7 @@ window.initGame = function(root, pixiScene) {
 
     cameraContainer.addChild(player);      
     cameraContainer.addChild(window.hillContainer); // Кладем новую гору поверх игрока
-    cameraContainer.addChild(window.stormContainer); // ДОБАВЛЯЕМ БУРЮ НА СЦЕНУ  
+    // cameraContainer.addChild(window.stormContainer); // ДОБАВЛЯЕМ БУРЮ НА СЦЕНУ  
     cameraContainer.addChild(coinsContainer);
 
     // --- ПРЕ-СПАВН ОБЪЕКТОВ ДЛЯ УСТРАНЕНИЯ ФРИЗОВ ---
@@ -1918,53 +1925,35 @@ function gameLoop(dt) {
             continue;
         }
     }
+
+
     
-    // --- УМНАЯ БУРЯ (Rubber-banding) ---
+    // --- ВОЗВРАЩАЕМ ТВОЮ ЛАВИНУ С НОВОЙ ЛОГИКОЙ ---
     let distanceToAvalanche = playerWorldX - avalancheWorldX;
     
-    // Буря постепенно разгоняется со временем, но имеет ЖЕСТКИЙ ПОТОЛОК (45)
+    // Потолок скорости лавины (чтобы не было безвыходного проигрыша)
     avalancheBaseSpeed += 0.002 * dt;
     if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
     
     let currentAvalancheSpeed = avalancheBaseSpeed;
 
-    // Резинка: не даем буре отстать слишком далеко или убить мгновенно
+    // "Резинка": лавина дает шанс, но наказывает за ошибки
     if (distanceToAvalanche > 2500) {
         currentAvalancheSpeed = speedX + 1.5; 
     } else if (distanceToAvalanche < 1000) {
         currentAvalancheSpeed = speedX - 2.0; 
-        if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; // Минимальная скорость настигания
+        if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; // Минимальная скорость
     }
 
     avalancheWorldX += currentAvalancheSpeed * dt; 
     
-    // АНИМАЦИЯ ЧАСТИЦ БУРИ
-    if (window.stormContainer) {
-        // Жестко привязываем бурю к её математической координате
-        window.stormContainer.x = avalancheWorldX - worldOffsetX; 
+    if (avalanche) {
+        avalanche.visible = true;
+        avalanche.x = avalancheWorldX - worldOffsetX; 
         
+        // МАГИЯ ЦВЕТА (красим твою белую лавину под биом)
         let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xAEAFCE];
-        let stormColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-
-        // Красим глухой фон
-        if (window.stormBackdrop) window.stormBackdrop.tint = stormColor;
-
-        for(let i = 0; i < window.stormParticles.length; i++) {
-            let p = window.stormParticles[i];
-            p.tint = stormColor;
-            
-            // Агрессивное вращение вокруг своей оси
-            p.rotation += p.spinSpeed * dt;
-            p.waveTime += p.waveSpeed * dt;
-            
-            // Круговое перекатывание (как гусеницы танка или волна)
-            p.x = p.offsetX + Math.cos(p.waveTime) * p.radius;
-            p.y = p.baseY + Math.sin(p.waveTime) * p.radius;
-            
-            // Легкая пульсация объема
-            let s = 1.0 + Math.sin(p.waveTime * 2) * 0.15;
-            p.scale.set(s);
-        }
+        avalanche.tint = stormColors[currentBiomeIndex] || 0xFFFFFF;
     }
     
     // ЗВУК И КОНЕЦ ИГРЫ
@@ -1976,11 +1965,11 @@ function gameLoop(dt) {
         avalancheSoundInstance = null;
     }
     
-    // БУРЯ НАСТИГЛА ИГРОКА
+    // ЛАВИНА НАСТИГЛА ИГРОКА
     if (avalancheWorldX > playerWorldX - 80) {
         if (!isGameOver) {
             if (hasSled) {
-                // Санки спасают от бури ОДИН раз, разбиваясь!
+                // Санки спасают 1 раз
                 hasSled = false;
                 nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
                 createjs.Sound.play("SfxSledBreak"); 
@@ -1988,12 +1977,13 @@ function gameLoop(dt) {
                 if (activeSledInstance) activeSledInstance.visible = false;
                 activeSledInstance = null;
                 
-                avalancheWorldX -= 1000; // Бурю отбрасывает назад
-                speedX += 15; // Даем толчок для спасения
+                avalancheWorldX -= 1000; 
+                speedX += 15; 
                 spawnBoostFlash();
             } else {
                 isGameOver = true;
-                triggerGameOver(distanceMeters);
+                let finalDist = Math.floor(worldOffsetX / 100);
+                triggerGameOver(finalDist);
             }
         }
     }
