@@ -35,6 +35,38 @@
         <div id="preloader-text" style="font-size: 50px;">LOADING...</div>
     </div>
 
+    <!-- 3. Экран требования поворота (Orientation Lock) -->
+    <div id="orientation-lock" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; font-family: 'PinglooFont', sans-serif;">
+        <!-- Можно вставить сюда картинку -->
+        <div style="font-size: 60px; text-align: center; line-height: 1.2;">PLEASE<br>ROTATE<br>DEVICE</div>
+    </div>
+
+    <script>
+        function checkOrientation() {
+            var lockScreen = document.getElementById('orientation-lock');
+            // Если экран узкий (портретный) и это мобилка
+            if (window.innerHeight > window.innerWidth && isMobile) {
+                lockScreen.style.display = 'flex'; // Показываем черную заглушку
+                // Опционально: ставим игру на паузу, если она шла
+                if (typeof isPlaying !== 'undefined' && isPlaying) {
+                    isPlaying = false; 
+                    if (currentBgmInstance) currentBgmInstance.paused = true;
+                    // Если есть экран паузы в игре, лучше вызвать его
+                    if (typeof gameRoot !== 'undefined' && gameRoot.btnPause) {
+                        gameRoot.btnPause.emit('pointerdown');
+                    }
+                }
+            } else {
+                lockScreen.style.display = 'none'; // Убираем заглушку
+            }
+        }
+        
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+        // Запускаем при загрузке
+        window.addEventListener('load', checkOrientation);
+    </script>
+
         <canvas id="stage" width="1920" height="1080"></canvas>
         
         <!-- Библиотеки Pixi -->
