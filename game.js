@@ -397,17 +397,21 @@ window.initGame = function(root, pixiScene) {
 
     if (window.playerStartX === undefined) window.playerStartX = player.x;
     
+    // --- ИСКАТЕЛЬ ИДЕАЛЬНОГО СТАРТА ---
     let isGoodStart = false;
+    let px = window.playerStartX || 200; 
     while (!isGoodStart) {
         trackSeed = Math.random() * 100000;
-        let y0 = getHillY(0);         
-        let y200 = getHillY(200); 
-        let y400 = getHillY(400); 
-        let y600 = getHillY(600);
-        let y800 = getHillY(800);
+        let yStart = getHillY(px - 100); 
+        let yMid1 = getHillY(px + 300);  
+        let yMid2 = getHillY(px + 700);  
+        let yEnd = getHillY(px + 1200);  
         
-        // Ищем кусок математики, где холм плавно и долго спускается ВНИЗ на протяжении 800 метров
-        if (y0 < baseY - 50 && y200 > y0 + 30 && y400 > y200 + 30 && y600 > y400 + 20 && y800 > y600 + 10) {
+        // Ищем форму "Чаши": крутой спуск вниз, дно, и крутой подъем вверх
+        if (yStart < baseY - 50 &&       // Старт высоко
+            yMid1 > yStart + 100 &&      // Долгий мощный спуск (набор скорости)
+            yMid2 > yMid1 + 20 &&        // Дно долины
+            yEnd < yMid2 - 80) {         // Мощный трамплин для первого полета
             isGoodStart = true; 
         }
     }
@@ -1121,7 +1125,8 @@ function resetGame(startImmediately) {
     comboCount = 0;
     speedX = 15;
     worldOffsetX = 0;
-    avalancheWorldX = -500;
+    // ФИКС ЛАВИНЫ: При рестарте отбрасываем её на 3000 пикселей назад
+    avalancheWorldX = -3000; 
     avalancheBaseSpeed = 12;
     isGameOver = false;
     isPlaying = startImmediately; 
@@ -1252,9 +1257,9 @@ function resetGame(startImmediately) {
             
             // ФИКС АНИМАЦИИ ЛАВИНЫ ПРИ РЕСТАРТЕ
             if (avalanche) {
-                avalanche.x = -1500;
-                avalanche.visible = true;
-                safePlayAvalanche(); // Принудительно заводим все слои лавины!
+                avalanche.x = -3000;
+                avalanche.visible = false; // Прячем, пока она далеко
+                safePlayAvalanche();
             }
         } else {
             playMusic("BgmMenu"); 
@@ -2085,63 +2090,64 @@ function gameLoop(dt) {
 
     
     // --- ВОЗВРАЩАЕМ ТВОЮ ЛАВИНУ С НОВОЙ ЛОГИКОЙ ---
-    let distanceToAvalanche = playerWorldX - avalancheWorldX;
-    
-    avalancheBaseSpeed += 0.002 * dt;
-    if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; // Потолок
-    
-    let currentAvalancheSpeed = avalancheBaseSpeed;
-
-    if (distanceToAvalanche > 2500) {
-        currentAvalancheSpeed = speedX + 1.5; 
-    } else if (distanceToAvalanche < 1000) {
-        currentAvalancheSpeed = speedX - 2.0; 
-        if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; 
-    }
-
-    avalancheWorldX += currentAvalancheSpeed * dt; 
-    
-    if (avalanche) {
-        avalanche.visible = true;
-        avalanche.x = avalancheWorldX - worldOffsetX; 
+    if (!window.isIntro) {
+        let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
-        // МАГИЯ ЦВЕТА ПО НАСТРОЙКАМ
-        // Биомы: 0:Белый, 1:#ABEFFF, 2:Белый, 3:#FAE08C, 4:#FEEDB5, 5:#3985A6, 6:#FAE08C, 7:#99A3BF
-        let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
-        let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-        colorizeAvalanche(targetColor); 
-    }
-    
-    if (distanceToAvalanche < 1500 && !isGameOver) {
-        if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
-        avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
-    } else if (avalancheSoundInstance) {
-        avalancheSoundInstance.stop();
-        avalancheSoundInstance = null;
-    }
-    
-    // ЛАВИНА НАСТИГЛА ИГРОКА
-    if (avalancheWorldX > playerWorldX - 80) {
-        if (!isGameOver) {
-            if (hasSled) {
-                // САНКИ СПАСАЮТ (Отбрасываем лавину далеко назад!)
-                hasSled = false;
-                nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
-                createjs.Sound.play("SfxSledBreak"); 
-                player.y += 35;
-                if (activeSledInstance) activeSledInstance.visible = false;
-                activeSledInstance = null;
-                
-                avalancheWorldX -= 1500; // Отбросили лавину на полтора экрана назад!
-                speedX += 15; // Дали игроку спасительный буст
-                spawnBoostFlash();
-            } else {
-                // Санков нет = Проигрыш
-                isGameOver = true;
-                let finalDist = Math.floor(worldOffsetX / 100);
-                triggerGameOver(finalDist);
+        avalancheBaseSpeed += 0.002 * dt;
+        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; // Потолок
+        
+        let currentAvalancheSpeed = avalancheBaseSpeed;
+
+        if (distanceToAvalanche > 2500) {
+            currentAvalancheSpeed = speedX + 1.5; 
+        } else if (distanceToAvalanche < 1000) {
+            currentAvalancheSpeed = speedX - 2.0; 
+            if (currentAvalancheSpeed < 25) currentAvalancheSpeed = 25; 
+        }
+
+        avalancheWorldX += currentAvalancheSpeed * dt; 
+        
+        if (avalanche) {
+            avalanche.visible = true;
+            avalanche.x = avalancheWorldX - worldOffsetX; 
+            
+            let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
+            let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+            colorizeAvalanche(targetColor); 
+        }
+        
+        if (distanceToAvalanche < 1500 && !isGameOver) {
+            if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
+            avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
+        } else if (avalancheSoundInstance) {
+            avalancheSoundInstance.stop();
+            avalancheSoundInstance = null;
+        }
+        
+        // ЛАВИНА НАСТИГЛА ИГРОКА
+        if (avalancheWorldX > playerWorldX - 80) {
+            if (!isGameOver) {
+                if (hasSled) {
+                    hasSled = false;
+                    nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
+                    createjs.Sound.play("SfxSledBreak"); 
+                    player.y += 35;
+                    if (activeSledInstance) activeSledInstance.visible = false;
+                    activeSledInstance = null;
+                    
+                    avalancheWorldX -= 1500; 
+                    speedX += 15; 
+                    spawnBoostFlash();
+                } else {
+                    isGameOver = true;
+                    let finalDist = Math.floor(worldOffsetX / 100);
+                    triggerGameOver(finalDist);
+                }
             }
         }
+    } else {
+        // Если сейчас интро (вылет), лавина просто ждет за кадром
+        if (avalanche) avalanche.visible = false;
     }
     
     if (distFromGround > 0 && hasTouchedGroundOnce) {
