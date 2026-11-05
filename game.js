@@ -1658,29 +1658,42 @@ function gameLoop(dt) {
     }
 
     if (hasSled) {
-        // Толкаем точку спавна далеко вперед, чтобы рыбы не появлялись, пока мы едем
+        // На санках рыбы не появляются (толкаем курсор спавна вперед)
         nextFishX = worldOffsetX + 5000; 
     } else {
-        while (nextFishX < worldOffsetX + 5000) {
-            let foundDownhill = false;
-            for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
-                if (Math.abs(scanX - nextSledX) < 1200) continue;
-                let nextY = getHillY(scanX + 10);
-                let prevY = getHillY(scanX - 10);
-                if (nextY - prevY > 4) {
-                    spawnFish(scanX, getHillY(scanX) - 40); 
-                    nextFishX = scanX + 1500 + Math.random() * 2000; 
-                    foundDownhill = true;
-                    break;
-                }
+        // ТВОЯ ИДЕЯ: Рыба спавнится ТОЛЬКО если энергия начинает падать
+        if (currentEnergy > 75) {
+            // Игрок сыт. Искусственно отодвигаем точку спавна, чтобы на горизонте не было рыб
+            if (nextFishX < worldOffsetX + 5000) {
+                nextFishX = worldOffsetX + 5000;
             }
-            if (!foundDownhill) nextFishX += 2000; 
+        } else {
+            // Начался "голод". Начинаем генерировать спасительную рыбу на трассе
+            while (nextFishX < worldOffsetX + 5000) {
+                let foundDownhill = false;
+                for (let scanX = nextFishX; scanX < nextFishX + 2000; scanX += 40) {
+                    if (Math.abs(scanX - nextSledX) < 1200) continue;
+                    let nextY = getHillY(scanX + 10);
+                    let prevY = getHillY(scanX - 10);
+                    if (nextY - prevY > 4) {
+                        spawnFish(scanX, getHillY(scanX) - 40); 
+                        
+                        // РЕЖЕМ ЧАСТОТУ: Теперь рыбы будут в 4 раза реже (раз в 80-120 метров)
+                        // Это заставит реально за них бороться!
+                        nextFishX = scanX + 8000 + Math.random() * 4000; 
+                        
+                        foundDownhill = true;
+                        break;
+                    }
+                }
+                if (!foundDownhill) nextFishX += 2000; 
+            }
         }
     }
 
     while (!hasSled && nextSledX < worldOffsetX + 3500) {
-        spawnSled(nextSledX, getHillY(nextSledX)); 
-        nextSledX += 80000 + Math.random() * 40000; // Спавн раз в 800-1200 метров
+        spawnSled(nextSledX, getHillY(nextSledX));
+        nextSledX += 24000 + Math.random() * 16000; // ВЕРНУЛИ ЧАСТЫЙ СПАВН (раз в 240-400 м)
     }
 
     for (let i = effects.length - 1; i >= 0; i--) {
@@ -1867,8 +1880,9 @@ function gameLoop(dt) {
             s.hit = true;
             hasSled = true;
             sledTimer = (window.selectedCharID === 1) ? 1200 : 900;
-            // Умный разгон: не кидаем в космос, если скорость уже огромная
-            speedX = speedX < 45 ? 60 : speedX + 10; 
+            
+            speedX += 25; // ВЕРНУЛИ ДОФАМИНОВЫЙ БУСТ!
+            
             spawnBoostFlash();
             spawnComboText("TURBO SLED!");
             createjs.Sound.play("SfxSledPickup");
