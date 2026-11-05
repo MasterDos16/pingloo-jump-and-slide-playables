@@ -365,28 +365,37 @@ window.initGame = function(root, pixiScene) {
         if (typeof avalanche.stop === "function") avalanche.stop();
     }
 
-    // --- СОЗДАЕМ ОБЪЕМНУЮ БУРЮ (Завихрения) ---
+    // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
     window.stormContainer = new PIXI.Container();
     window.stormParticles = [];
     
-    // Создаем 40 крупных сфер, которые накладываются друг на друга
-    for(let i = 0; i < 40; i++) {
+    // 1. Глухой фон бури, чтобы слева не было пустых мест
+    window.stormBackdrop = new PIXI.Sprite(PIXI.Texture.WHITE);
+    window.stormBackdrop.width = 4000; // Бесконечно влево
+    window.stormBackdrop.height = 3000;
+    window.stormBackdrop.anchor.set(1, 0.5); // Якорь на правом краю (на фронте)
+    window.stormBackdrop.x = 200; // Чуть позади клубящихся облаков
+    window.stormContainer.addChild(window.stormBackdrop);
+
+    // 2. Создаем 60 плотных кувыркающихся кусков волны
+    for(let i = 0; i < 60; i++) {
         let p = new PIXI.Graphics();
         p.beginFill(0xFFFFFF);
-        p.drawCircle(0, 0, 150 + Math.random() * 100); // Огромные пухлые сферы
+        // Вытянутые овалы лучше передают динамику падающего снега/песка
+        p.drawEllipse(0, 0, 180 + Math.random() * 100, 120 + Math.random() * 80); 
         p.endFill();
         
-        p.offsetX = Math.random() * 1200; // Глубина фронта бури
-        p.baseY = -500 + Math.random() * 2000; 
+        // Распределяем от фронта (0) в глубину влево (-1200)
+        p.offsetX = -1200 + Math.random() * 1400; 
+        p.baseY = -800 + Math.random() * 1600; 
         
-        p.alpha = 0.15 + Math.random() * 0.2; // Полупрозрачные, вместе дают плотность
+        p.alpha = 0.7 + Math.random() * 0.3; // Непрозрачные, жесткие куски
         
-        p.angle = Math.random() * Math.PI * 2;
-        p.orbitSpeed = 0.02 + Math.random() * 0.04;
-        p.orbitRadius = 50 + Math.random() * 200;
-        
-        p.scaleTime = Math.random() * 100;
-        p.scaleSpeed = 0.02 + Math.random() * 0.03;
+        // Математика бурления
+        p.spinSpeed = (Math.random() > 0.5 ? 1 : -1) * (0.05 + Math.random() * 0.1);
+        p.waveSpeed = 0.08 + Math.random() * 0.12;
+        p.waveTime = Math.random() * 100;
+        p.radius = 80 + Math.random() * 150; // Амплитуда перекатывания
         
         window.stormContainer.addChild(p);
         window.stormParticles.push(p);
@@ -1931,24 +1940,29 @@ function gameLoop(dt) {
     
     // АНИМАЦИЯ ЧАСТИЦ БУРИ
     if (window.stormContainer) {
-        // Буря ползет за нами (фронт надвигается слева, перекрывая Кико при проигрыше)
-        window.stormContainer.x = avalancheWorldX - worldOffsetX - 500; 
+        // Жестко привязываем бурю к её математической координате
+        window.stormContainer.x = avalancheWorldX - worldOffsetX; 
         
         let stormColors = [0xFFFFFF, 0xA8E8E6, 0x99D798, 0xFFE783, 0xFEEDB5, 0x00BFFF, 0xFAE08C, 0xAEAFCE];
         let stormColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+
+        // Красим глухой фон
+        if (window.stormBackdrop) window.stormBackdrop.tint = stormColor;
 
         for(let i = 0; i < window.stormParticles.length; i++) {
             let p = window.stormParticles[i];
             p.tint = stormColor;
             
-            // Буря клубится (вращение элементов по орбитам)
-            p.angle += p.orbitSpeed * dt;
-            p.x = p.offsetX + Math.cos(p.angle) * p.orbitRadius;
-            p.y = p.baseY + Math.sin(p.angle) * p.orbitRadius;
+            // Агрессивное вращение вокруг своей оси
+            p.rotation += p.spinSpeed * dt;
+            p.waveTime += p.waveSpeed * dt;
             
-            // Дыхание/пульсация размера облаков
-            p.scaleTime += p.scaleSpeed * dt;
-            let s = 1.0 + Math.sin(p.scaleTime) * 0.3;
+            // Круговое перекатывание (как гусеницы танка или волна)
+            p.x = p.offsetX + Math.cos(p.waveTime) * p.radius;
+            p.y = p.baseY + Math.sin(p.waveTime) * p.radius;
+            
+            // Легкая пульсация объема
+            let s = 1.0 + Math.sin(p.waveTime * 2) * 0.15;
             p.scale.set(s);
         }
     }
