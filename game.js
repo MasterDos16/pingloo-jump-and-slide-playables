@@ -89,7 +89,7 @@ let objPool = {
 let maxEnergy = 100;
 let currentEnergy = 100;
 let visualEnergy = 100; 
-let energyDepletionRate = 0.12;
+let energyDepletionRate = 0.08;
 let fishes = [];
 let nextFishX = 3000; 
 let comboAnimTimer = 0;
@@ -1331,12 +1331,16 @@ function gameLoop(dt) {
             // ДИНАМИЧЕСКИЙ РАСХОД ЭНЕРГИИ
             let currentRate = energyDepletionRate;
             
-            if (speedX < 23) {
-                currentRate *= 4.0; // Низкая скорость: Энергия сгорает экстремально быстро
-            } else if (speedX > 38) {
-                currentRate *= 0.4; // Высокая скорость: Энергия экономится (награда)
+            if (speedX < 20) {
+                // НИЗКАЯ СКОРОСТЬ: Энергия падает быстрее, но не мгновенно (в 1.8 раз, а не в 4.0)
+                // У игрока будет пара секунд, чтобы попытаться разогнаться
+                currentRate *= 1.8; 
+            } else if (speedX > 45) {
+                // ВЫСОКАЯ СКОРОСТЬ (>45): Награда за комбо, энергия экономится
+                currentRate *= 0.4; 
             } else {
-                currentRate *= 1.5; // Средняя скорость: Энергия тратится быстрее базовой
+                // СРЕДНЯЯ СКОРОСТЬ (20 - 45): Обычный расход, 1.0x
+                currentRate *= 1.0; 
             }
             
             if (!window.isEnergyEmpty) {
@@ -1497,10 +1501,23 @@ function gameLoop(dt) {
             } else {
                 createjs.Sound.play("SfxLand");
                 
-                // УСИЛЕННЫЙ ШТРАФ ЗА ПЛОХОЕ ПРИЗЕМЛЕНИЕ И ПОТЕРЮ КОМБО
-                let speedPenalty = 8; // Базовый жесткий штраф за удар о склон
-                if (comboCount > 0) {
-                    speedPenalty += (comboCount * 5); // Доп. штраф за сброс накопленного комбо
+                // УМНЫЙ ШТРАФ ЗА ПРИЗЕМЛЕНИЕ:
+                // slopeForce > 0 это спуск (мы катимся вниз)
+                // slopeForce < 0 это подъем (мы врезались в стену)
+                
+                let speedPenalty = 0;
+                
+                if (slopeForce < 0) {
+                    // ВРЕЗАЛИСЬ В ПОДЪЕМ: Жесткий штраф
+                    // Чем круче стена, тем сильнее гасится скорость
+                    speedPenalty = 5 + (Math.abs(slopeForce) * 15); 
+                    if (comboCount > 0) speedPenalty += (comboCount * 3);
+                    isComboSliding = false;
+                    comboCount = 0; 
+                } else {
+                    // ПРИЗЕМЛИЛИСЬ НА СПУСК (просто не вошли в идеальное комбо):
+                    // Прощаем ошибку. Комбо сбрасывается, но скорость почти не падает
+                    speedPenalty = 1;
                     isComboSliding = false;
                     comboCount = 0; 
                 }
@@ -1510,7 +1527,7 @@ function gameLoop(dt) {
                 if (currentJumpHeight > 250) { 
                     if (!hasSled) setPlayerState("land"); 
                     playerAnimLock = 15;
-                    if (!hasSled) speedX -= 5; 
+                    if (!hasSled) speedX -= (slopeForce < 0 ? 5 : 1); // Мягче штраф за высоту на спуске
                     isComboSliding = false;
                 } 
             }
