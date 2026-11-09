@@ -23,7 +23,7 @@ let comboCount = 0;
 let comboMultiplier = 0;  
 
 let speedX = 15; 
-let minSpeedX = 5; 
+let minSpeedX = 10; 
 let maxSpeedX = 100; 
 let worldOffsetX = 0; 
 
@@ -439,6 +439,21 @@ window.initGame = function(root, pixiScene) {
     }
     // -------------------------------------------
 
+    // --- УМНОЕ РАЗДЕЛЕНИЕ ЗВУКА И МУЗЫКИ ---
+    let originalSoundPlay = createjs.Sound.play;
+    createjs.Sound.play = function(src, options) {
+        // Если звук начинается на "Sfx", а в настройках звуки ВЫКЛ - блокируем
+        if (!window.isSoundsOn && String(src).startsWith("Sfx")) {
+            return { stop: function(){} }; // Возвращаем пустышку, чтобы игра не крашилась
+        }
+        // Если музыка начинается на "Bgm", а музыка ВЫКЛ - блокируем
+        if (!window.isMusicOn && String(src).startsWith("Bgm")) {
+            return { stop: function(){} };
+        }
+        // Иначе играем как обычно
+        return originalSoundPlay.apply(this, arguments);
+    };
+
     // === РЕГИСТРАЦИЯ ВНЕШНИХ ЗВУКОВ (SoundJS работает как раньше) ===
     createjs.Sound.registerSound("sounds/bgm_menu.mp3", "BgmMenu");
     createjs.Sound.registerSound("sounds/bgm_game.mp3", "BgmGame");
@@ -776,7 +791,14 @@ window.initGame = function(root, pixiScene) {
             mBox.on("pointerdown", () => {
                 window.isMusicOn = !window.isMusicOn;
                 mBox.gotoAndStop(window.isMusicOn ? 0 : 1);
-                if (currentBgmInstance) currentBgmInstance.paused = !window.isMusicOn;
+                
+                if (currentBgmInstance) {
+                    currentBgmInstance.paused = !window.isMusicOn;
+                } else if (window.isMusicOn && currentBgmName !== "") {
+                    // Если трек не был создан из-за ранней паузы, запускаем его
+                    currentBgmInstance = createjs.Sound.play(currentBgmName, { loop: -1, volume: 0.5 });
+                }
+                
                 if (window.isSoundsOn) createjs.Sound.play("SfxClick");
             });
         }
@@ -790,7 +812,10 @@ window.initGame = function(root, pixiScene) {
             sBox.on("pointerdown", () => {
                 window.isSoundsOn = !window.isSoundsOn;
                 sBox.gotoAndStop(window.isSoundsOn ? 0 : 1);
-                createjs.Sound.muted = !window.isSoundsOn; // Глобальный мьют для SoundJS
+                
+                // УБРАЛИ ГЛОБАЛЬНЫЙ createjs.Sound.muted!
+                // Теперь звуки фильтруются автоматически нашим перехватчиком выше.
+                
                 if (window.isSoundsOn) createjs.Sound.play("SfxClick");
             });
         }
@@ -1174,18 +1199,25 @@ function getHillY(x) {
     let rx = x + trackSeed;
     let globalAmplitude = 1 + Math.sin(rx * 0.0004) * 0.4; 
     
-    // БИОМ 3 (Пляж) теперь такой же высоты, как Биом 2 (Луга)
     let hMod = 1.0;
     if (currentBiomeIndex === 2 || currentBiomeIndex === 3) hMod = 0.85; 
-    else if (currentBiomeIndex === 5) hMod = 0.6; // Ванна остается плоской
+    else if (currentBiomeIndex === 5) hMod = 0.6; 
     
     let wave1 = Math.sin(rx * 0.0022) * (150 * globalAmplitude * hMod); 
     let wave2 = Math.cos(rx * 0.0011) * (100 * hMod);  
     let wave3 = Math.cos(rx * 0.0033) * (30 * hMod);  
     let macroWave = Math.sin(rx * 0.00015) * (80 * hMod);
     
-    // Возвращаем чистую математику без искусственного сплющивания на старте!
-    return baseY + wave1 + wave2 + wave3 + macroWave; 
+    // --- НОВЫЙ ИДЕАЛЬНЫЙ СТАРТ (ГАРАНТИРОВАННЫЙ ТРАМПЛИН ИЗ СТАРОГО КОДА) ---
+    let startRamp = 0;
+    if (x < 3000) {
+        // Кубическая функция: начинается на высоте 800 и плавно сходит на нет к 3000 пикселям
+        let progress = Math.max(0, 3000 - x) / 3000;
+        startRamp = progress * progress * progress * 800; 
+    }
+    
+    // Вычитаем startRamp, чтобы земля ушла высоко вверх на страте
+    return baseY + wave1 + wave2 + wave3 + macroWave - startRamp; 
 }
 
 function playMusic(trackId) {
@@ -1633,7 +1665,7 @@ function gameLoop(dt) {
         // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Мягко отбираем скорость
         if (window.isEnergyEmpty) {
             speedX -= 0.05 * dt; 
-            if (speedX < 5) speedX = 5; // ФИКС: Ниже 5 не падаем никогда
+            if (speedX < 10) speedX = 10; // ФИКС: Ниже 10 не падаем никогда
         }
     }
     
@@ -2225,27 +2257,26 @@ function gameLoop(dt) {
 
 
     
-    // --- ЛАВИНА: ОРИГИНАЛЬНАЯ ЛОГИКА ПРЕСЛЕДОВАНИЯ ---
+    // --- ЛАВИНА: ЛОГИКА "ПОЛИЦЕЙСКИЙ ИЗ SUBWAY SURFERS" ---
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
-        // Лавина медленно разгоняется всю игру, усложняя выживание на поздних этапах
         avalancheBaseSpeed += 0.002 * dt;
         if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        // Резиновая нить:
-        if (distanceToAvalanche > 2500) {
-            // Если игрок улетел далеко, лавина уверенно его догоняет
-            currentAvalancheSpeed = speedX + 1.5; 
-        } else if (distanceToAvalanche < 1000) {
-            // Если лавина "дышит в затылок", она чуть сбавляет темп, давая шанс на ошибку (комбо/прыжок)
+        if (distanceToAvalanche > 1500) {
+            // ЛАВИНА ЗА КАДРОМ: Если игрок далеко, но еле ползет (ошибся), лавина делает РЕЗКИЙ РЫВОК (минимум 25)
+            currentAvalancheSpeed = Math.max(speedX + 1.5, 25); 
+        } else if (distanceToAvalanche < 800) {
+            // ЛАВИНА В КАДРЕ: Дает шанс оторваться (скорость чуть ниже твоей). 
+            // НО если ты продолжаешь тупить (скорость ниже 18) - она тебя сожрет.
             currentAvalancheSpeed = speedX - 0.5; 
             if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
         } else {
-            // В средней зоне (1000 - 2500) лавина едет со своей базовой скоростью, 
-            // позволяя игроку реально ОТРЫВАТЬСЯ от неё на хороших скоростях!
+            // ИГРОК ВЫРВАЛСЯ: Как только ты оторвался на 800+ пикселей, лавина теряет к тебе интерес 
+            // и сбрасывает скорость до базовой. Ты стремительно улетаешь от нее.
             currentAvalancheSpeed = avalancheBaseSpeed;
         }
 
@@ -2255,9 +2286,12 @@ function gameLoop(dt) {
             avalanche.visible = true;
             avalanche.x = avalancheWorldX - worldOffsetX; 
             
-            // let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
-            // let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-            // colorizeAvalanche(targetColor); 
+            // ФИКС АНИМАЦИИ: Принудительно крутим таймлайн лавины
+            if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
+                if (avalanche.currentFrame >= avalanche.totalFrames - 1 || !avalanche.playing) {
+                    if (typeof avalanche.gotoAndPlay === "function") avalanche.gotoAndPlay(0);
+                }
+            }
         }
         
         if (distanceToAvalanche < 1500 && !isGameOver) {
