@@ -23,7 +23,7 @@ let comboCount = 0;
 let comboMultiplier = 0;  
 
 let speedX = 15; 
-let minSpeedX = 2; 
+let minSpeedX = 5; 
 let maxSpeedX = 100; 
 let worldOffsetX = 0; 
 
@@ -616,13 +616,14 @@ window.initGame = function(root, pixiScene) {
                 let isTarget = (name === screenName);
                 gameRoot[name].visible = isTarget;
                 if (isTarget) {
-                    gameRoot.addChild(gameRoot[name]);
-                    // Запускаем анимации только активного окна
-                    if (typeof gameRoot[name].play === "function") gameRoot[name].play();
-                } else {
-                    // Глушим таймлайны невидимых окон
-                    if (typeof gameRoot[name].stop === "function") gameRoot[name].stop();
-                }
+            gameRoot.addChild(gameRoot[name]);
+            // ФИКС: Всегда стартуем с 0 кадра, иначе анимация застревает в конце
+            if (typeof gameRoot[name].gotoAndPlay === "function") {
+                gameRoot[name].gotoAndPlay(0);
+            } else if (typeof gameRoot[name].play === "function") {
+                gameRoot[name].play();
+            }
+        }
             }
         });
         updateGlobalUI(); 
@@ -1316,9 +1317,7 @@ function resetGame(startImmediately) {
     }
 
     if (!startImmediately) {
-        // Убираем старую логику с .visible = false и .stop()
-        
-        // ФИКС МЕНЮ: Используем твою же функцию showScreen, которая корректно всё покажет и запустит
+        // ФИКС: Единая функция сама скроет игру и покажет меню с 0 кадра
         showScreen("menuScreen");
         
         // ФИКС ФОНА: Жестко сбрасываем координаты параллакса на старт, чтобы они не застревали
@@ -1497,14 +1496,10 @@ function gameLoop(dt) {
             }
         }
         
-        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ
+        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Мягко отбираем скорость
         if (window.isEnergyEmpty) {
-            // Отбираем скорость, только если она выше 5
-            if (speedX > 5) {
-                speedX -= 0.1 * dt; // Снижаем скорость (поставил 0.1, чтобы ощущалось, но можешь вернуть 0.05)
-                // Если из-за вычитания скорость упала ниже 5, фиксируем на 5
-                if (speedX < 5) speedX = 5; 
-            }
+            speedX -= 0.05 * dt; 
+            if (speedX < 5) speedX = 5; // ФИКС: Ниже 5 не падаем никогда
         }
     }
     
@@ -2105,12 +2100,14 @@ function gameLoop(dt) {
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        // Мягкая резинка из старого кода
+        // ФИКС ЛАВИНЫ: Агрессивная погоня издалека
         if (distanceToAvalanche > 2500) {
-            currentAvalancheSpeed = speedX + 1.5; 
+            currentAvalancheSpeed = Math.max(speedX + 2, 20); // Минимальная скорость погони 20
         } else if (distanceToAvalanche < 1000) {
-            currentAvalancheSpeed = speedX - 0.5; // Лавина почти уравнивает с тобой скорость
-            if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; // Но никогда не останавливается
+            currentAvalancheSpeed = speedX - 0.5; 
+            if (currentAvalancheSpeed < 15) currentAvalancheSpeed = 15; 
+        } else {
+            currentAvalancheSpeed = Math.max(avalancheBaseSpeed, speedX + 1);
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
@@ -2118,13 +2115,6 @@ function gameLoop(dt) {
         if (avalanche) {
             avalanche.visible = true;
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            
-            // ФИКС АНИМАЦИИ: Принудительно перезапускаем, если она остановилась
-            if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
-                if (avalanche.currentFrame >= avalanche.totalFrames - 1 || !avalanche.playing) {
-                    if (typeof avalanche.gotoAndPlay === "function") avalanche.gotoAndPlay(0);
-                }
-            }
             
             // let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
             // let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
