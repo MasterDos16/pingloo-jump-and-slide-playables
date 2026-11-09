@@ -1313,7 +1313,9 @@ function resetGame(startImmediately) {
 
     if (gameRoot.gameOverScreen) {
         gameRoot.gameOverScreen.visible = false;
-        gameRoot.gameOverScreen.gotoAndStop(0); 
+        if (typeof gameRoot.gameOverScreen.gotoAndStop === "function") {
+            gameRoot.gameOverScreen.gotoAndStop(0);
+        }
     }
 
     if (!startImmediately) {
