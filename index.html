@@ -2,7 +2,13 @@
 <html>
     <head>
         <!-- YouTube Playables SDK -->
-        <script src="https://www.youtube.com/game_api/v1"></script>
+    <script src="https://www.youtube.com/game_api/v1"></script>
+    <script>
+        // Как только SDK загрузился, сразу говорим, что мы готовы рендерить
+        if (typeof ytgame !== 'undefined' && ytgame.game) {
+            ytgame.game.firstFrameReady();
+        }
+    </script>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>pingloo_wings_game_v02</title>

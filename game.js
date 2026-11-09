@@ -979,19 +979,41 @@ window.initGame = function(root, pixiScene) {
     }
     requestAnimationFrame(browserLoop);
 
-    // ПРЯЧЕМ ПРЕЛОАДЕР ПОСЛЕ ЗАГРУЗКИ
+    // ПРЯЧЕМ HTML-ПРЕЛОАДЕР: Pixi загрузился, показываем Tap to Start
     let preloader = document.getElementById("game-preloader");
     if (preloader) {
-        preloader.style.opacity = "0"; // Запускаем плавное исчезновение
+        preloader.style.opacity = "0"; 
         setTimeout(() => {
-            if (preloader.parent) preloader.remove(); // Удаляем из DOM через полсекунды
+            if (preloader.parentNode) preloader.remove(); // Исправлено .parent на .parentNode
         }, 500);
     }
 
-    if (typeof yt !== 'undefined' && yt.game) {
-        yt.game.firstFrameReady(); // Платформа требует этот вызов первым
-        yt.game.ready();
+    // --- ИНТЕГРАЦИЯ YOUTUBE SDK (ОБЯЗАТЕЛЬНЫЕ ТРЕБОВАНИЯ) ---
+    if (typeof ytgame !== 'undefined') {
+        
+        // 1. Сообщаем платформе, что игра полностью загружена
+        if (ytgame.game) {
+            ytgame.game.gameReady();
+        }
+        
+        // 2. Подключаем обязательные системные события (звук и пауза)
+        if (ytgame.system) {
+            ytgame.system.onPause(() => {
+                if (isPlaying && gameRoot.btnPause) {
+                    gameRoot.btnPause.emit('pointerdown');
+                }
+            });
+            
+            ytgame.system.onResume(() => {
+                // Возврат из паузы (пока просто слушаем)
+            });
+            
+            ytgame.system.onAudioEnabledChange((isAudioEnabled) => {
+                createjs.Sound.muted = !isAudioEnabled;
+            });
+        }
     }
+
     window.handleResize();
 }
 
