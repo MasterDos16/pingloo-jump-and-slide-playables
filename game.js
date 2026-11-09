@@ -1316,19 +1316,10 @@ function resetGame(startImmediately) {
     }
 
     if (!startImmediately) {
-        if (gameRoot.menuLevelScreen) {
-            gameRoot.menuLevelScreen.visible = false;
-            if (typeof gameRoot.menuLevelScreen.stop === "function") gameRoot.menuLevelScreen.stop();
-        }
-        if (gameRoot.menuCharScreen) {
-            gameRoot.menuCharScreen.visible = false;
-            if (typeof gameRoot.menuCharScreen.stop === "function") gameRoot.menuCharScreen.stop();
-        }
-        if (gameRoot.menuScreen) {
-            gameRoot.addChild(gameRoot.menuScreen); 
-            gameRoot.menuScreen.visible = true;
-            if (typeof gameRoot.menuScreen.play === "function") gameRoot.menuScreen.play(); // ФИКС: Запускаем анимацию меню!
-        }
+        // Убираем старую логику с .visible = false и .stop()
+        
+        // ФИКС МЕНЮ: Используем твою же функцию showScreen, которая корректно всё покажет и запустит
+        showScreen("menuScreen");
         
         // ФИКС ФОНА: Жестко сбрасываем координаты параллакса на старт, чтобы они не застревали
         let layers = ["sky", "cloudsBack", "mountainsMid", "mountains", "trees", "cloudsFront"];
@@ -1506,10 +1497,14 @@ function gameLoop(dt) {
             }
         }
         
-        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ: Мягко отбираем скорость
+        // ШТРАФ ЗА ПУСТУЮ ЭНЕРГИЮ
         if (window.isEnergyEmpty) {
-            speedX -= 0.05 * dt; // ОЧЕНЬ плавное падение скорости (было резкое 1.5)
-            if (speedX < 15) speedX = 15; // Минимальная скорость барахтанья (чтобы не замер на месте)
+            // Отбираем скорость, только если она выше 5
+            if (speedX > 5) {
+                speedX -= 0.1 * dt; // Снижаем скорость (поставил 0.1, чтобы ощущалось, но можешь вернуть 0.05)
+                // Если из-за вычитания скорость упала ниже 5, фиксируем на 5
+                if (speedX < 5) speedX = 5; 
+            }
         }
     }
     
@@ -1701,7 +1696,7 @@ function gameLoop(dt) {
         }
 
         if (isDiving) {
-            if (playerAnimLock <= 0 && !hasSled) setPlayerState(isComboSliding ? "combo" : "dive"); 
+            if (playerAnimLock <= 0 && !hasSled) setPlayerState(isComboSliding ? "combo" : "dive");
             if (slopeForce > 0) {
                 // РАЗГОН ВНИЗ ПО СКЛОНУ
                 // Папи(3) разгоняется быстрее (2.2). Моми(2) слабее (1.4). Остальные (1.8).
@@ -2131,9 +2126,9 @@ function gameLoop(dt) {
                 }
             }
             
-            let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
-            let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-            colorizeAvalanche(targetColor); 
+            // let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
+            // let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+            // colorizeAvalanche(targetColor); 
         }
         
         if (distanceToAvalanche < 1500 && !isGameOver) {
