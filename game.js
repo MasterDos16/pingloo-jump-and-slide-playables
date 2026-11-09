@@ -989,6 +989,7 @@ window.initGame = function(root, pixiScene) {
     }
 
     if (typeof yt !== 'undefined' && yt.game) {
+        yt.game.firstFrameReady(); // Платформа требует этот вызов первым
         yt.game.ready();
     }
     window.handleResize();
