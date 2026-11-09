@@ -29536,16 +29536,9 @@
 
     var Graphic230 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 19, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 8"));
-        var instance2 = new Sprite(fromFrame("Bitmap 26"))
+        var instance1 = new Sprite(fromFrame("Bitmap 26"))
             .setTransform(-33, -19);
-        this.addTimedChild(instance1, 0, 8, {
-                "0": {
-                    x: -29,
-                    y: -19
-                }
-            })
-            .addTimedChild(instance2, 8, 11);
+        this.addTimedChild(instance1);
     });
 
     var Graphic231 = MovieClip.extend(function (mode) {
@@ -31929,7 +31922,10 @@
                     ky: 0,
                     r: 0.325
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 70);
     });
 
     var Graphic251 = MovieClip.extend(function (mode) {
@@ -32244,16 +32240,9 @@
 
     var Graphic252 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 60, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 8"));
-        var instance2 = new Sprite(fromFrame("Bitmap 26"))
+        var instance1 = new Sprite(fromFrame("Bitmap 26"))
             .setTransform(-33, -19);
-        this.addTimedChild(instance1, 0, 11, {
-                "0": {
-                    x: -29,
-                    y: -19
-                }
-            })
-            .addTimedChild(instance2, 11, 49);
+        this.addTimedChild(instance1);
     });
 
     var Graphic253 = MovieClip.extend(function (mode) {
@@ -32486,7 +32475,10 @@
                     r: -1.723
                 }
             })
-            .addTimedChild(instance1);
+            .addTimedChild(instance1)
+            .addAction(function () {
+                this.stop();
+            }, 59);
     });
 
     var Graphic261 = MovieClip.extend(function (mode) {
@@ -32853,16 +32845,9 @@
 
     var Graphic262 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 71, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 8"));
-        var instance2 = new Sprite(fromFrame("Bitmap 26"))
+        var instance1 = new Sprite(fromFrame("Bitmap 26"))
             .setTransform(-33, -19);
-        this.addTimedChild(instance1, 0, 9, {
-                "0": {
-                    x: -29,
-                    y: -19
-                }
-            })
-            .addTimedChild(instance2, 9, 62);
+        this.addTimedChild(instance1);
     });
 
     var Graphic263 = MovieClip.extend(function (mode) {
@@ -33343,7 +33328,10 @@
                     r: -1.723
                 }
             })
-            .addTimedChild(instance1);
+            .addTimedChild(instance1)
+            .addAction(function () {
+                this.stop();
+            }, 70);
     });
 
     var Graphic272 = MovieClip.extend(function (mode) {
@@ -34193,16 +34181,9 @@
 
     var Graphic292 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 19, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 8"));
-        var instance2 = new Sprite(fromFrame("Bitmap 26"))
+        var instance1 = new Sprite(fromFrame("Bitmap 26"))
             .setTransform(-33, -19);
-        this.addTimedChild(instance1, 0, 8, {
-                "0": {
-                    x: -29,
-                    y: -19
-                }
-            })
-            .addTimedChild(instance2, 8, 11);
+        this.addTimedChild(instance1);
     });
 
     var Graphic293 = MovieClip.extend(function (mode) {
@@ -37328,7 +37309,10 @@
                     y: 1.35,
                     r: 0.193
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 70);
     });
 
     var Graphic323 = MovieClip.extend(function (mode) {
@@ -38212,7 +38196,10 @@
                     y: -66,
                     r: 0.388
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 60);
     });
 
     var Graphic333 = MovieClip.extend(function (mode) {
@@ -38948,7 +38935,10 @@
                     y: -66,
                     r: 0.388
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 59);
     });
 
     var Graphic344 = MovieClip.extend(function (mode) {
@@ -43674,7 +43664,10 @@
                     y: -52.55,
                     r: 0.275
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 100);
     });
 
     var Graphic395 = MovieClip.extend(function (mode) {
@@ -44502,7 +44495,10 @@
                     y: -82.85,
                     r: 0.457
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 59);
     });
 
     var Graphic405 = MovieClip.extend(function (mode) {
@@ -45192,7 +45188,10 @@
                     y: -82.85,
                     r: 0.457
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 59);
     });
 
     var Graphic416 = MovieClip.extend(function (mode) {
@@ -49481,7 +49480,10 @@
                     y: -511.45,
                     r: -0.202
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 66);
     });
 
     var Graphic461 = MovieClip.extend(function (mode) {
@@ -50354,7 +50356,10 @@
                     x: -286.9,
                     y: -638.3
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 29);
     });
 
     var Graphic470 = MovieClip.extend(function (mode) {
@@ -51018,7 +51023,10 @@
                     y: -638.3,
                     r: 0.114
                 }
-            });
+            })
+            .addAction(function () {
+                this.stop();
+            }, 59);
     });
 
     var Graphic484 = MovieClip.extend(function (mode) {

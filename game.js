@@ -439,19 +439,24 @@ window.initGame = function(root, pixiScene) {
     }
     // -------------------------------------------
 
-    // --- УМНОЕ РАЗДЕЛЕНИЕ ЗВУКА И МУЗЫКИ ---
+    // --- УМНОЕ РАЗДЕЛЕНИЕ ЗВУКА И МУЗЫКИ (БЕЗОПАСНАЯ ВЕРСИЯ) ---
     let originalSoundPlay = createjs.Sound.play;
-    createjs.Sound.play = function(src, options) {
-        // Если звук начинается на "Sfx", а в настройках звуки ВЫКЛ - блокируем
-        if (!window.isSoundsOn && String(src).startsWith("Sfx")) {
-            return { stop: function(){} }; // Возвращаем пустышку, чтобы игра не крашилась
+    createjs.Sound.play = function() {
+        // Создаем настоящий звук, чтобы ничего не ломалось
+        let instance = originalSoundPlay.apply(createjs.Sound, arguments);
+        let srcStr = String(arguments[0]);
+        
+        // Если это музыка и она выключена - ставим на паузу
+        if (!window.isMusicOn && srcStr.startsWith("Bgm")) {
+            instance.paused = true;
         }
-        // Если музыка начинается на "Bgm", а музыка ВЫКЛ - блокируем
-        if (!window.isMusicOn && String(src).startsWith("Bgm")) {
-            return { stop: function(){} };
+        
+        // Если это звук и он выключен - глушим громкость в 0
+        if (!window.isSoundsOn && srcStr.startsWith("Sfx")) {
+            instance.volume = 0;
         }
-        // Иначе играем как обычно
-        return originalSoundPlay.apply(this, arguments);
+        
+        return instance;
     };
 
     // === РЕГИСТРАЦИЯ ВНЕШНИХ ЗВУКОВ (SoundJS работает как раньше) ===
@@ -1200,8 +1205,10 @@ function getHillY(x) {
     let globalAmplitude = 1 + Math.sin(rx * 0.0004) * 0.4; 
     
     let hMod = 1.0;
-    if (currentBiomeIndex === 2 || currentBiomeIndex === 3) hMod = 0.85; 
-    else if (currentBiomeIndex === 5) hMod = 0.6; 
+    // Объединили 2, 3 и 5 биомы: теперь холмы в ванной (5) такие же комфортные для прыжков, как на пляже
+    if (currentBiomeIndex === 2 || currentBiomeIndex === 3 || currentBiomeIndex === 5) {
+        hMod = 0.85; 
+    }
     
     let wave1 = Math.sin(rx * 0.0022) * (150 * globalAmplitude * hMod); 
     let wave2 = Math.cos(rx * 0.0011) * (100 * hMod);  
@@ -2257,7 +2264,7 @@ function gameLoop(dt) {
 
 
     
-    // --- ЛАВИНА: ЛОГИКА "ПОЛИЦЕЙСКИЙ ИЗ SUBWAY SURFERS" ---
+    // --- ЛАВИНА: ОРИГИНАЛЬНАЯ ЛОГИКА С НАСТРОЙКОЙ ПОД PIXI ---
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
@@ -2266,43 +2273,36 @@ function gameLoop(dt) {
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        if (distanceToAvalanche > 1500) {
-            // ЛАВИНА ЗА КАДРОМ: Если игрок далеко, но еле ползет (ошибся), лавина делает РЕЗКИЙ РЫВОК (минимум 25)
-            currentAvalancheSpeed = Math.max(speedX + 1.5, 25); 
-        } else if (distanceToAvalanche < 800) {
-            // ЛАВИНА В КАДРЕ: Дает шанс оторваться (скорость чуть ниже твоей). 
-            // НО если ты продолжаешь тупить (скорость ниже 18) - она тебя сожрет.
+        // ТОЧНАЯ КОПИЯ ТВОИХ ЗНАЧЕНИЙ ИЗ СТАРОГО КОДА:
+        if (distanceToAvalanche > 2500) {
+            currentAvalancheSpeed = speedX + 1.5; 
+        } else if (distanceToAvalanche < 1000) {
             currentAvalancheSpeed = speedX - 0.5; 
             if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
-        } else {
-            // ИГРОК ВЫРВАЛСЯ: Как только ты оторвался на 800+ пикселей, лавина теряет к тебе интерес 
-            // и сбрасывает скорость до базовой. Ты стремительно улетаешь от нее.
-            currentAvalancheSpeed = avalancheBaseSpeed;
         }
 
-        avalancheWorldX += currentAvalancheSpeed * dt;
+        avalancheWorldX += currentAvalancheSpeed * dt; 
         
         if (avalanche) {
             avalanche.visible = true;
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            
-            // ФИКС АНИМАЦИИ: Принудительно крутим таймлайн лавины
-            if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
-                if (avalanche.currentFrame >= avalanche.totalFrames - 1 || !avalanche.playing) {
-                    if (typeof avalanche.gotoAndPlay === "function") avalanche.gotoAndPlay(0);
-                }
-            }
+            // МЫ ПОЛНОСТЬЮ УДАЛИЛИ КОСТЫЛЬ С gotoAndPlay(0), ИЗ-ЗА КОТОРОГО ОНА МЕРЦАЛА
         }
         
         if (distanceToAvalanche < 1500 && !isGameOver) {
-            if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
-            avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
+            if (!avalancheSoundInstance) {
+                avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
+            }
+            if (window.isSoundsOn) {
+                avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
+            } else {
+                avalancheSoundInstance.volume = 0;
+            }
         } else if (avalancheSoundInstance) {
             avalancheSoundInstance.stop();
             avalancheSoundInstance = null;
         }
         
-        // ЛАВИНА НАСТИГЛА ИГРОКА
         if (avalancheWorldX > playerWorldX - 80) {
             if (!isGameOver) {
                 if (hasSled) {
@@ -2310,23 +2310,22 @@ function gameLoop(dt) {
                     nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
                     createjs.Sound.play("SfxSledBreak"); 
                     player.y += 35;
-                    if (activeSledInstance) activeSledInstance.visible = false;
+                    if (activeSledInstance && activeSledInstance.parent) {
+                        activeSledInstance.parent.removeChild(activeSledInstance);
+                    }
                     activeSledInstance = null;
                     
-                    avalancheWorldX -= 1500; 
-                    speedX += 15; 
+                    avalancheWorldX -= 700; // Отбрасывание как в старом коде
+                    speedX += 10; 
                     spawnBoostFlash();
                 } else {
                     isGameOver = true;
-                    // МЫ НЕ ОСТАНАВЛИВАЕМ АНИМАЦИЮ ПЕРСОНАЖА ПРИ ПРОИГРЫШЕ, 
-                    // чтобы он красиво утонул в лавине!
                     let finalDist = Math.floor(worldOffsetX / 100);
                     triggerGameOver(finalDist);
                 }
             }
         }
     } else {
-        // Если сейчас интро (вылет), лавина просто ждет за кадром
         if (avalanche) avalanche.visible = false;
     }
     
