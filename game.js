@@ -1,4 +1,4 @@
-// v1.6.6
+// v1.7.1
 
 let activeCharMC = null;
 let player;
