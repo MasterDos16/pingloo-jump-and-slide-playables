@@ -51,6 +51,9 @@ let effects = [];
 
 let slideParticles = [];
 
+window.isMusicOn = true;
+window.isSoundsOn = true;
+
 // ПУЛ ОБЪЕКТОВ: Хранилище для переиспользования
 let objPool = {
     coins: [], fishes: [], sleds: {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}, coinFX: [], fishFX: [], comboText: [], comboFlash: []
@@ -386,7 +389,7 @@ function addTween(target, props, duration, onComplete = null, onUpdate = null) {
     window.activeTweens.push({ target, startProps, targetProps: props, duration, time: 0, onComplete, onUpdate });
 }
 
-let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen"];
+let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen", "settingsScreen", "creditsScreen"];
     function showScreen(screenName) {
         screens.forEach(name => {
             if (gameRoot[name]) {
@@ -734,6 +737,75 @@ window.initGame = function(root, pixiScene) {
             createjs.Sound.play("SfxClick");
             showScreen("menuLevelScreen"); 
         });
+    }
+    // Обработка кнопок Настроек и Credits в главном меню
+    if (gameRoot.menuScreen.btnSettings) {
+        gameRoot.menuScreen.btnSettings.interactive = true;
+        gameRoot.menuScreen.btnSettings.cursor = "pointer";
+        gameRoot.menuScreen.btnSettings.on("pointerdown", () => {
+            createjs.Sound.play("SfxClick");
+            showScreen("settingsScreen");
+        });
+    }
+    if (gameRoot.menuScreen.btnCredits) {
+        gameRoot.menuScreen.btnCredits.interactive = true;
+        gameRoot.menuScreen.btnCredits.cursor = "pointer";
+        gameRoot.menuScreen.btnCredits.on("pointerdown", () => {
+            createjs.Sound.play("SfxClick");
+            showScreen("creditsScreen");
+        });
+    }
+
+    // --- ЛОГИКА ЭКРАНА НАСТРОЕК ---
+    if (gameRoot.settingsScreen) {
+        if (gameRoot.settingsScreen.btnBack) {
+            gameRoot.settingsScreen.btnBack.interactive = true;
+            gameRoot.settingsScreen.btnBack.cursor = "pointer";
+            gameRoot.settingsScreen.btnBack.on("pointerdown", () => { 
+                createjs.Sound.play("SfxClick"); 
+                showScreen("menuScreen"); 
+            });
+        }
+        
+        // Чекбокс музыки напрямую внутри settingsScreen
+        if (gameRoot.settingsScreen.music_checkbox) {
+            let mBox = gameRoot.settingsScreen.music_checkbox;
+            mBox.interactive = true;
+            mBox.cursor = "pointer";
+            mBox.gotoAndStop(window.isMusicOn ? 0 : 1);
+            mBox.on("pointerdown", () => {
+                window.isMusicOn = !window.isMusicOn;
+                mBox.gotoAndStop(window.isMusicOn ? 0 : 1);
+                if (currentBgmInstance) currentBgmInstance.paused = !window.isMusicOn;
+                if (window.isSoundsOn) createjs.Sound.play("SfxClick");
+            });
+        }
+
+        // Чекбокс звуков напрямую внутри settingsScreen
+        if (gameRoot.settingsScreen.sounds_checkbox) {
+            let sBox = gameRoot.settingsScreen.sounds_checkbox;
+            sBox.interactive = true;
+            sBox.cursor = "pointer";
+            sBox.gotoAndStop(window.isSoundsOn ? 0 : 1);
+            sBox.on("pointerdown", () => {
+                window.isSoundsOn = !window.isSoundsOn;
+                sBox.gotoAndStop(window.isSoundsOn ? 0 : 1);
+                createjs.Sound.muted = !window.isSoundsOn; // Глобальный мьют для SoundJS
+                if (window.isSoundsOn) createjs.Sound.play("SfxClick");
+            });
+        }
+    }
+
+    // --- ЛОГИКА ЭКРАНА CREDITS ---
+    if (gameRoot.creditsScreen) {
+        if (gameRoot.creditsScreen.btnBack) {
+            gameRoot.creditsScreen.btnBack.interactive = true;
+            gameRoot.creditsScreen.btnBack.cursor = "pointer";
+            gameRoot.creditsScreen.btnBack.on("pointerdown", () => { 
+                createjs.Sound.play("SfxClick"); 
+                showScreen("menuScreen"); 
+            });
+        }
     }
 
     window.selectedBiomeID = 0; 
@@ -1721,10 +1793,10 @@ function gameLoop(dt) {
                 let speedPenalty = 0;
                 
                 if (slopeForce < 0) {
-                    // ВРЕЗАЛИСЬ В ПОДЪЕМ: Жесткий штраф
-                    // Чем круче стена, тем сильнее гасится скорость
-                    speedPenalty = 5 + (Math.abs(slopeForce) * 15); 
-                    if (comboCount > 0) speedPenalty += (comboCount * 3);
+                    // МЯГКИЙ ШТРАФ: Уменьшили базовый сброс и влияние угла
+                    speedPenalty = 2 + (Math.abs(slopeForce) * 8); 
+                    // Штраф за сорванное комбо тоже стал справедливее
+                    if (comboCount > 0) speedPenalty += (comboCount * 1.5);
                     isComboSliding = false;
                     comboCount = 0; 
                 } else {
@@ -1756,8 +1828,8 @@ function gameLoop(dt) {
             if (playerAnimLock <= 0 && !hasSled) setPlayerState(isComboSliding ? "combo" : "dive");
             if (slopeForce > 0) {
                 // РАЗГОН ВНИЗ ПО СКЛОНУ
-                // Папи(3) разгоняется быстрее (2.2). Моми(2) слабее (1.4). Остальные (1.8).
-                let normalBoost = (window.selectedCharID === 3) ? 2.2 : (window.selectedCharID === 2) ? 1.4 : 1.8; 
+                // Моми (2) теперь разгоняется наравне с Кико, но за счет чуть большего веса едет плотнее
+                let normalBoost = (window.selectedCharID === 3) ? 2.2 : (window.selectedCharID === 2) ? 1.85 : 1.8;
                 speedX += slopeForce * (hasSled ? 3.0 : normalBoost) * dt;
             } else {
                 speedX += slopeForce * (hasSled ? 1.2 : 2.5) * dt;
@@ -1981,7 +2053,7 @@ function gameLoop(dt) {
     let baseMagnet = (window.selectedCharID === 2) ? 280 : 35; // Моми стала мощнее
     // МОМИ (ID 2): Единственная имеет магнит для монет
     let coinMagnetBonus = (window.selectedCharID === 2) ? 150 : 35; 
-    let fishHitRadius = 100; // Рыбы без магнита для всех
+    let fishHitRadius = (currentBiomeIndex === 4) ? 250 : 100; // В воде радиус 250
 
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
@@ -2153,26 +2225,31 @@ function gameLoop(dt) {
 
 
     
-    // --- ВОЗВРАЩАЕМ ТВОЮ ЛАВИНУ С НОВОЙ ЛОГИКОЙ ---
+    // --- ЛАВИНА: ОРИГИНАЛЬНАЯ ЛОГИКА ПРЕСЛЕДОВАНИЯ ---
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
+        // Лавина медленно разгоняется всю игру, усложняя выживание на поздних этапах
         avalancheBaseSpeed += 0.002 * dt;
-        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; // Потолок
+        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        // ФИКС ЛАВИНЫ: Агрессивная погоня издалека
+        // Резиновая нить:
         if (distanceToAvalanche > 2500) {
-            currentAvalancheSpeed = Math.max(speedX + 2, 20); // Минимальная скорость погони 20
+            // Если игрок улетел далеко, лавина уверенно его догоняет
+            currentAvalancheSpeed = speedX + 1.5; 
         } else if (distanceToAvalanche < 1000) {
+            // Если лавина "дышит в затылок", она чуть сбавляет темп, давая шанс на ошибку (комбо/прыжок)
             currentAvalancheSpeed = speedX - 0.5; 
-            if (currentAvalancheSpeed < 15) currentAvalancheSpeed = 15; 
+            if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
         } else {
-            currentAvalancheSpeed = Math.max(avalancheBaseSpeed, speedX + 1);
+            // В средней зоне (1000 - 2500) лавина едет со своей базовой скоростью, 
+            // позволяя игроку реально ОТРЫВАТЬСЯ от неё на хороших скоростях!
+            currentAvalancheSpeed = avalancheBaseSpeed;
         }
 
-        avalancheWorldX += currentAvalancheSpeed * dt; 
+        avalancheWorldX += currentAvalancheSpeed * dt;
         
         if (avalanche) {
             avalanche.visible = true;
