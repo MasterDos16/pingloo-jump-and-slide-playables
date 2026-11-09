@@ -372,6 +372,26 @@ function addTween(target, props, duration, onComplete = null, onUpdate = null) {
     window.activeTweens.push({ target, startProps, targetProps: props, duration, time: 0, onComplete, onUpdate });
 }
 
+let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen"];
+    function showScreen(screenName) {
+        screens.forEach(name => {
+            if (gameRoot[name]) {
+                let isTarget = (name === screenName);
+                gameRoot[name].visible = isTarget;
+                if (isTarget) {
+            gameRoot.addChild(gameRoot[name]);
+            // ФИКС: Всегда стартуем с 0 кадра, иначе анимация застревает в конце
+            if (typeof gameRoot[name].gotoAndPlay === "function") {
+                gameRoot[name].gotoAndPlay(0);
+            } else if (typeof gameRoot[name].play === "function") {
+                gameRoot[name].play();
+            }
+        }
+            }
+        });
+        updateGlobalUI(); 
+    }
+
 window.initGame = function(root, pixiScene) {
     gameRoot = root; 
     scene = pixiScene;
@@ -607,26 +627,6 @@ window.initGame = function(root, pixiScene) {
                 resetGame(false); 
             });
         }
-    }
-
-    let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen"];
-    function showScreen(screenName) {
-        screens.forEach(name => {
-            if (gameRoot[name]) {
-                let isTarget = (name === screenName);
-                gameRoot[name].visible = isTarget;
-                if (isTarget) {
-            gameRoot.addChild(gameRoot[name]);
-            // ФИКС: Всегда стартуем с 0 кадра, иначе анимация застревает в конце
-            if (typeof gameRoot[name].gotoAndPlay === "function") {
-                gameRoot[name].gotoAndPlay(0);
-            } else if (typeof gameRoot[name].play === "function") {
-                gameRoot[name].play();
-            }
-        }
-            }
-        });
-        updateGlobalUI(); 
     }
 
     if (cameraContainer) cameraContainer.visible = false;
