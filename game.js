@@ -133,20 +133,34 @@ let cameraContainer;
 let initialUI_Y = {};
 
 // === ЭКОНОМИКА И ДАННЫЕ ИГРОКА ===
-let globalCoins = parseInt(localStorage.getItem("pinglooTotalCoins")) || 0;
-let savedBiomes = localStorage.getItem("pinglooUnlockedBiomes");
-let unlockedBiomes = savedBiomes ? JSON.parse(savedBiomes) : [0]; // По умолчанию открыт только 0 (первый биом)
-let biomeCosts = [0, 10, 10, 10, 10, 10, 10, 10]; // Цены биомов по порядку
-let savedChars = localStorage.getItem("pinglooUnlockedChars");
-let unlockedChars = savedChars ? JSON.parse(savedChars) : [0]; 
-let charCosts = [0, 10, 10, 10]; // Впиши свои цены
-window.selectedCharID = parseInt(localStorage.getItem("pinglooSelectedChar")) || 0; 
+let globalCoins = 0;
+let unlockedBiomes = [0]; 
+let biomeCosts = [0, 10, 10, 10, 10, 10, 10, 10]; 
+let unlockedChars = [0]; 
+let charCosts = [0, 10, 10, 10]; 
+window.selectedCharID = 0; 
+let recordDistance = 0;
+
+// Единая функция облачного сохранения для YouTube
+function saveProgress() {
+    let dataObj = {
+        coins: globalCoins,
+        biomes: unlockedBiomes,
+        chars: unlockedChars,
+        selectedChar: window.selectedCharID,
+        record: recordDistance
+    };
+    if (typeof ytgame !== 'undefined' && ytgame.game) {
+        ytgame.game.saveData(JSON.stringify(dataObj));
+    } else {
+        // Фоллбэк для локального тестирования
+        try { localStorage.setItem("pinglooSave", JSON.stringify(dataObj)); } catch(e){}
+    }
+}
 
 function updateGlobalUI() {
-    let record = localStorage.getItem("pinglooRecordDistance") || 0;
-    // В PixiJS свойство изменения текста это просто .text
     if (gameRoot.menuScreen) {
-        if (gameRoot.menuScreen.txtRecord) gameRoot.menuScreen.txtRecord.text = record;
+        if (gameRoot.menuScreen.txtRecord) gameRoot.menuScreen.txtRecord.text = recordDistance;
         if (gameRoot.menuScreen.txtTotalCoins) gameRoot.menuScreen.txtTotalCoins.text = globalCoins;
     }
     if (gameRoot.menuLevelScreen && gameRoot.menuLevelScreen.txtTotalCoins) {
@@ -395,6 +409,32 @@ let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen"];
 window.initGame = function(root, pixiScene) {
     gameRoot = root; 
     scene = pixiScene;
+
+    // --- ЗАГРУЗКА ОБЛАЧНЫХ СОХРАНЕНИЙ YOUTUBE ---
+    function applyData(dataStr) {
+        if (dataStr) {
+            try {
+                let data = JSON.parse(dataStr);
+                globalCoins = data.coins !== undefined ? data.coins : 0;
+                unlockedBiomes = data.biomes || [0];
+                unlockedChars = data.chars || [0];
+                window.selectedCharID = data.selectedChar || 0;
+                recordDistance = data.record || 0;
+            } catch(e) {}
+        }
+        updateGlobalUI();
+    }
+
+    if (typeof ytgame !== 'undefined' && ytgame.game) {
+        ytgame.game.loadData().then(dataStr => {
+            applyData(dataStr);
+        }).catch(() => applyData(null));
+    } else {
+        let local = null;
+        try { local = localStorage.getItem("pinglooSave"); } catch(e){}
+        applyData(local);
+    }
+    // -------------------------------------------
 
     // === РЕГИСТРАЦИЯ ВНЕШНИХ ЗВУКОВ (SoundJS работает как раньше) ===
     createjs.Sound.registerSound("sounds/bgm_menu.mp3", "BgmMenu");
@@ -768,9 +808,8 @@ window.initGame = function(root, pixiScene) {
                 } else {
                     if (globalCoins >= biomeCosts[i]) {
                         globalCoins -= biomeCosts[i];
-                        localStorage.setItem("pinglooTotalCoins", globalCoins);
                         unlockedBiomes.push(i);
-                        localStorage.setItem("pinglooUnlockedBiomes", JSON.stringify(unlockedBiomes));
+                        saveProgress();
                         updateGlobalUI();
                         createjs.Sound.play("SfxBuy"); // УСПЕХ
                         updateBiomeUI(i);
@@ -817,7 +856,7 @@ window.initGame = function(root, pixiScene) {
         function updateCharUI(selectedIndex) {
             let prevSelectedCharID = window.selectedCharID;
             window.selectedCharID = selectedIndex;
-            localStorage.setItem("pinglooSelectedChar", window.selectedCharID); 
+            saveProgress();
             
             function setButtonState(btn, frame) {
                 if (!btn) return;
@@ -862,9 +901,8 @@ window.initGame = function(root, pixiScene) {
                 } else {
                     if (globalCoins >= charCosts[i]) {
                         globalCoins -= charCosts[i];
-                        localStorage.setItem("pinglooTotalCoins", globalCoins);
                         unlockedChars.push(i);
-                        localStorage.setItem("pinglooUnlockedChars", JSON.stringify(unlockedChars));
+                        saveProgress();
                         updateGlobalUI();
                         createjs.Sound.play("SfxBuy"); // УСПЕХ
                         updateCharUI(i); 
@@ -1125,12 +1163,10 @@ function triggerGameOver(finalDistance) {
             );
         }
 
-        let savedRecord = localStorage.getItem("pinglooRecordDistance") || 0;
-        if (finalDistance > savedRecord) {
-            localStorage.setItem("pinglooRecordDistance", finalDistance); 
+        if (finalDistance > recordDistance) {
+            recordDistance = finalDistance; 
             if (gameRoot.gameOverScreen.mcNewRecord) {
                 gameRoot.gameOverScreen.mcNewRecord.visible = true;
-                // Глушим таймлайн плашки рекорда, чтобы не было спайка процессора
                 if (typeof gameRoot.gameOverScreen.mcNewRecord.stop === "function") {
                     gameRoot.gameOverScreen.mcNewRecord.stop();
                 }
@@ -1138,11 +1174,12 @@ function triggerGameOver(finalDistance) {
         }
 
         globalCoins += coinsCollected;
-        localStorage.setItem("pinglooTotalCoins", globalCoins);
+        saveProgress(); // Сохраняем в облако!
         updateGlobalUI(); 
 
-        if (typeof yt !== 'undefined' && yt.game) {
-            yt.game.sendScore({ score: finalDistance });
+        // Правильная отправка рекорда в YouTube (согласно документации)
+        if (typeof ytgame !== 'undefined' && ytgame.engagement) {
+            ytgame.engagement.sendScore({ value: finalDistance });
         }
     }
 }
