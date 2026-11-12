@@ -2334,27 +2334,31 @@ function gameLoop(dt) {
 
 
     
-    // --- ЛАВИНА: ИДЕАЛЬНАЯ ЛОГИКА ОТСТАВАНИЯ ---
+    // --- ЛАВИНА: ИДЕАЛЬНАЯ ЛОГИКА "РЕЗИНКИ" ---
     if (!window.isIntro) {
-        let distanceToAvalanche = playerWorldX - avalancheWorldX;
-        
-        // Базовая скорость лавины плавно растет, но имеет потолок 42
+        // Базовая скорость лавины плавно растет, усложняя лейт-гейм (потолок 45)
         avalancheBaseSpeed += 0.002 * dt;
-        if (avalancheBaseSpeed > 42) avalancheBaseSpeed = 42; 
+        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
+        let distanceToAvalanche = playerWorldX - avalancheWorldX;
+
+        // СЕКРЕТ РЕЗИНКИ: Лавина НИКОГДА не отстает больше чем на 2500 пикселей.
+        // Если ты улетаешь вперед, она незримо телепортируется за кадром и держится ровно на этой дистанции.
+        if (distanceToAvalanche > 2500) {
+            avalancheWorldX = playerWorldX - 2500;
+            distanceToAvalanche = 2500; 
+        }
 
         if (distanceToAvalanche > 1500) {
             if (speedX < 25) {
-                // Если игрок далеко, но еле тащится (сбросил скорость) - лавина делает рывок, чтобы догнать
-                currentAvalancheSpeed = 35; 
+                // Если ты ошибся и тащишься медленно - лавина делает РЕЗКИЙ РЫВОК, чтобы появиться в кадре
+                currentAvalancheSpeed = 45; 
             } else {
-                // ИГРОК ГОНИТ: Лавина двигается со своей базовой скоростью (12-42).
-                // Так как скорость игрока выше (50+), лавина будет отставать и ИСЧЕЗНЕТ ИЗ КАДРА.
                 currentAvalancheSpeed = avalancheBaseSpeed;
             }
         } else if (distanceToAvalanche < 800) {
-            // ЛАВИНА БЛИЗКО (в кадре): Дает шанс вырваться, двигаясь чуть медленнее игрока
+            // Лавина в кадре: дает шанс вырваться, двигаясь чуть медленнее тебя
             currentAvalancheSpeed = speedX - 0.5; 
             if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
         }
@@ -2363,7 +2367,7 @@ function gameLoop(dt) {
         
         if (avalanche) {
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            // Полностью скрываем графику лавины, если игрок оторвался, чтобы она не маячила при зуме камеры
+            // Полностью скрываем графику лавины, если она далеко
             avalanche.visible = (distanceToAvalanche < 1800);
         }
         
