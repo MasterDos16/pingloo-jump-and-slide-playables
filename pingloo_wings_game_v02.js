@@ -13397,13 +13397,13 @@
         this[instance13.name = "txtTotalCoins"] = instance13;
         var instance12 = new Sprite(fromFrame("Bitmap 66"))
             .setTransform(-562, -261);
-        var instance11 = new Sprite(fromFrame("Bitmap 425"))
+        var instance11 = new Sprite(fromFrame("Bitmap425"))
             .setTransform(-680, -404, 0.402, 0.402);
         var instance10 = new Sprite(fromFrame("Bitmap 426"))
             .setTransform(504, -224, 0.402, 0.402);
         var instance9 = new Sprite(fromFrame("Bitmap 427"))
             .setTransform(-614, -224, 0.402, 0.402);
-        var instance8 = new Sprite(fromFrame("Bitmap 428"))
+        var instance8 = new Sprite(fromFrame("Bitmap428"))
             .setTransform(-641, 348, 0.402, 0.402);
         var instance7 = new Sprite(fromFrame("Bitmap 424"))
             .setTransform(-347, -502, 0.284, 0.284);
@@ -311297,8 +311297,8 @@
     });
 
     lib.pingloo_wings_game_v02.assets = {
-        "Bitmap 428": "images/Bitmap 428.png",
-        "Bitmap 425": "images/Bitmap 425.png",
+        "Bitmap428": "images/Bitmap428.png",
+        "Bitmap425": "images/Bitmap425.png",
         "pingloo_wings_game_v02": "images/pingloo_wings_game_v02.shapes.txt",
         "pingloo_wings_game_v02_atlas_1": "images/pingloo_wings_game_v02_atlas_1.json",
         "pingloo_wings_game_v02_atlas_2": "images/pingloo_wings_game_v02_atlas_2.json",

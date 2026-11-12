@@ -519,23 +519,10 @@ window.initGame = function(root, pixiScene) {
 
     avalanche = root.avalanche; 
     if (avalanche) {
-        // Прячем лавину, если она отстала дальше, чем расширяется экран при зуме
-            avalanche.visible = (distanceToAvalanche < 1800);
-            avalanche.x = avalancheWorldX - worldOffsetX;
+        avalanche.visible = false;
         
-        // ФИКС АНИМАЦИИ: Принудительно перезапускаем, если она остановилась
-        if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
-            // Если мы достигли последнего кадра ИЛИ анимация не проигрывается
-            if (avalanche.currentFrame >= avalanche.totalFrames - 1 || !avalanche.playing) {
-                if (typeof avalanche.gotoAndPlay === "function") {
-                    avalanche.gotoAndPlay(0);
-                }
-            }
-        }
-        
-        // 0: Снег (белый), 1: Ночь (в цвет холмов), 2: Луга (белый), 3: Пляж (песок), 4: Вода (грунт), 5: Уточки (белый/пена), 6: Пирамиды (песок), 7: Луна (лунный грунт)
+        // Первоначальная покраска при старте игры
         let stormColors = [0xFFFFFF, 0x63B6E5, 0xFFFFFF, 0xE6C875, 0xC2B280, 0xFFFFFF, 0xE6C875, 0xAEAFCE];
-        colorizeAvalanche(stormColors[index] || 0xFFFFFF);
         let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
         colorizeAvalanche(targetColor);
     }
