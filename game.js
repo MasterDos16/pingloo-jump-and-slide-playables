@@ -519,12 +519,14 @@ window.initGame = function(root, pixiScene) {
 
     avalanche = root.avalanche; 
     if (avalanche) {
-        avalanche.visible = false;
+        avalanche.visible = false; // При старте лавину не видно
         
-        // Фиксируем цвет лавины для текущего биома
+        // Первоначальная покраска при старте игры
         let stormColors = [0xFFFFFF, 0x63B6E5, 0xFFFFFF, 0xE6C875, 0xC2B280, 0xFFFFFF, 0xE6C875, 0xAEAFCE];
-        window.currentAvalancheColor = stormColors[index] || 0xFFFFFF;
-        colorizeAvalanche(window.currentAvalancheColor);
+        let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
+        
+        window.currentAvalancheColor = targetColor;
+        colorizeAvalanche(targetColor);
     }
 
     // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
