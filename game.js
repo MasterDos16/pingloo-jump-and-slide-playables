@@ -245,7 +245,7 @@ function spawnSlideParticle(px, py, color) {
     
     p.tint = color; // Красим в цвет земли текущего биома
     p.alpha = 1.0;
-    p.scale.set(0.5 + Math.random() * 0.8);
+    p.scale.set(1.5 + Math.random() * 1.5); // <--- УВЕЛИЧЕНО (было 0.5 + 0.8)
     
     // Частицы летят в противоположную сторону (назад и чуть вверх)
     p.vx = -speedX * 0.3 - Math.random() * 10; 
@@ -310,12 +310,16 @@ function spawnFish(worldX, worldY) {
         fishObj = objPool.fishes.pop();
         fishObj.visible = true;
     } else {
-        fishObj = PIXI.Sprite.from("img/fish.png"); 
+        // Создаем пустой спрайт без конкретной картинки при старте
+        fishObj = new PIXI.Sprite(); 
         fishObj.anchor.set(0.5);
     }
     
-    // ГЛАВНЫЙ ФИКС: Возвращаем размер и видимость
-    fishObj.scale.set(1);
+    // --- ДИНАМИЧЕСКАЯ СМЕНА РЫБКИ ПОД БИОМ ---
+    fishObj.texture = PIXI.Texture.from("img/fish_" + currentBiomeIndex + ".png");
+    
+    // Возвращаем размер и видимость. В воде (4) они на 60% крупнее!
+    fishObj.scale.set(currentBiomeIndex === 4 ? 1.6 : 1);
     fishObj.alpha = 1;
     
     if (fishObj.parent !== coinsContainer) coinsContainer.addChild(fishObj); 
@@ -475,6 +479,7 @@ window.initGame = function(root, pixiScene) {
     createjs.Sound.registerSound("sounds/sfx_page.mp3", "SfxPage");
     createjs.Sound.registerSound("sounds/sfx_buy.mp3", "SfxBuy");
     createjs.Sound.registerSound("sounds/sfx_error.mp3", "SfxError");
+    createjs.Sound.registerSound("sounds/sfx_countdown.mp3", "SfxCountdown");
 
     player = root.player;
 
@@ -526,9 +531,10 @@ window.initGame = function(root, pixiScene) {
             }
         }
         
-        let stormColors = [0xFFFFFF, 0xABEFFF, 0xFFFFFF, 0xFAE08C, 0xFEEDB5, 0x3985A6, 0xFAE08C, 0x99A3BF];
+        // 0: Снег (белый), 1: Ночь (в цвет холмов), 2: Луга (белый), 3: Пляж (песок), 4: Вода (грунт), 5: Уточки (белый/пена), 6: Пирамиды (песок), 7: Луна (лунный грунт)
+        let stormColors = [0xFFFFFF, 0x63B6E5, 0xFFFFFF, 0xE6C875, 0xC2B280, 0xFFFFFF, 0xE6C875, 0xAEAFCE];
         let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-        colorizeAvalanche(targetColor); 
+        colorizeAvalanche(targetColor);
     }
 
     // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
@@ -1218,9 +1224,8 @@ function getHillY(x) {
     // --- НОВЫЙ ИДЕАЛЬНЫЙ СТАРТ (ГАРАНТИРОВАННЫЙ ТРАМПЛИН ИЗ СТАРОГО КОДА) ---
     let startRamp = 0;
     if (x < 3000) {
-        // Кубическая функция: начинается на высоте 800 и плавно сходит на нет к 3000 пикселям
         let progress = Math.max(0, 3000 - x) / 3000;
-        startRamp = progress * progress * progress * 800; 
+        startRamp = progress * progress * progress * 500; // Было 800. Теперь трамплин комфортнее.
     }
     
     // Вычитаем startRamp, чтобы земля ушла высоко вверх на страте
@@ -1431,12 +1436,13 @@ function resetGame(startImmediately) {
             window.isIntro = true;
             
             // МЯГКИЙ ВЫЛЕТ ПО ДИАГОНАЛИ
-            player.x = -250; // Начинаем чуть ближе к видимому экрану
-            player.y = getHillY(worldOffsetX + player.x) - 50; 
+            player.x = -250; 
+            // Опускаем Кико ниже к земле на старте (было -50, стало 0)
+            player.y = getHillY(worldOffsetX + player.x); 
             
-            // Успокаиваем физику:
-            velocityY = -25;  // Было -45. Даем адекватный прыжок, а не старт ракеты
-            speedX = 28;      // Было 40. Уверенная, но контролируемая начальная скорость
+            // Уменьшаем подброс вверх и даем мощный горизонтальный импульс
+            velocityY = -15;  // Было -25
+            speedX = 35;      // Было 28 (даст хороший пролет вперед)
             
             setPlayerState("fly");
             
@@ -1524,6 +1530,7 @@ function resumeWithCountdown() {
     // Добавляем поверх всей игры, игнорируя камеру
     if (gameRoot.parent) gameRoot.parent.addChild(txt); 
     else gameRoot.addChild(txt); 
+    createjs.Sound.play("SfxCountdown");
 
     function animateNumber() {
         if (count > 0) {
@@ -1547,6 +1554,7 @@ function resumeWithCountdown() {
             if (gameRoot.btnPause) gameRoot.btnPause.visible = true; 
             if (currentBgmInstance) currentBgmInstance.paused = false; 
             if (player && typeof player.play === "function") player.play(); 
+            if (avalanche && typeof avalanche.play === "function") avalanche.play(); // <--- ФИКС Анимации ЛАВИНЫ
         }
     }
     animateNumber();
@@ -1772,6 +1780,8 @@ function gameLoop(dt) {
 
     // ОСОБЕННОСТЬ БИОМА 7 (Космос): Гравитация слабее на 35%. Игрок парит.
     if (currentBiomeIndex === 7) currentGravity *= 0.65;
+    // В воде (4) падение в воздухе (не дайв) в два раза медленнее
+    if (currentBiomeIndex === 4 && !isDiving) currentGravity *= 0.5;
     
     velocityY += currentGravity * dt;
     player.y += velocityY * dt;
@@ -1800,11 +1810,8 @@ function gameLoop(dt) {
         // --- ГЕНЕРАЦИЯ ЧАСТИЦ СКОЛЬЖЕНИЯ (Стабильный цикл) ---
         // Спавним, если едем (скорость > 5), не на санках и не врезаемся в стену
         if (!hasSled && speedX > 5 && slopeForce > -0.2) {
-            // Убрали зависимость от скорости. Жестко генерируем 1-2 частицы каждый кадр
-            spawnSlideParticle(player.x + worldOffsetX - 20, player.y + 45, currentFillColor);
-            if (Math.random() > 0.5) {
-                spawnSlideParticle(player.x + worldOffsetX - 10, player.y + 50, currentFillColor);
-            }
+            spawnSlideParticle(player.x + worldOffsetX - 20, player.y + 45, currentLineColor);
+            if (Math.random() > 0.5) spawnSlideParticle(player.x + worldOffsetX - 10, player.y + 50, currentLineColor);
         }
         
         if (wasInAir) {
@@ -1871,7 +1878,11 @@ function gameLoop(dt) {
                 let normalBoost = (window.selectedCharID === 3) ? 2.2 : (window.selectedCharID === 2) ? 1.85 : 1.8;
                 speedX += slopeForce * (hasSled ? 3.0 : normalBoost) * dt;
             } else {
-                speedX += slopeForce * (hasSled ? 1.2 : 2.5) * dt;
+                if (!hasSled && slopeForce < -0.2) {
+                    speedX -= 1.5 * dt; // Жесткий штраф: скорость быстро сгорает при таране горы
+                } else {
+                    speedX += slopeForce * (hasSled ? 1.2 : 2.5) * dt;
+                }
             }
         } else {
          if (playerAnimLock <= 0 && !hasSled) { 
@@ -1901,7 +1912,8 @@ function gameLoop(dt) {
             velocityY = slopeForce * speedX * jumpMultiplier; 
             isComboSliding = false;
             
-            let speedTransfer = speedX * 0.05; 
+            // Оставляем микроскопическую потерю в 1% для физики отрыва
+            let speedTransfer = speedX * 0.01; 
             speedX -= speedTransfer;           
             velocityY -= speedTransfer * 1.2;        
 
@@ -1932,6 +1944,20 @@ function gameLoop(dt) {
 
     wasDiving = isDiving; 
     let playerWorldX = worldOffsetX + player.x;
+
+    // ПУЗЫРЬКИ ИЗО РТА В ВОДЕ
+    if (currentBiomeIndex === 4 && Math.random() > 0.85) {
+        let bub = new PIXI.Graphics();
+        bub.beginFill(0xFFFFFF).drawCircle(0,0, 3 + Math.random()*4).endFill();
+        // Рот находится примерно справа-посередине от центра Кико
+        bub.x = player.x + Math.cos(player.rotation) * 40; 
+        bub.y = player.y + Math.sin(player.rotation) * 40;
+        bub.alpha = 0.6;
+        bub.worldX = playerWorldX;
+        // Пузырьки живут отдельной логикой в effects
+        cameraContainer.addChild(bub);
+        effects.push({ shape: bub, type: "bubble", life: 0 });
+    }
 
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
     while (nextCoinX < worldOffsetX + 5000) {
@@ -2031,7 +2057,7 @@ function gameLoop(dt) {
         }
     }
 
-    while (!hasSled && nextSledX < worldOffsetX + 3500) {
+    while (!hasSled && nextSledX < worldOffsetX + 6000) {
         spawnSled(nextSledX, getHillY(nextSledX));
         nextSledX += 24000 + Math.random() * 16000; // ВЕРНУЛИ ЧАСТЫЙ СПАВН (раз в 240-400 м)
     }
@@ -2074,6 +2100,16 @@ function gameLoop(dt) {
                 objPool.comboText.push(fx.shape);
                 effects.splice(i, 1);
             }
+        }
+        else if (fx.type === "bubble") {
+            fx.shape.y -= 3 * dt; // Пузырек всплывает вверх
+            fx.shape.x -= 1 * dt; // Чуть сносит назад
+            fx.life += dt;
+            if (fx.life > 60) fx.shape.alpha -= 0.05 * dt;
+            if (fx.shape.alpha <= 0) {
+                if (fx.shape.parent) fx.shape.parent.removeChild(fx.shape);
+                effects.splice(i, 1);
+            }
         } 
         else {
             fx.x = fx.worldX - worldOffsetX; 
@@ -2092,7 +2128,7 @@ function gameLoop(dt) {
     let baseMagnet = (window.selectedCharID === 2) ? 280 : 35; // Моми стала мощнее
     // МОМИ (ID 2): Единственная имеет магнит для монет
     let coinMagnetBonus = (window.selectedCharID === 2) ? 150 : 35; 
-    let fishHitRadius = (currentBiomeIndex === 4) ? 250 : 100; // В воде радиус 250
+    let fishHitRadius = (currentBiomeIndex === 4) ? 200 : 100;
 
     for (let i = coins.length - 1; i >= 0; i--) {
         let c = coins[i];
@@ -2375,6 +2411,11 @@ function gameLoop(dt) {
     // Сравниваем чистую координату в пространстве игры (1080), а не сжатую экраном
     if (player.y < cameraFocusY) {
         targetCameraY = (gameRoot.baseY || 0) + (cameraFocusY - player.y) * currentScale; 
+    }
+
+    // ДОБАВЛЕН ЛИМИТ КАМЕРЫ: Не даем камере опускать мир ниже 800 пикселей (не улетаем в космос)
+    if (targetCameraY > (gameRoot.baseY || 0) + 800) {
+        targetCameraY = (gameRoot.baseY || 0) + 800;
     }
 
     gameRoot.y += (targetCameraY - gameRoot.y) * 0.1 * dt;
