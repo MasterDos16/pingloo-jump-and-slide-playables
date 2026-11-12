@@ -2347,7 +2347,7 @@ function gameLoop(dt) {
         if (speedX <= 20) {
             // ТЫ ОШИБСЯ И ПОЛЗЕШЬ МЕДЛЕННО: Лавина не телепортируется, 
             // а едет чуть быстрее тебя (например, 30), медленно и неотвратимо приближаясь.
-            currentAvalancheSpeed = 30; 
+            currentAvalancheSpeed = 15; 
         } else if (distanceToAvalanche > 2500) {
             // Если ты далеко впереди, лавина держит безопасную дистанцию, не отставая слишком сильно
             currentAvalancheSpeed = speedX + 2; 
