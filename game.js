@@ -1819,7 +1819,8 @@ function gameLoop(dt) {
         if (speedX > 75 && Math.random() > 0.6) {
             let line = new PIXI.Graphics();
             line.beginFill(0xFFFFFF).drawRect(0, 0, 150 + Math.random() * 200, 3 + Math.random() * 3).endFill();
-            line.x = playerWorldX + 800 + Math.random() * 500; // Появляются далеко спереди
+            // ФИКС: Считаем позицию напрямую, без использования playerWorldX
+            line.x = (worldOffsetX + player.x) + 800 + Math.random() * 500;
             line.y = player.y + (Math.random() * 300 - 150);
             line.alpha = 0.5;
             line.worldX = line.x;
