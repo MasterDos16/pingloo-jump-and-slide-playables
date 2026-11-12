@@ -519,14 +519,7 @@ window.initGame = function(root, pixiScene) {
 
     avalanche = root.avalanche; 
     if (avalanche) {
-        avalanche.visible = false; // При старте лавину не видно
-        
-        // Первоначальная покраска при старте игры
-        let stormColors = [0xFFFFFF, 0x63B6E5, 0xFFFFFF, 0xE6C875, 0xC2B280, 0xFFFFFF, 0xE6C875, 0xAEAFCE];
-        let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-        
-        window.currentAvalancheColor = targetColor;
-        colorizeAvalanche(targetColor);
+        avalanche.visible = false; // При старте лавину просто не видно
     }
 
     // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
@@ -2341,25 +2334,38 @@ function gameLoop(dt) {
 
 
     
-    // --- ЛАВИНА: ОРИГИНАЛЬНАЯ ЛОГИКА С НАСТРОЙКОЙ ПОД PIXI ---
+    // --- ЛАВИНА: ИДЕАЛЬНАЯ ЛОГИКА ОТСТАВАНИЯ ---
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
-        avalancheBaseSpeed += 0.003 * dt;
-        if (avalancheBaseSpeed > 65) avalancheBaseSpeed = 45; 
+        // Базовая скорость лавины плавно растет, но имеет потолок 42
+        avalancheBaseSpeed += 0.002 * dt;
+        if (avalancheBaseSpeed > 42) avalancheBaseSpeed = 42; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        // ТОЧНАЯ КОПИЯ ТВОИХ ЗНАЧЕНИЙ ИЗ СТАРОГО КОДА:
         if (distanceToAvalanche > 1500) {
-            // Если игрок ползет медленнее 25, лавина делает резкий рывок со скоростью 40
-            currentAvalancheSpeed = (speedX < 25) ? 40 : Math.max(speedX + 1.5, 25); 
+            if (speedX < 25) {
+                // Если игрок далеко, но еле тащится (сбросил скорость) - лавина делает рывок, чтобы догнать
+                currentAvalancheSpeed = 35; 
+            } else {
+                // ИГРОК ГОНИТ: Лавина двигается со своей базовой скоростью (12-42).
+                // Так как скорость игрока выше (50+), лавина будет отставать и ИСЧЕЗНЕТ ИЗ КАДРА.
+                currentAvalancheSpeed = avalancheBaseSpeed;
+            }
         } else if (distanceToAvalanche < 800) {
+            // ЛАВИНА БЛИЗКО (в кадре): Дает шанс вырваться, двигаясь чуть медленнее игрока
             currentAvalancheSpeed = speedX - 0.5; 
             if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
+        
+        if (avalanche) {
+            avalanche.x = avalancheWorldX - worldOffsetX; 
+            // Полностью скрываем графику лавины, если игрок оторвался, чтобы она не маячила при зуме камеры
+            avalanche.visible = (distanceToAvalanche < 1800);
+        }
         
         if (avalanche) {
             avalanche.visible = true;
