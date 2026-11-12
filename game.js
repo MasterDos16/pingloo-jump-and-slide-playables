@@ -521,10 +521,10 @@ window.initGame = function(root, pixiScene) {
     if (avalanche) {
         avalanche.visible = false;
         
-        // Первоначальная покраска при старте игры
+        // Фиксируем цвет лавины для текущего биома
         let stormColors = [0xFFFFFF, 0x63B6E5, 0xFFFFFF, 0xE6C875, 0xC2B280, 0xFFFFFF, 0xE6C875, 0xAEAFCE];
-        let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
-        colorizeAvalanche(targetColor);
+        window.currentAvalancheColor = stormColors[index] || 0xFFFFFF;
+        colorizeAvalanche(window.currentAvalancheColor);
     }
 
     // --- СОЗДАЕМ АГРЕССИВНУЮ ОБЪЕМНУЮ БУРЮ ---
@@ -1068,12 +1068,33 @@ window.initGame = function(root, pixiScene) {
     window.addEventListener("pointerup", () => isDiving = false);
 
     let lastW = 0, lastH = 0;
+
+    // === ОВЕРЛЕЙ ПОВОРОТА ЭКРАНА ===
+    window.orientationOverlay = new PIXI.Container();
+    let oriBg = new PIXI.Graphics().beginFill(0x000000, 0.95).drawRect(-5000, -5000, 10000, 10000).endFill();
+    let oriStyle = new PIXI.TextStyle({ fontFamily: "Arial", fontSize: 70, fill: 0xFFFFFF, fontWeight: "bold" });
+    let oriTxt = new PIXI.Text("PLEASE ROTATE YOUR DEVICE", oriStyle);
+    oriTxt.anchor.set(0.5);
+    window.orientationOverlay.addChild(oriBg, oriTxt);
+    
+    // Бросаем на самый-самый верх
+    if (gameRoot.parent) gameRoot.parent.addChild(window.orientationOverlay);
+    else gameRoot.addChild(window.orientationOverlay);
+
     window.handleResize = function() {
         let canvas = document.getElementById("stage");
         if (!canvas) return;
 
         let w = window.innerWidth;
         let h = window.innerHeight;
+
+        let isPortrait = h > w;
+        if (window.orientationOverlay) {
+            window.orientationOverlay.visible = isPortrait;
+            // Центрируем текст независимо от масштаба игры
+            oriTxt.x = w / 2;
+            oriTxt.y = h / 2;
+        }
 
         if (w === lastW && h === lastH) return;
         lastW = w; lastH = h;
@@ -1771,20 +1792,15 @@ function gameLoop(dt) {
 
     // ОСОБЕННОСТЬ БИОМА 7 (Космос): Гравитация слабее на 35%. Игрок парит.
     if (currentBiomeIndex === 7) currentGravity *= 0.65;
-    // В воде (4) падение в воздухе (не дайв) в два раза медленнее
-    if (currentBiomeIndex === 4 && !isDiving) currentGravity *= 0.5;
     
     velocityY += currentGravity * dt;
-    // В воде (4) падение вниз замедляется (эффект парашюта/плавания)
-    if (currentBiomeIndex === 4 && velocityY > 0 && !isDiving) {
-        velocityY *= 0.85; 
-    }
+    
     player.y += velocityY * dt;
 
-    // ЭКСТРЕННЫЙ ПОТОЛОК: Не даём улететь выше -1200 пикселей
-    if (player.y < -1200) {
-        player.y = -1200;
-        if (velocityY < 0) velocityY = 0; // Гасим вертикальный импульс
+    // МЯГКИЙ ПОТОЛОК: Форсируем дугу, если залетел слишком высоко
+    if (player.y < -1000 && velocityY < 0) {
+        // Чем выше летит, тем сильнее давит искусственная гравитация вниз
+        velocityY += (Math.abs(player.y) - 1000) * 0.05 * dt; 
     }
 
     let currentHitboxOffset = hasSled ? 85 : 50; 
@@ -1815,16 +1831,15 @@ function gameLoop(dt) {
             if (Math.random() > 0.5) spawnSlideParticle(player.x + worldOffsetX - 10, player.y + 50, currentLineColor);
         }
 
-        // СПАВН SPEED LINES НА ВЫСОКОЙ СКОРОСТИ
-        if (speedX > 75 && Math.random() > 0.6) {
+        // СПАВН SPEED LINES (Полоски скорости)
+        if (speedX > 45 && Math.random() > 0.4) {
             let line = new PIXI.Graphics();
-            line.beginFill(0xFFFFFF).drawRect(0, 0, 150 + Math.random() * 200, 3 + Math.random() * 3).endFill();
-            // ФИКС: Считаем позицию напрямую, без использования playerWorldX
-            line.x = (worldOffsetX + player.x) + 800 + Math.random() * 500;
-            line.y = player.y + (Math.random() * 300 - 150);
-            line.alpha = 0.5;
-            line.worldX = line.x;
-            cameraContainer.addChildAt(line, cameraContainer.getChildIndex(player)); // Под персонажем
+            line.beginFill(0xFFFFFF).drawRect(0, 0, 150 + Math.random() * 200, 2 + Math.random() * 3).endFill();
+            // Привязываем к экрану: появляются впереди Кико
+            line.x = player.x + 800 + Math.random() * 500; 
+            line.y = player.y + (Math.random() * 400 - 200);
+            line.alpha = 0.4 + Math.random() * 0.3;
+            cameraContainer.addChildAt(line, cameraContainer.getChildIndex(player)); 
             effects.push({ shape: line, type: "speedLine", life: 0 });
         }
         
@@ -2128,9 +2143,9 @@ function gameLoop(dt) {
             }
         } 
         else if (fx.type === "speedLine") {
-            fx.shape.x -= (speedX * 2.5) * dt; // Проносятся мимо очень быстро
-            fx.shape.scale.x -= 0.05 * dt;     // Сужаются
-            if (fx.shape.scale.x <= 0 || fx.shape.x < player.x - 1500) {
+            fx.shape.x -= (speedX * 0.8 + 20) * dt; // Летят навстречу камере
+            fx.shape.scale.x -= 0.01 * dt; // Сжимаются
+            if (fx.shape.scale.x <= 0 || fx.shape.x < player.x - 1200) {
                 if (fx.shape.parent) fx.shape.parent.removeChild(fx.shape);
                 effects.splice(i, 1);
             }
@@ -2347,7 +2362,10 @@ function gameLoop(dt) {
         if (avalanche) {
             avalanche.visible = true;
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            // МЫ ПОЛНОСТЬЮ УДАЛИЛИ КОСТЫЛЬ С gotoAndPlay(0), ИЗ-ЗА КОТОРОГО ОНА МЕРЦАЛА
+            // ЗАЩИТА ЦВЕТА: Обновляем постоянно, чтобы аниматор не сбил цвет
+            if (window.currentAvalancheColor !== undefined) {
+                colorizeAvalanche(window.currentAvalancheColor);
+            }
         }
         
         if (distanceToAvalanche < 1500 && !isGameOver) {
