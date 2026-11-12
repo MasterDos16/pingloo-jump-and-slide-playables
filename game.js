@@ -2334,49 +2334,54 @@ function gameLoop(dt) {
 
 
     
-    // --- ЛАВИНА: ИДЕАЛЬНАЯ ЛОГИКА "РЕЗИНКИ" ---
+    // --- ЛАВИНА: ИДЕАЛЬНАЯ ЛОГИКА "РЕЗИНКИ" (SUBWAY SURFERS) ---
     if (!window.isIntro) {
-        // Базовая скорость лавины плавно растет, усложняя лейт-гейм (потолок 45)
-        avalancheBaseSpeed += 0.002 * dt;
-        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
-        
-        let currentAvalancheSpeed = avalancheBaseSpeed;
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
-
-        // СЕКРЕТ РЕЗИНКИ: Лавина НИКОГДА не отстает больше чем на 2500 пикселей.
-        // Если ты улетаешь вперед, она незримо телепортируется за кадром и держится ровно на этой дистанции.
-        if (distanceToAvalanche > 2500) {
-            avalancheWorldX = playerWorldX - 2500;
-            distanceToAvalanche = 2500; 
+        
+        // 1. ОПРЕДЕЛЯЕМ ЗОНУ В ЗАВИСИМОСТИ ОТ ТВОЕЙ СКОРОСТИ
+        let targetDistance = 2500; 
+        
+        if (speedX <= 16) {
+            // ФАТАЛЬНАЯ ОШИБКА (Скорость на минимуме): Лавина идет на убийство
+            targetDistance = -200; 
+        } else if (speedX <= 30) {
+            // ПРЕДУПРЕЖДЕНИЕ (Потерял комбо): Лавина дышит в спину на краю экрана
+            targetDistance = 900; 
+        } else {
+            // В ПОТОКЕ (Гонишь быстро): Лавина держится далеко за кадром
+            targetDistance = 2500; 
         }
 
-        if (distanceToAvalanche > 1500) {
-            if (speedX < 25) {
-                // Если ты ошибся и тащишься медленно - лавина делает РЕЗКИЙ РЫВОК, чтобы появиться в кадре
-                currentAvalancheSpeed = 45; 
-            } else {
-                currentAvalancheSpeed = avalancheBaseSpeed;
-            }
-        } else if (distanceToAvalanche < 800) {
-            // Лавина в кадре: дает шанс вырваться, двигаясь чуть медленнее тебя
-            currentAvalancheSpeed = speedX - 0.5; 
-            if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
+        // 2. ДВИГАЕМ ЛАВИНУ К ЦЕЛИ МГНОВЕННО (Эффект резинки)
+        let currentAvalancheSpeed = speedX;
+
+        if (distanceToAvalanche > targetDistance) {
+            // Лавина делает агрессивный рывок вперед
+            currentAvalancheSpeed = speedX + (distanceToAvalanche - targetDistance) * 0.035;
+            if (currentAvalancheSpeed > 75) currentAvalancheSpeed = 75; // Ограничитель рывка
+        } else if (distanceToAvalanche < targetDistance) {
+            // Лавина плавно отстает, если ты набрал скорость
+            currentAvalancheSpeed = speedX - (targetDistance - distanceToAvalanche) * 0.02;
+            if (currentAvalancheSpeed < 10) currentAvalancheSpeed = 10; 
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
         
+        // 3. ОБНОВЛЯЕМ РЕАЛЬНУЮ ДИСТАНЦИЮ
+        distanceToAvalanche = playerWorldX - avalancheWorldX;
+        
         if (avalanche) {
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            // Полностью скрываем графику лавины, если она далеко
+            // Полностью отключаем рендер лавины, когда ты оторвался далеко
             avalanche.visible = (distanceToAvalanche < 1800);
         }
         
+        // 4. ЗВУК И КОНЕЦ ИГРЫ
         if (distanceToAvalanche < 1500 && !isGameOver) {
-            if (!avalancheSoundInstance) {
-                avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
-            }
+            if (!avalancheSoundInstance) avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
             if (window.isSoundsOn) {
-                avalancheSoundInstance.volume = 1 - (distanceToAvalanche / 1500); 
+                let vol = 1 - (distanceToAvalanche / 1500);
+                avalancheSoundInstance.volume = (vol < 0) ? 0 : vol; 
             } else {
                 avalancheSoundInstance.volume = 0;
             }
@@ -2385,20 +2390,19 @@ function gameLoop(dt) {
             avalancheSoundInstance = null;
         }
         
-        if (avalancheWorldX > playerWorldX - 80) {
+        if (distanceToAvalanche < 80) {
             if (!isGameOver) {
                 if (hasSled) {
                     hasSled = false;
                     nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
                     createjs.Sound.play("SfxSledBreak"); 
                     player.y += 35;
-                    if (activeSledInstance && activeSledInstance.parent) {
-                        activeSledInstance.parent.removeChild(activeSledInstance);
-                    }
+                    if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
                     activeSledInstance = null;
                     
-                    avalancheWorldX -= 700; // Отбрасывание как в старом коде
-                    speedX += 10; 
+                    // Сани ломаются: отбрасываем лавину назад и даем буст скорости для спасения
+                    avalancheWorldX -= 1200; 
+                    speedX += 15; 
                     spawnBoostFlash();
                 } else {
                     isGameOver = true;
