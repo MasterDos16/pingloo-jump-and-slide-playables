@@ -2334,40 +2334,35 @@ function gameLoop(dt) {
 
 
     
-    // --- ЛАВИНА: ПЛАВНОЕ НАПОЛЗАНИЕ И ЕСТЕСТВЕННАЯ РЕЗИНКА ---
+    // --- ЛАВИНА: ИДЕАЛЬНОЕ ПОЯВЛЕНИЕ В НАЧАЛЕ ЭКРАНА И ПЛАВНАЯ ПОГОНЯ ---
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
-        // Базовая скорость лавины плавно растет (потолок 45)
-        avalancheBaseSpeed += 0.002 * dt;
-        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
+        // Базовый медленный рост опасности
+        avalancheBaseSpeed += 0.001 * dt;
+        if (avalancheBaseSpeed > 32) avalancheBaseSpeed = 32; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        if (speedX <= 20) {
-            // ТЫ ОШИБСЯ И ПОЛЗЕШЬ МЕДЛЕННО: Лавина не телепортируется, 
-            // а едет чуть быстрее тебя (например, 30), медленно и неотвратимо приближаясь.
-            currentAvalancheSpeed = 22; 
-        } else if (distanceToAvalanche > 2500) {
-            // Если ты далеко впереди, лавина держит безопасную дистанцию, не отставая слишком сильно
-            currentAvalancheSpeed = speedX + 2; 
-        } else if (distanceToAvalanche < 800) {
-            // Лавина близко в кадре: дает шанс вырваться, двигаясь чуть медленнее тебя
-            currentAvalancheSpeed = speedX - 0.5; 
-            if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
+        if (speedX <= 22) {
+            // ЕДЕШЬ МЕДЛЕННО: Жестко держим лавину в начале экрана (на расстоянии 1100 пикселей слева),
+            // чтобы она была видна и неумолимо ползла за тобой со скоростью 22.
+            let targetDist = 1100;
+            if (distanceToAvalanche > targetDist) {
+                avalancheWorldX = playerWorldX - targetDist; // Плавный подгон к началу экрана
+            }
+            currentAvalancheSpeed = 22; // Медленная, но опасная скорость
         } else {
-            // Штатная погоня
+            // ГОНИШЬ БЫСТРО: Лавина отстает со своей базовой скоростью
             currentAvalancheSpeed = avalancheBaseSpeed;
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
-        
-        // Пересчитываем дистанцию после шага физики
         distanceToAvalanche = playerWorldX - avalancheWorldX;
         
         if (avalanche) {
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            // Скрываем графику, если она далеко за левым краем экрана
+            // Видна, если она ближе 1800 пикселей (как раз в поле зрения / у левого края)
             avalanche.visible = (distanceToAvalanche < 1800);
         }
         
@@ -2395,7 +2390,7 @@ function gameLoop(dt) {
                     if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
                     activeSledInstance = null;
                     
-                    avalancheWorldX -= 800; // Мягкий отброс назад при потере санок
+                    avalancheWorldX -= 800; 
                     speedX += 12; 
                     spawnBoostFlash();
                 } else {
