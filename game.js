@@ -245,7 +245,7 @@ function spawnSlideParticle(px, py, color) {
     
     p.tint = color; // Красим в цвет земли текущего биома
     p.alpha = 1.0;
-    p.scale.set(1.5 + Math.random() * 1.5); // <--- УВЕЛИЧЕНО (было 0.5 + 0.8)
+    p.scale.set(0.8 + Math.random() * 0.6); // Чуть крупнее оригинала, но не гигантские
     
     // Частицы летят в противоположную сторону (назад и чуть вверх)
     p.vx = -speedX * 0.3 - Math.random() * 10; 
@@ -253,6 +253,7 @@ function spawnSlideParticle(px, py, color) {
     
     slideParticles.push(p);
 }
+
 
 function spawnComboText(combo) {
     let textStr = combo === 1 ? "COMBO!" : "COMBO x" + combo + "!";
@@ -518,8 +519,9 @@ window.initGame = function(root, pixiScene) {
 
     avalanche = root.avalanche; 
     if (avalanche) {
-        avalanche.visible = true;
-        avalanche.x = avalancheWorldX - worldOffsetX; 
+        // Прячем лавину, если она отстала дальше, чем расширяется экран при зуме
+            avalanche.visible = (distanceToAvalanche < 1800);
+            avalanche.x = avalancheWorldX - worldOffsetX;
         
         // ФИКС АНИМАЦИИ: Принудительно перезапускаем, если она остановилась
         if (avalanche.currentFrame !== undefined && avalanche.totalFrames > 1) {
@@ -533,6 +535,7 @@ window.initGame = function(root, pixiScene) {
         
         // 0: Снег (белый), 1: Ночь (в цвет холмов), 2: Луга (белый), 3: Пляж (песок), 4: Вода (грунт), 5: Уточки (белый/пена), 6: Пирамиды (песок), 7: Луна (лунный грунт)
         let stormColors = [0xFFFFFF, 0x63B6E5, 0xFFFFFF, 0xE6C875, 0xC2B280, 0xFFFFFF, 0xE6C875, 0xAEAFCE];
+        colorizeAvalanche(stormColors[index] || 0xFFFFFF);
         let targetColor = stormColors[currentBiomeIndex] || 0xFFFFFF;
         colorizeAvalanche(targetColor);
     }
@@ -1552,7 +1555,8 @@ function resumeWithCountdown() {
             window.isCountdown = false; 
             isPlaying = true; 
             if (gameRoot.btnPause) gameRoot.btnPause.visible = true; 
-            if (currentBgmInstance) currentBgmInstance.paused = false; 
+            // Музыка снимется с паузы ТОЛЬКО если она включена в настройках
+            if (currentBgmInstance) currentBgmInstance.paused = !window.isMusicOn;
             if (player && typeof player.play === "function") player.play(); 
             if (avalanche && typeof avalanche.play === "function") avalanche.play(); // <--- ФИКС Анимации ЛАВИНЫ
         }
@@ -1784,7 +1788,17 @@ function gameLoop(dt) {
     if (currentBiomeIndex === 4 && !isDiving) currentGravity *= 0.5;
     
     velocityY += currentGravity * dt;
+    // В воде (4) падение вниз замедляется (эффект парашюта/плавания)
+    if (currentBiomeIndex === 4 && velocityY > 0 && !isDiving) {
+        velocityY *= 0.85; 
+    }
     player.y += velocityY * dt;
+
+    // ЭКСТРЕННЫЙ ПОТОЛОК: Не даём улететь выше -1200 пикселей
+    if (player.y < -1200) {
+        player.y = -1200;
+        if (velocityY < 0) velocityY = 0; // Гасим вертикальный импульс
+    }
 
     let currentHitboxOffset = hasSled ? 85 : 50; 
     let playerBottom = player.y + currentHitboxOffset;
@@ -1813,6 +1827,18 @@ function gameLoop(dt) {
             spawnSlideParticle(player.x + worldOffsetX - 20, player.y + 45, currentLineColor);
             if (Math.random() > 0.5) spawnSlideParticle(player.x + worldOffsetX - 10, player.y + 50, currentLineColor);
         }
+
+        // СПАВН SPEED LINES НА ВЫСОКОЙ СКОРОСТИ
+        if (speedX > 75 && Math.random() > 0.6) {
+            let line = new PIXI.Graphics();
+            line.beginFill(0xFFFFFF).drawRect(0, 0, 150 + Math.random() * 200, 3 + Math.random() * 3).endFill();
+            line.x = playerWorldX + 800 + Math.random() * 500; // Появляются далеко спереди
+            line.y = player.y + (Math.random() * 300 - 150);
+            line.alpha = 0.5;
+            line.worldX = line.x;
+            cameraContainer.addChildAt(line, cameraContainer.getChildIndex(player)); // Под персонажем
+            effects.push({ shape: line, type: "speedLine", life: 0 });
+        }
         
         if (wasInAir) {
             let isPerfectLanding = (currentJumpHeight > 80 && isDiving && slopeForce > 0.1);
@@ -1839,10 +1865,9 @@ function gameLoop(dt) {
                 let speedPenalty = 0;
                 
                 if (slopeForce < 0) {
-                    // МЯГКИЙ ШТРАФ: Уменьшили базовый сброс и влияние угла
+                    // Увеличили множитель комбо-штрафа с 1.5 до 3.5
                     speedPenalty = 2 + (Math.abs(slopeForce) * 8); 
-                    // Штраф за сорванное комбо тоже стал справедливее
-                    if (comboCount > 0) speedPenalty += (comboCount * 1.5);
+                    if (comboCount > 0) speedPenalty += (comboCount * 3.5);
                     isComboSliding = false;
                     comboCount = 0; 
                 } else {
@@ -1864,6 +1889,8 @@ function gameLoop(dt) {
             }
             currentJumpHeight = 0; 
         }
+
+
 
         if (isComboSliding) {
             comboAnimTimer -= dt;
@@ -1950,8 +1977,9 @@ function gameLoop(dt) {
         let bub = new PIXI.Graphics();
         bub.beginFill(0xFFFFFF).drawCircle(0,0, 3 + Math.random()*4).endFill();
         // Рот находится примерно справа-посередине от центра Кико
-        bub.x = player.x + Math.cos(player.rotation) * 40; 
-        bub.y = player.y + Math.sin(player.rotation) * 40;
+        // Сместили правее (60) и выше (-20)
+        bub.x = player.x + Math.cos(player.rotation) * 60 - Math.sin(player.rotation) * -20; 
+        bub.y = player.y + Math.sin(player.rotation) * 60 + Math.cos(player.rotation) * -20;
         bub.alpha = 0.6;
         bub.worldX = playerWorldX;
         // Пузырьки живут отдельной логикой в effects
@@ -2111,6 +2139,14 @@ function gameLoop(dt) {
                 effects.splice(i, 1);
             }
         } 
+        else if (fx.type === "speedLine") {
+            fx.shape.x -= (speedX * 2.5) * dt; // Проносятся мимо очень быстро
+            fx.shape.scale.x -= 0.05 * dt;     // Сужаются
+            if (fx.shape.scale.x <= 0 || fx.shape.x < player.x - 1500) {
+                if (fx.shape.parent) fx.shape.parent.removeChild(fx.shape);
+                effects.splice(i, 1);
+            }
+        }
         else {
             fx.x = fx.worldX - worldOffsetX; 
             fx.life = (fx.life || 0) + dt; 
@@ -2304,15 +2340,16 @@ function gameLoop(dt) {
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
-        avalancheBaseSpeed += 0.002 * dt;
-        if (avalancheBaseSpeed > 45) avalancheBaseSpeed = 45; 
+        avalancheBaseSpeed += 0.003 * dt;
+        if (avalancheBaseSpeed > 65) avalancheBaseSpeed = 45; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
         // ТОЧНАЯ КОПИЯ ТВОИХ ЗНАЧЕНИЙ ИЗ СТАРОГО КОДА:
-        if (distanceToAvalanche > 2500) {
-            currentAvalancheSpeed = speedX + 1.5; 
-        } else if (distanceToAvalanche < 1000) {
+        if (distanceToAvalanche > 1500) {
+            // Если игрок ползет медленнее 25, лавина делает резкий рывок со скоростью 40
+            currentAvalancheSpeed = (speedX < 25) ? 40 : Math.max(speedX + 1.5, 25); 
+        } else if (distanceToAvalanche < 800) {
             currentAvalancheSpeed = speedX - 0.5; 
             if (currentAvalancheSpeed < 18) currentAvalancheSpeed = 18; 
         }

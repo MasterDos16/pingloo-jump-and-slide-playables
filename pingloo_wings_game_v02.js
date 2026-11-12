@@ -67299,8 +67299,8 @@
 
     var Graphic510 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 987, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 55"))
-            .setTransform(-58, -44);
+        var instance1 = new Sprite(fromFrame("Bitmap 435"))
+            .setTransform(-56, -44, 0.122, 0.122);
         this.addTimedChild(instance1);
     });
 
@@ -72152,8 +72152,8 @@
 
     var Graphic511 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 987, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 55"))
-            .setTransform(-58, -44);
+        var instance1 = new Sprite(fromFrame("Bitmap 435"))
+            .setTransform(-56, -44, 0.122, 0.122);
         this.addTimedChild(instance1);
     });
 
@@ -77005,8 +77005,8 @@
 
     var Graphic512 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 987, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 55"))
-            .setTransform(-58, -44);
+        var instance1 = new Sprite(fromFrame("Bitmap 435"))
+            .setTransform(-56, -44, 0.122, 0.122);
         this.addTimedChild(instance1);
     });
 
