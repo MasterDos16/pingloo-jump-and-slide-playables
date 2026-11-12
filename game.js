@@ -2367,15 +2367,6 @@ function gameLoop(dt) {
             avalanche.visible = (distanceToAvalanche < 1800);
         }
         
-        if (avalanche) {
-            avalanche.visible = true;
-            avalanche.x = avalancheWorldX - worldOffsetX; 
-            // ЗАЩИТА ЦВЕТА: Обновляем постоянно, чтобы аниматор не сбил цвет
-            if (window.currentAvalancheColor !== undefined) {
-                colorizeAvalanche(window.currentAvalancheColor);
-            }
-        }
-        
         if (distanceToAvalanche < 1500 && !isGameOver) {
             if (!avalancheSoundInstance) {
                 avalancheSoundInstance = createjs.Sound.play("SfxAvalanche", { loop: -1, volume: 0 });
