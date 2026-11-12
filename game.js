@@ -138,9 +138,9 @@ let initialUI_Y = {};
 // === ЭКОНОМИКА И ДАННЫЕ ИГРОКА ===
 let globalCoins = 0;
 let unlockedBiomes = [0]; 
-let biomeCosts = [0, 10, 10, 10, 10, 10, 10, 10]; 
+let biomeCosts = [0, 1, 1, 1, 1, 1, 1, 1]; 
 let unlockedChars = [0]; 
-let charCosts = [0, 10, 10, 10]; 
+let charCosts = [0, 1, 1, 1]; 
 window.selectedCharID = 0; 
 let recordDistance = 0;
 
