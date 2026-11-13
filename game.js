@@ -1067,9 +1067,20 @@ window.initGame = function(root, pixiScene) {
 
     // === ОВЕРЛЕЙ ПОВОРОТА ЭКРАНА ===
     window.orientationOverlay = new PIXI.Container();
-    let oriBg = new PIXI.Graphics().beginFill(0x000000, 0.95).drawRect(-5000, -5000, 10000, 10000).endFill();
-    let oriStyle = new PIXI.TextStyle({ fontFamily: "Arial", fontSize: 70, fill: 0xFFFFFF, fontWeight: "bold" });
-    let oriTxt = new PIXI.Text("PLEASE ROTATE YOUR DEVICE", oriStyle);
+    let oriBg = new PIXI.Graphics().beginFill(0x000000, 1.0).drawRect(-5000, -5000, 10000, 10000).endFill();
+    
+    // Включаем перенос слов (wordWrap) и центрирование
+    let oriStyle = new PIXI.TextStyle({ 
+        fontFamily: "PinglooFont", // Если шрифт не успел загрузиться, Pixi сам подставит Arial
+        fontSize: 50, 
+        fill: 0xFFFFFF, 
+        fontWeight: "bold",
+        align: "center",
+        wordWrap: true,
+        wordWrapWidth: 300 
+    });
+    // Добавили \n для принудительного переноса строки
+    let oriTxt = new PIXI.Text("PLEASE ROTATE\nYOUR DEVICE", oriStyle);
     oriTxt.anchor.set(0.5);
     window.orientationOverlay.addChild(oriBg, oriTxt);
     
@@ -1087,9 +1098,11 @@ window.initGame = function(root, pixiScene) {
         let isPortrait = h > w;
         if (window.orientationOverlay) {
             window.orientationOverlay.visible = isPortrait;
-            // Центрируем текст независимо от масштаба игры
+            // Центрируем текст и делаем его адаптивным
             oriTxt.x = w / 2;
             oriTxt.y = h / 2;
+            oriTxt.style.wordWrapWidth = w * 0.9; // Текст занимает не больше 90% ширины экрана
+            oriTxt.style.fontSize = Math.min(w * 0.1, 70); // Размер шрифта сжимается на узких экранах
         }
 
         if (w === lastW && h === lastH) return;
