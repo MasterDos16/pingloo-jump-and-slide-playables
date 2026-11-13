@@ -143,6 +143,7 @@ let unlockedChars = [0];
 let charCosts = [0, 1, 1, 1]; 
 window.selectedCharID = 0; 
 let recordDistance = 0;
+let adDistanceBuffer = 0;
 
 // Единая функция облачного сохранения для YouTube
 function saveProgress() {
@@ -1293,6 +1294,21 @@ function triggerGameOver(finalDistance) {
                     gameRoot.gameOverScreen.mcNewRecord.stop();
                 }
             }
+        }
+
+        // === ЛОГИКА БУФЕРА РЕКЛАМЫ ===
+        adDistanceBuffer += finalDistance;
+        
+        if (adDistanceBuffer >= 1500) {
+            if (typeof ytgame !== 'undefined' && ytgame.ads) {
+                // Запрашиваем показ межстраничной рекламы
+                ytgame.ads.requestInterstitialAd().catch((error) => {
+                    // Обрабатываем возможные ошибки (например, если API временно недоступен).
+                    // Нам не нужно стопать игру, она просто продолжится.
+                });
+            }
+            // Сбрасываем буфер в любом случае, чтобы начать копить заново
+            adDistanceBuffer = 0;
         }
 
         globalCoins += coinsCollected;
