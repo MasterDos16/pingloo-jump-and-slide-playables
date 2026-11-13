@@ -155,7 +155,8 @@ function saveProgress() {
         record: recordDistance
     };
     if (typeof ytgame !== 'undefined' && ytgame.game) {
-        ytgame.game.saveData(JSON.stringify(dataObj));
+        // Добавили .catch() в конце
+        ytgame.game.saveData(JSON.stringify(dataObj)).catch(() => {});
     } else {
         // Фоллбэк для локального тестирования
         try { localStorage.setItem("pinglooSave", JSON.stringify(dataObj)); } catch(e){}
@@ -607,7 +608,7 @@ window.initGame = function(root, pixiScene) {
         objPool.coins.push(c);
     }
     for (let i = 0; i < 10; i++) {
-        let f = PIXI.Sprite.from("img/fish.png"); 
+        let f = new PIXI.Sprite();
         f.anchor.set(0.5);
         f.visible = false;
         objPool.fishes.push(f);
