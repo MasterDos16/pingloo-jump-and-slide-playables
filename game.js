@@ -1171,18 +1171,20 @@ window.initGame = function(root, pixiScene) {
         if (ytgame.system) {
             ytgame.system.onPause(() => {
                 if (isPlaying && gameRoot.btnPause) {
-                    gameRoot.btnPause.emit('pointerdown'); // Обычная игровая пауза
+                    gameRoot.btnPause.emit('pointerdown');
                 }
             });
             
             ytgame.system.onResume(() => {
-                // Возврат из системной паузы (например, после закрытия рекламы)
-                // Если мы были на экране Game Over, убеждаемся, что всё кликабельно
-                if (gameRoot.gameOverScreen && gameRoot.gameOverScreen.visible) {
-                    // Игра просто возвращается к ожиданию клика игрока
-                }
+                // Возврат из паузы (пока просто слушаем)
             });
+
+            // Инициализация звука при старте (Обязательное требование YouTube)
+            if (typeof ytgame.system.isAudioEnabled === 'function') {
+                createjs.Sound.muted = !ytgame.system.isAudioEnabled();
+            }
             
+            // Отслеживание переключателя звука в интерфейсе самого YouTube
             ytgame.system.onAudioEnabledChange((isAudioEnabled) => {
                 createjs.Sound.muted = !isAudioEnabled;
             });
