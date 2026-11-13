@@ -1317,22 +1317,24 @@ function triggerGameOver(finalDistance) {
             }
         }
 
-        // === ЛОГИКА БУФЕРА РЕКЛАМЫ (С ЗАДЕРЖКОЙ) ===
+        // === ЛОГИКА БУФЕРА РЕКЛАМЫ (С ЛОГАМИ) ===
         adDistanceBuffer += finalDistance;
+        console.log("[ADS] Текущий буфер: " + adDistanceBuffer + " / 1500");
         
         if (adDistanceBuffer >= 1500) {
-            // Сбрасываем буфер сразу
             adDistanceBuffer = 0;
+            console.log("[ADS] Буфер заполнен! Ждем 1.5 сек для показа UI...");
             
-            // Даем интерфейсу "NEW BEST" полторы секунды на анимацию,
-            // прежде чем YouTube перехватит экран и поставит игру на системную паузу
             setTimeout(() => {
                 if (typeof ytgame !== 'undefined' && ytgame.ads) {
+                    console.log("[ADS] Запрашиваем ytgame.ads.requestInterstitialAd()...");
                     ytgame.ads.requestInterstitialAd().then(() => {
-                        // Реклама закончилась успешно, YouTube сам снимет паузу через onResume
+                        console.log("[ADS] УСПЕХ: Реклама просмотрена и закрыта.");
                     }).catch((error) => {
-                        // Если рекламы нет или кулдаун, игра просто продолжит работу в фоне
+                        console.log("[ADS] ОТКЛОНЕНО/ПРОПУЩЕНО: Реклама не показана. Ошибка:", error);
                     });
+                } else {
+                    console.log("[ADS] ОШИБКА: SDK ytgame.ads не найден.");
                 }
             }, 1500); 
         }
