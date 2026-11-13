@@ -267,7 +267,7 @@ function spawnComboText(combo) {
         txt.visible = true;
     } else {
         let style = new PIXI.TextStyle({
-           fontFamily: "PinglooFont", fontSize: 40, fontWeight: "bold",
+           fontFamily: "'PinglooFont', 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif", fontSize: 40, fontWeight: "bold",
             fill: 0xFFD700, dropShadow: true, dropShadowColor: 0xFF4500, dropShadowDistance: 4, dropShadowBlur: 10
         });
         txt = new PIXI.Text(textStr, style);
@@ -568,7 +568,7 @@ window.initGame = function(root, pixiScene) {
 
     // Создаем красный таймер смерти
     // let deathStyle = new PIXI.TextStyle({
-    //     fontFamily: "PinglooFont", fontSize: 90, fontWeight: "bold",
+    //     fontFamily: "'PinglooFont', 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif", fontSize: 90, fontWeight: "bold",
     //     fill: 0xFF0000, stroke: 0xFFFFFF, strokeThickness: 8, dropShadow: true
     // });
     
@@ -701,7 +701,7 @@ window.initGame = function(root, pixiScene) {
     overlayBg.beginFill(0x80C5FA).drawRect(-2000, -2000, 6000, 6000).endFill();
     
     let style = new PIXI.TextStyle({ 
-        fontFamily: "PinglooFont", // Твой кастомный шрифт
+        fontFamily: "'PinglooFont', 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif", // Твой кастомный шрифт
         fontSize: 80, 
         fill: 0xFFFFFF 
     });
@@ -1073,15 +1073,23 @@ window.initGame = function(root, pixiScene) {
             gameRoot.pauseScreen.btnMenu.on("pointerdown", () => {
                 createjs.Sound.play("SfxClick");
                 gameRoot.pauseScreen.visible = false;
-                resetGame(false); 
+                
+                // --- НОВАЯ МЕХАНИКА: Плавная сдача ---
+                window.isGivingUp = true;
+                isPlaying = true; // Снимаем игру с паузы в фоне
+                if (gameRoot.btnPause) gameRoot.btnPause.visible = false; // Прячем кнопку паузы, чтобы не нажал еще раз
+                if (currentBgmInstance) currentBgmInstance.paused = !window.isMusicOn; // Возвращаем музыку
+                if (player && typeof player.play === "function") player.play(); 
+                if (avalanche && typeof avalanche.play === "function") avalanche.play();
             });
         }
     }
     
     // Стандартные глобальные клики
     window.addEventListener("pointerdown", () => { 
-        // ВЕРНУЛИ УПРАВЛЕНИЕ: Игрок может нырять даже без энергии
-        if (isPlaying) isDiving = true; 
+        // ВЕРНУЛИ УПРАВЛЕНИЕ: Игрок может нырять даже без энергии. 
+        // НО блокируем, если он сдался (нажал выход в паузе)
+        if (isPlaying && !window.isGivingUp) isDiving = true; 
     });
     window.addEventListener("pointerup", () => isDiving = false);
 
@@ -1098,7 +1106,7 @@ window.initGame = function(root, pixiScene) {
     
     // Включаем перенос слов (wordWrap) и центрирование
     let oriStyle = new PIXI.TextStyle({ 
-        fontFamily: "PinglooFont", 
+        fontFamily: "'PinglooFont', 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif", 
         fontSize: 50, 
         fill: 0xFFFFFF, 
         fontWeight: "bold",
@@ -1404,6 +1412,7 @@ function triggerGameOver(finalDistance) {
 }
 
 function resetGame(startImmediately) {
+    window.isGivingUp = false; // Сбрасываем флаг сдачи
     if (gameRoot.pauseScreen) gameRoot.pauseScreen.visible = false;
     velocityY = 0;
     isDiving = false;
@@ -1620,7 +1629,7 @@ function resumeWithCountdown() {
 
     let count = 3;
     let style = new PIXI.TextStyle({
-        fontFamily: "PinglooFont", fontSize: 150, fontWeight: "bold",
+        fontFamily: "'PinglooFont', 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif", fontSize: 150, fontWeight: "bold",
         fill: 0xFFD700, stroke: 0xFF4500, strokeThickness: 8, dropShadow: true
     });
     let txt = new PIXI.Text(count, style);
@@ -2067,7 +2076,12 @@ function gameLoop(dt) {
     rotationDiff = ((rotationDiff + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
     player.rotation += rotationDiff * 0.2 * dt;
     
-    if (speedX < minSpeedX) speedX = minSpeedX;
+    if (window.isGivingUp) {
+        speedX -= 1.5 * dt; // Плавно, но быстро тормозим до нуля
+        if (speedX < 0) speedX = 0; // Разрешаем остановиться полностью
+    } else {
+        if (speedX < minSpeedX) speedX = minSpeedX; // В обычной игре ниже минимума не падаем
+    }
     if (speedX > maxSpeedX) speedX = maxSpeedX;
 
     wasDiving = isDiving; 
@@ -2447,18 +2461,20 @@ function gameLoop(dt) {
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
-        // ФИКС ЛАВИНЫ: Адаптируем дистанцию удержания под масштаб камеры (чтобы она спавнилась за левым краем экрана, а не в кадре при отдалении)
+        // ЗАМЕНИТЬ БЛОК СКОРОСТИ ЛАВИНЫ:
         let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
         let targetDist = 1200 / currentZoom; 
 
-        if (speedX <= 15) {
-            // ЕДЕШЬ МЕДЛЕННО: Лавина ждет прямо за границей видимости камеры
+        // Добавили проверку && !window.isGivingUp
+        if (speedX <= 20 && !window.isGivingUp) {
+            // ЕДЕШЬ МЕДЛЕННО: Лавина ждет прямо за границей видимости
             if (distanceToAvalanche > targetDist) {
                 avalancheWorldX = playerWorldX - targetDist; 
             }
-            currentAvalancheSpeed = 22; 
+            currentAvalancheSpeed = 15; 
         } else {
-            currentAvalancheSpeed = avalancheBaseSpeed;
+            // Если сдались - лавина ускоряется, чтобы быстрее поглотить игрока
+            currentAvalancheSpeed = window.isGivingUp ? Math.max(avalancheBaseSpeed, 25) : avalancheBaseSpeed;
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
