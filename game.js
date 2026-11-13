@@ -1313,8 +1313,14 @@ function triggerGameOver(finalDistance) {
     if (gameRoot.gameOverScreen) {
         gameRoot.addChild(gameRoot.gameOverScreen); 
         gameRoot.gameOverScreen.visible = true; 
+
+        // ФИКС: Принудительно прячем плашку перед каждой проверкой рекорда
+        if (gameRoot.gameOverScreen.mcNewRecord) {
+            gameRoot.gameOverScreen.mcNewRecord.visible = false;
+        }
+
         if (typeof gameRoot.gameOverScreen.gotoAndStop === "function") {
-            gameRoot.gameOverScreen.gotoAndStop(0); // Встаем на первый кадр (где всё уже нарисовано)
+            gameRoot.gameOverScreen.gotoAndStop(0); // Встаем на первый кадр
         }
 
         // ПРОГРАММНАЯ АНИМАЦИЯ: Окно плавно выплывает снизу и появляется из прозрачности
@@ -1864,10 +1870,17 @@ function gameLoop(dt) {
     
     player.y += velocityY * dt;
 
-    // МЯГКИЙ ПОТОЛОК: Форсируем дугу, если залетел слишком высоко
-    if (player.y < -1000 && velocityY < 0) {
-        // Чем выше летит, тем сильнее давит искусственная гравитация вниз
-        velocityY += (Math.abs(player.y) - 1000) * 0.05 * dt; 
+    // МЯГКИЙ ПОТОЛОК (СТРАТОСФЕРА): Заворачиваем траекторию плавно и заранее
+    if (player.y < -500 && velocityY < 0) {
+        let overHeight = Math.abs(player.y) - 500;
+        
+        // 1. Плавно накидываем вес, начиная задолго до жесткого края (с -500).
+        // Коэффициент крошечный (0.0025 вместо старых 0.05), поэтому давление нарастает незаметно.
+        velocityY += (overHeight * 0.0025) * dt; 
+        
+        // 2. Слегка гасим сам импульс (эффект плотного воздуха). 
+        // Это сделает зависание в верхней точке дуги долгим и кинематографичным, без резких отскоков.
+        velocityY *= (1 - 0.015 * dt);
     }
 
     let currentHitboxOffset = hasSled ? 85 : 50; 
@@ -2137,7 +2150,8 @@ function gameLoop(dt) {
                         
                         // Спавним рыбу (или стайку)
                         for (let k = 0; k < fishCount; k++) {
-                            spawnFish(scanX + k * 80, fishY); 
+                            // Расширили шаг с 80 до 200 пикселей для комфортного сбора
+                            spawnFish(scanX + k * 200, fishY); 
                         }
                         
                         let baseDist = 4000 + Math.random() * 3000;
