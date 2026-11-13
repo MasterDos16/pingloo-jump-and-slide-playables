@@ -1067,11 +1067,16 @@ window.initGame = function(root, pixiScene) {
 
     // === ОВЕРЛЕЙ ПОВОРОТА ЭКРАНА ===
     window.orientationOverlay = new PIXI.Container();
-    let oriBg = new PIXI.Graphics().beginFill(0x000000, 1.0).drawRect(-5000, -5000, 10000, 10000).endFill();
+    
+    // Делаем оверлей интерактивным, чтобы клики не проходили сквозь него
+    window.orientationOverlay.interactive = true; 
+    
+    // Вернули правильный фирменный голубой цвет
+    let oriBg = new PIXI.Graphics().beginFill(0x80C5FA, 1.0).drawRect(-5000, -5000, 10000, 10000).endFill();
     
     // Включаем перенос слов (wordWrap) и центрирование
     let oriStyle = new PIXI.TextStyle({ 
-        fontFamily: "PinglooFont", // Если шрифт не успел загрузиться, Pixi сам подставит Arial
+        fontFamily: "PinglooFont", 
         fontSize: 50, 
         fill: 0xFFFFFF, 
         fontWeight: "bold",
@@ -1079,7 +1084,6 @@ window.initGame = function(root, pixiScene) {
         wordWrap: true,
         wordWrapWidth: 300 
     });
-    // Добавили \n для принудительного переноса строки
     let oriTxt = new PIXI.Text("PLEASE ROTATE\nYOUR DEVICE", oriStyle);
     oriTxt.anchor.set(0.5);
     window.orientationOverlay.addChild(oriBg, oriTxt);
@@ -1166,12 +1170,16 @@ window.initGame = function(root, pixiScene) {
         if (ytgame.system) {
             ytgame.system.onPause(() => {
                 if (isPlaying && gameRoot.btnPause) {
-                    gameRoot.btnPause.emit('pointerdown');
+                    gameRoot.btnPause.emit('pointerdown'); // Обычная игровая пауза
                 }
             });
             
             ytgame.system.onResume(() => {
-                // Возврат из паузы (пока просто слушаем)
+                // Возврат из системной паузы (например, после закрытия рекламы)
+                // Если мы были на экране Game Over, убеждаемся, что всё кликабельно
+                if (gameRoot.gameOverScreen && gameRoot.gameOverScreen.visible) {
+                    // Игра просто возвращается к ожиданию клика игрока
+                }
             });
             
             ytgame.system.onAudioEnabledChange((isAudioEnabled) => {
@@ -1309,19 +1317,24 @@ function triggerGameOver(finalDistance) {
             }
         }
 
-        // === ЛОГИКА БУФЕРА РЕКЛАМЫ ===
+        // === ЛОГИКА БУФЕРА РЕКЛАМЫ (С ЗАДЕРЖКОЙ) ===
         adDistanceBuffer += finalDistance;
         
         if (adDistanceBuffer >= 1500) {
-            if (typeof ytgame !== 'undefined' && ytgame.ads) {
-                // Запрашиваем показ межстраничной рекламы
-                ytgame.ads.requestInterstitialAd().catch((error) => {
-                    // Обрабатываем возможные ошибки (например, если API временно недоступен).
-                    // Нам не нужно стопать игру, она просто продолжится.
-                });
-            }
-            // Сбрасываем буфер в любом случае, чтобы начать копить заново
+            // Сбрасываем буфер сразу
             adDistanceBuffer = 0;
+            
+            // Даем интерфейсу "NEW BEST" полторы секунды на анимацию,
+            // прежде чем YouTube перехватит экран и поставит игру на системную паузу
+            setTimeout(() => {
+                if (typeof ytgame !== 'undefined' && ytgame.ads) {
+                    ytgame.ads.requestInterstitialAd().then(() => {
+                        // Реклама закончилась успешно, YouTube сам снимет паузу через onResume
+                    }).catch((error) => {
+                        // Если рекламы нет или кулдаун, игра просто продолжит работу в фоне
+                    });
+                }
+            }, 1500); 
         }
 
         globalCoins += coinsCollected;
