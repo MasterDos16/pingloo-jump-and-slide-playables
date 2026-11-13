@@ -2419,7 +2419,7 @@ function gameLoop(dt) {
         let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
         let targetDist = 1200 / currentZoom; 
 
-        if (speedX <= 22) {
+        if (speedX <= 15) {
             // ЕДЕШЬ МЕДЛЕННО: Лавина ждет прямо за границей видимости камеры
             if (distanceToAvalanche > targetDist) {
                 avalancheWorldX = playerWorldX - targetDist; 
