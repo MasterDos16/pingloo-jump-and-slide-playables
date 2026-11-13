@@ -1166,37 +1166,37 @@ window.initGame = function(root, pixiScene) {
 
     // --- ИНТЕГРАЦИЯ YOUTUBE SDK (ОБЯЗАТЕЛЬНЫЕ ТРЕБОВАНИЯ) ---
     if (typeof ytgame !== 'undefined') {
-        
         // 1. Сообщаем платформе, что игра полностью загружена
         if (ytgame.game) {
-            ytgame.game.gameReady();
+            ytgame.game.firstFrameReady(); 
+            ytgame.game.gameReady();       
         }
         
-        // 2. Подключаем обязательные системные события (звук и пауза)
+        // 2. Подключаем обязательные системные события
         if (ytgame.system) {
-            ytgame.system.onPause(() => {
-                if (isPlaying && gameRoot.btnPause) {
-                    gameRoot.btnPause.emit('pointerdown');
-                }
-            });
-            
-            ytgame.system.onResume(() => {
-                // Возврат из паузы (пока просто слушаем)
-            });
-
-            // Инициализация звука при старте (Обязательное требование YouTube)
-            if (typeof ytgame.system.isAudioEnabled === 'function') {
-                createjs.Sound.muted = !ytgame.system.isAudioEnabled();
-            }
-            
-            // Отслеживание переключателя звука в интерфейсе самого YouTube
-            ytgame.system.onAudioEnabledChange((isAudioEnabled) => {
-                createjs.Sound.muted = !isAudioEnabled;
-            });
-        } else {
-        // ЕСЛИ МЫ НЕ В YOUTUBE (по прямой ссылке): принудительно включаем звук
-        createjs.Sound.muted = false;
+            ytgame.system.onPause(() => { if (isPlaying && gameRoot.btnPause) gameRoot.btnPause.emit('pointerdown'); });
+            ytgame.system.onResume(() => {});
+            if (typeof ytgame.system.isAudioEnabled === 'function') createjs.Sound.muted = !ytgame.system.isAudioEnabled();
+            ytgame.system.onAudioEnabledChange((isAudioEnabled) => { createjs.Sound.muted = !isAudioEnabled; });
         }
+    } else {
+        // --- ЖЕЛЕЗОБЕТОННАЯ РАЗБЛОКИРОВКА ЗВУКА ДЛЯ ПК И ТЕЛЕФОНОВ (ВНЕ YOUTUBE) ---
+        createjs.Sound.muted = false;
+        createjs.Sound.volume = 1.0;
+        
+        // Вешаем слушатель на само окно браузера (нативный клик пробивает любую защиту)
+        window.addEventListener("pointerdown", function unlockAudio() {
+            // Пингуем контекст Web Audio API
+            if (createjs.Sound.activePlugin && createjs.Sound.activePlugin.context) {
+                let ctx = createjs.Sound.activePlugin.context;
+                if (ctx.state === "suspended") ctx.resume();
+            }
+            // Страховка глобальной громкости
+            createjs.Sound.muted = false;
+            
+            // Снимаем слушатель, чтобы он не спамил при каждом клике в игре
+            window.removeEventListener("pointerdown", unlockAudio);
+        }, { once: true });
     }
 
     // ФИКС ШРИФТОВ НА ТЕЛЕФОНЕ: Перерисовываем текст, когда шрифт реально скачался
