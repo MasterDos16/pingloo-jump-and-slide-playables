@@ -641,10 +641,13 @@ window.initGame = function(root, pixiScene) {
                 gameRoot[name].interactive = true;
                 gameRoot[name].cursor = "pointer";
                 gameRoot[name].on("pointerdown", () => { 
+                    // ЖЕСТКАЯ ЗАЩИТА: Не ставим на паузу, если игра уже закончена или мы сдаемся лавине
+                    if (isGameOver || window.isGivingUp) return; 
+                    
                     gameRoot.btnPause.visible = false; // Скрываем кнопку
                     if (window.isCountdown) return; 
-                    createjs.Sound.play("SfxPause"); // НОВЫЙ ЗВУК
-                    isPlaying = false; 
+                    createjs.Sound.play("SfxPause"); 
+                    isPlaying = false;
                     if (currentBgmInstance) currentBgmInstance.paused = true; // ПАУЗА МУЗЫКИ
                     if (player && typeof player.stop === "function") player.stop(); // ПАУЗА ПЕРСОНАЖА
                     if (avalanche && typeof avalanche.stop === "function") avalanche.stop(); // ПАУЗА ЛАВИНЫ
@@ -1070,17 +1073,29 @@ window.initGame = function(root, pixiScene) {
         if (gameRoot.pauseScreen.btnMenu) {
             gameRoot.pauseScreen.btnMenu.interactive = true;
             gameRoot.pauseScreen.btnMenu.cursor = "pointer";
-            gameRoot.pauseScreen.btnMenu.on("pointerdown", () => {
+            gameRoot.pauseScreen.btnMenu.removeAllListeners(); 
+            gameRoot.pauseScreen.btnMenu.on("pointerdown", (e) => {
+                if (e) e.stopPropagation();
                 createjs.Sound.play("SfxClick");
                 gameRoot.pauseScreen.visible = false;
                 
                 // --- НОВАЯ МЕХАНИКА: Плавная сдача ---
                 window.isGivingUp = true;
-                isPlaying = true; // Снимаем игру с паузы в фоне
-                if (gameRoot.btnPause) gameRoot.btnPause.visible = false; // Прячем кнопку паузы, чтобы не нажал еще раз
-                if (currentBgmInstance) currentBgmInstance.paused = !window.isMusicOn; // Возвращаем музыку
+                isPlaying = true; 
+                if (gameRoot.btnPause) gameRoot.btnPause.visible = false; 
+                if (currentBgmInstance) currentBgmInstance.paused = !window.isMusicOn; 
                 if (player && typeof player.play === "function") player.play(); 
                 if (avalanche && typeof avalanche.play === "function") avalanche.play();
+                
+                // ТЕЛЕПОРТ ЛАВИНЫ: Подтягиваем её к самому краю видимости камеры
+                let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
+                let targetDist = 1200 / currentZoom; 
+                let playerWorldX = worldOffsetX + player.x;
+                
+                if (playerWorldX - avalancheWorldX > targetDist) {
+                    // Ставим её ровно за край экрана + 150px, чтобы её край уже начал влезать в кадр
+                    avalancheWorldX = playerWorldX - targetDist + 150; 
+                }
             });
         }
     }
@@ -1198,7 +1213,13 @@ window.initGame = function(root, pixiScene) {
         
         // 2. Подключаем обязательные системные события
         if (ytgame.system) {
-            ytgame.system.onPause(() => { if (isPlaying && gameRoot.btnPause) gameRoot.btnPause.emit('pointerdown'); });
+            ytgame.system.onPause(() => { 
+                // Эмулятор и YouTube присылают сигнал паузы при повороте экрана.
+                // Реагируем ТОЛЬКО если идет активная игра (кнопка паузы видна на экране)
+                if (isPlaying && !isGameOver && !window.isGivingUp && gameRoot.btnPause && gameRoot.btnPause.visible) {
+                    gameRoot.btnPause.emit('pointerdown'); 
+                } 
+            });
             ytgame.system.onResume(() => {});
             if (typeof ytgame.system.isAudioEnabled === 'function') createjs.Sound.muted = !ytgame.system.isAudioEnabled();
             ytgame.system.onAudioEnabledChange((isAudioEnabled) => { createjs.Sound.muted = !isAudioEnabled; });
@@ -2077,10 +2098,10 @@ function gameLoop(dt) {
     player.rotation += rotationDiff * 0.2 * dt;
     
     if (window.isGivingUp) {
-        speedX -= 1.5 * dt; // Плавно, но быстро тормозим до нуля
+        speedX -= 0.3 * dt; // Было 1.5. Теперь скорость тает плавно и долго.
         if (speedX < 0) speedX = 0; // Разрешаем остановиться полностью
     } else {
-        if (speedX < minSpeedX) speedX = minSpeedX; // В обычной игре ниже минимума не падаем
+        if (speedX < minSpeedX) speedX = minSpeedX; 
     }
     if (speedX > maxSpeedX) speedX = maxSpeedX;
 
