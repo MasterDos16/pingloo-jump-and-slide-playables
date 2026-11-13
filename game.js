@@ -732,10 +732,15 @@ window.initGame = function(root, pixiScene) {
     startOverlay.interactive = true;
     startOverlay.cursor = "pointer";
     startOverlay.on("pointerdown", () => {
-        let ctx = createjs.Sound.activePlugin.context;
-        if (ctx && ctx.state === "suspended") ctx.resume();
+        // ЖЕСТКАЯ РАЗБЛОКИРОВКА АУДИОКОНТЕКСТА ДЛЯ МОБИЛЬНЫХ БРАУЗЕРОВ
+        if (createjs.Sound.activePlugin && createjs.Sound.activePlugin.context) {
+            let ctx = createjs.Sound.activePlugin.context;
+            if (ctx.state === "suspended") ctx.resume();
+        }
+        // Воспроизводим тихий системный звук — это 100% снимает блокировку iOS/Android
+        createjs.Sound.play("SfxClick", { volume: 0.01 });
 
-        clearInterval(pulseInterval); // Останавливаем анимацию
+        clearInterval(pulseInterval); 
         if (startOverlay.parent) startOverlay.parent.removeChild(startOverlay);
         
         showScreen("menuScreen"); 
@@ -1188,7 +1193,25 @@ window.initGame = function(root, pixiScene) {
             ytgame.system.onAudioEnabledChange((isAudioEnabled) => {
                 createjs.Sound.muted = !isAudioEnabled;
             });
+        } else {
+        // ЕСЛИ МЫ НЕ В YOUTUBE (по прямой ссылке): принудительно включаем звук
+        createjs.Sound.muted = false;
         }
+    }
+
+    // ФИКС ШРИФТОВ НА ТЕЛЕФОНЕ: Перерисовываем текст, когда шрифт реально скачался
+    if (document.fonts) {
+        document.fonts.ready.then(() => {
+            if (window.orientationOverlay && window.orientationOverlay.children[1]) {
+                window.orientationOverlay.children[1].style.fontFamily = "PinglooFont";
+                window.orientationOverlay.children[1].dirty = true;
+            }
+            if (overlayTxt) {
+                overlayTxt.style.fontFamily = "PinglooFont";
+                overlayTxt.dirty = true;
+            }
+            // Главное меню и экраны обновятся сами при смене кадров
+        });
     }
 
     window.handleResize();
@@ -1615,6 +1638,8 @@ function resumeWithCountdown() {
 }
 
 function gameLoop(dt) {
+    if (gameRoot.txtFPS) gameRoot.txtFPS.visible = false;
+    if (gameRoot.txtSpeed) gameRoot.txtSpeed.visible = false;
     // === ОБРАБОТКА МИНИ-ДВИЖКА АНИМАЦИЙ ===
     for (let i = window.activeTweens.length - 1; i >= 0; i--) {
         let tw = window.activeTweens[i];
@@ -2385,22 +2410,22 @@ function gameLoop(dt) {
     if (!window.isIntro) {
         let distanceToAvalanche = playerWorldX - avalancheWorldX;
         
-        // Базовый медленный рост опасности
         avalancheBaseSpeed += 0.001 * dt;
         if (avalancheBaseSpeed > 32) avalancheBaseSpeed = 32; 
         
         let currentAvalancheSpeed = avalancheBaseSpeed;
 
+        // ФИКС ЛАВИНЫ: Адаптируем дистанцию удержания под масштаб камеры (чтобы она спавнилась за левым краем экрана, а не в кадре при отдалении)
+        let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
+        let targetDist = 1200 / currentZoom; 
+
         if (speedX <= 22) {
-            // ЕДЕШЬ МЕДЛЕННО: Жестко держим лавину в начале экрана (на расстоянии 1100 пикселей слева),
-            // чтобы она была видна и неумолимо ползла за тобой со скоростью 22.
-            let targetDist = 1100;
+            // ЕДЕШЬ МЕДЛЕННО: Лавина ждет прямо за границей видимости камеры
             if (distanceToAvalanche > targetDist) {
-                avalancheWorldX = playerWorldX - targetDist; // Плавный подгон к началу экрана
+                avalancheWorldX = playerWorldX - targetDist; 
             }
-            currentAvalancheSpeed = 22; // Медленная, но опасная скорость
+            currentAvalancheSpeed = 22; 
         } else {
-            // ГОНИШЬ БЫСТРО: Лавина отстает со своей базовой скоростью
             currentAvalancheSpeed = avalancheBaseSpeed;
         }
 
@@ -2409,8 +2434,8 @@ function gameLoop(dt) {
         
         if (avalanche) {
             avalanche.x = avalancheWorldX - worldOffsetX; 
-            // Видна, если она ближе 1800 пикселей (как раз в поле зрения / у левого края)
-            avalanche.visible = (distanceToAvalanche < 1800);
+            // Видна, если она ближе, чем граница экрана + запас (чтобы не пропадала резко при сужении камеры)
+            avalanche.visible = (distanceToAvalanche < targetDist + 500);
         }
         
         // ЗВУК И КОНЕЦ ИГРЫ
