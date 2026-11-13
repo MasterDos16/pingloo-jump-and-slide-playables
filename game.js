@@ -1184,19 +1184,24 @@ window.initGame = function(root, pixiScene) {
         createjs.Sound.muted = false;
         createjs.Sound.volume = 1.0;
         
-        // Вешаем слушатель на само окно браузера (нативный клик пробивает любую защиту)
-        window.addEventListener("pointerdown", function unlockAudio() {
+        const unlockAudio = () => {
             // Пингуем контекст Web Audio API
             if (createjs.Sound.activePlugin && createjs.Sound.activePlugin.context) {
                 let ctx = createjs.Sound.activePlugin.context;
                 if (ctx.state === "suspended") ctx.resume();
             }
-            // Страховка глобальной громкости
             createjs.Sound.muted = false;
             
-            // Снимаем слушатель, чтобы он не спамил при каждом клике в игре
-            window.removeEventListener("pointerdown", unlockAudio);
-        }, { once: true });
+            // Снимаем слушатели, чтобы не спамить
+            document.removeEventListener("mousedown", unlockAudio, true);
+            document.removeEventListener("touchstart", unlockAudio, true);
+            document.removeEventListener("click", unlockAudio, true);
+        };
+
+        // Флаг true заставляет браузер выполнить этот код ДО того, как клик уйдет в канвас игры
+        document.addEventListener("mousedown", unlockAudio, true);
+        document.addEventListener("touchstart", unlockAudio, true);
+        document.addEventListener("click", unlockAudio, true);
     }
 
     // ФИКС ШРИФТОВ НА ТЕЛЕФОНЕ: Перерисовываем текст, когда шрифт реально скачался
@@ -1870,17 +1875,14 @@ function gameLoop(dt) {
     
     player.y += velocityY * dt;
 
-    // МЯГКИЙ ПОТОЛОК (СТРАТОСФЕРА): Заворачиваем траекторию плавно и заранее
-    if (player.y < -500 && velocityY < 0) {
-        let overHeight = Math.abs(player.y) - 500;
+    // МЯГКИЙ ПОТОЛОК: Возвращаем высокие прыжки, но делаем пик параболы плавным
+    if (player.y < -850 && velocityY < 0) {
+        // Начинаем тормозить намного выше (с -850 вместо -500)
+        let overHeight = Math.abs(player.y) - 850;
         
-        // 1. Плавно накидываем вес, начиная задолго до жесткого края (с -500).
-        // Коэффициент крошечный (0.0025 вместо старых 0.05), поэтому давление нарастает незаметно.
-        velocityY += (overHeight * 0.0025) * dt; 
-        
-        // 2. Слегка гасим сам импульс (эффект плотного воздуха). 
-        // Это сделает зависание в верхней точке дуги долгим и кинематографичным, без резких отскоков.
-        velocityY *= (1 - 0.015 * dt);
+        // Только плавно накидываем вес, чтобы закруглить траекторию.
+        // Убрали жесткое гашение импульса (*=), чтобы не портить физику отрыва.
+        velocityY += (overHeight * 0.015) * dt; 
     }
 
     let currentHitboxOffset = hasSled ? 85 : 50; 
