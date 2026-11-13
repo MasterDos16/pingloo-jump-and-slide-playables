@@ -446,21 +446,24 @@ window.initGame = function(root, pixiScene) {
     }
     // -------------------------------------------
 
-    // --- УМНОЕ РАЗДЕЛЕНИЕ ЗВУКА И МУЗЫКИ (БЕЗОПАСНАЯ ВЕРСИЯ) ---
+    // --- УМНОЕ РАЗДЕЛЕНИЕ ЗВУКА И МУЗЫКИ (С ЛОГАМИ) ---
     let originalSoundPlay = createjs.Sound.play;
     createjs.Sound.play = function() {
-        // Создаем настоящий звук, чтобы ничего не ломалось
         let instance = originalSoundPlay.apply(createjs.Sound, arguments);
         let srcStr = String(arguments[0]);
         
-        // Если это музыка и она выключена - ставим на паузу
         if (!window.isMusicOn && srcStr.startsWith("Bgm")) {
+            console.log("[AUDIO] Музыка на паузе (выключена в настройках):", srcStr);
             instance.paused = true;
         }
         
-        // Если это звук и он выключен - глушим громкость в 0
         if (!window.isSoundsOn && srcStr.startsWith("Sfx")) {
+            console.log("[AUDIO] Эффект заглушен (выключен в настройках):", srcStr);
             instance.volume = 0;
+        }
+        
+        if (createjs.Sound.muted) {
+            console.log("[AUDIO] ВНИМАНИЕ: Весь движок заглушен (createjs.Sound.muted = true). Звук:", srcStr);
         }
         
         return instance;
@@ -732,12 +735,25 @@ window.initGame = function(root, pixiScene) {
     startOverlay.interactive = true;
     startOverlay.cursor = "pointer";
     startOverlay.on("pointerdown", () => {
-        // ЖЕСТКАЯ РАЗБЛОКИРОВКА АУДИОКОНТЕКСТА ДЛЯ МОБИЛЬНЫХ БРАУЗЕРОВ
+        console.log("[AUDIO] Клик по TAP TO START. Пробуждаем звук...");
+        
+        // 1. Пробиваем Web Audio API
         if (createjs.Sound.activePlugin && createjs.Sound.activePlugin.context) {
             let ctx = createjs.Sound.activePlugin.context;
-            if (ctx.state === "suspended") ctx.resume();
+            if (ctx.state === "suspended") {
+                ctx.resume().then(() => console.log("[AUDIO] Контекст успешно разблокирован!"));
+            } else {
+                console.log("[AUDIO] Контекст уже активен: " + ctx.state);
+            }
+        } else {
+            console.log("[AUDIO] ВНИМАНИЕ: Web Audio API не найден движком SoundJS!");
         }
-        // Воспроизводим тихий системный звук — это 100% снимает блокировку iOS/Android
+
+        // 2. Жестко снимаем любые муты самого движка (иногда он сам себя глушит)
+        createjs.Sound.muted = false;
+        createjs.Sound.volume = 1.0;
+        
+        // 3. Вызываем пустой звук для инициализации мобильных браузеров
         createjs.Sound.play("SfxClick", { volume: 0.01 });
 
         clearInterval(pulseInterval); 
