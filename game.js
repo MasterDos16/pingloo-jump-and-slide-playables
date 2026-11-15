@@ -59,12 +59,17 @@ let objPool = {
     coins: [], fishes: [], sleds: {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}, coinFX: [], fishFX: [], comboText: [], comboFlash: []
 };
 
-// --- УМНЫЕ ФУНКЦИИ ДЛЯ ЛАВИНЫ (ВСТАВЛЯТЬ СЮДА) ---
+// --- УМНЫЕ ФУНКЦИИ ДЛЯ ЛАВИНЫ ---
 function colorizeAvalanche(color) {
     if (!avalanche) return;
     function tintObj(obj) {
-        if (obj.tint !== undefined) obj.tint = color;
-        if (obj.children) obj.children.forEach(tintObj);
+        // Красим только видимые спрайты и векторные шейпы
+        if (obj instanceof PIXI.Sprite || obj instanceof PIXI.Graphics) {
+            obj.tint = color;
+        }
+        if (obj.children) {
+            obj.children.forEach(tintObj);
+        }
     }
     tintObj(avalanche);
 }
@@ -361,6 +366,22 @@ function spawnSled(worldX, worldY) {
 
 function switchBiome(index) {
     currentBiomeIndex = index;
+
+    // --- ПАЛИТРА ЛАВИНЫ ---
+    // 0xFFFFFF оставляет оригинальные цвета символа из Adobe Animate
+    let avalancheColors = [
+        0xFFFFFF, // 0: Снег (оригинальная лавина)
+        0xABEFFF, // 1: Ледник (в цвет холмов биома 1)
+        0xFFFFFF, // 2: Луга
+        0xFFE783, // 3: Пляж (цвет песка/холмов биома 3)
+        0xFEEDB5, // 4: Подводный (иловая буря, цвет холмов биома 4)
+        0xFFFFFF, // 5: Ванная (оставляем оригинал, чтобы тени не искажались)
+        0xFAE08C, // 6: Пирамиды (цвет песка биома 6)
+        0xAEAFCE  // 7: Космос (лунная буря, цвет холмов биома 7)
+    ];
+    // Применяем цвет к лавине
+    colorizeAvalanche(avalancheColors[index]);
+
     let layers = ["sky", "cloudsBack", "mountainsMid", "mountains", "trees", "cloudsFront"];
     
     for (let i = 0; i <= 7; i++) {
