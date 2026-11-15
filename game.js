@@ -2196,20 +2196,23 @@ function gameLoop(dt) {
                     
                     if (isValidSpawn) {
                         let fishCount = (currentBiomeIndex === 3) ? 3 : 1; // БИОМ 3 (Пляж): Стайки по 3
-                        
-                        let fishY = (currentBiomeIndex === 4) 
-                            ? getHillY(scanX) - 300 - Math.random() * 200 // БИОМ 4: Рыба высоко в воздухе
-                            : getHillY(scanX) - 40; // Обычная рыба над землей
+                        let fishSpacing = 350; // Расстояние между рыбками в стайке
                         
                         // Спавним рыбу (или стайку)
                         for (let k = 0; k < fishCount; k++) {
-                            // Расширили шаг с 80 до 200 пикселей для комфортного сбора
-                            spawnFish(scanX + k * 200, fishY); 
+                            let currentFishX = scanX + k * fishSpacing;
+                            
+                            // Вычисляем высоту для КАЖДОЙ рыбки отдельно по её координате X
+                            let fishY = (currentBiomeIndex === 4) 
+                                ? getHillY(currentFishX) - 300 - Math.random() * 200 // БИОМ 4: высоко в воздухе
+                                : getHillY(currentFishX) - 80; // Остальные: подняли до уровня монет (было -40)
+                            
+                            spawnFish(currentFishX, fishY); 
                         }
                         
                         let baseDist = 4000 + Math.random() * 3000;
                         if (currentBiomeIndex === 2) baseDist *= 1.5; 
-                        else if (currentBiomeIndex === 4) baseDist *= 0.25; // Рыб в подводном биоме в 4 РАЗА больше!
+                        else if (currentBiomeIndex === 4) baseDist *= 0.25; 
                         
                         nextFishX = scanX + baseDist; 
                         
