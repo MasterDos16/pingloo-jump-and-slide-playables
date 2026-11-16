@@ -1108,14 +1108,27 @@ window.initGame = function(root, pixiScene) {
                 if (player && typeof player.play === "function") player.play(); 
                 if (avalanche && typeof avalanche.play === "function") avalanche.play();
                 
-                // ТЕЛЕПОРТ ЛАВИНЫ: Подтягиваем её к самому краю видимости камеры
+                // 1. ЛОМАЕМ САНКИ (Если они были)
+                if (hasSled) {
+                    hasSled = false;
+                    nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
+                    createjs.Sound.play("SfxSledBreak"); 
+                    player.y += 35;
+                    if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
+                    activeSledInstance = null;
+                    spawnBoostFlash();
+                }
+                
+                // 2. ТЕЛЕПОРТ И ПЛАВНОЕ ПОЯВЛЕНИЕ ЛАВИНЫ
                 let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
-                let targetDist = 1200 / currentZoom; 
+                let targetDist = 1350 / currentZoom; // Сдвинули границу левее
                 let playerWorldX = worldOffsetX + player.x;
                 
-                if (playerWorldX - avalancheWorldX > targetDist) {
-                    // Ставим её ровно за край экрана + 150px, чтобы её край уже начал влезать в кадр
-                    avalancheWorldX = playerWorldX - targetDist + 150; 
+                // Закидываем лавину далеко за левый край и плавно проявляем
+                avalancheWorldX = playerWorldX - targetDist - 400; 
+                if (avalanche) {
+                    avalanche.alpha = 0; // Прячем
+                    addTween(avalanche, { alpha: 1 }, 600); // Плавно проявляем
                 }
             });
         }
@@ -1365,7 +1378,13 @@ function playMusic(trackId) {
 }
 
 function triggerGameOver(finalDistance) {
-    if (avalanche) avalanche.stop();
+    //if (avalanche) avalanche.stop();
+    if (avalanche) {
+        // Лавина проезжает еще 350 пикселей вперед за 0.6 сек, накрывая Кико с головой
+        addTween(avalanche, { x: avalanche.x + 350 }, 600, () => {
+            if (typeof avalanche.stop === "function") avalanche.stop();
+        });
+    }
 
     if (currentBgmInstance) currentBgmInstance.stop();
     currentBgmName = ""; 
@@ -1604,6 +1623,7 @@ function resetGame(startImmediately) {
             if (avalanche) {
                 avalanche.x = -3000;
                 avalanche.visible = false; // Прячем, пока она далеко
+                avalanche.alpha = 1;
                 safePlayAvalanche();
             }
         } else {
@@ -1618,6 +1638,7 @@ function resetGame(startImmediately) {
     }
     if (avalanche) {
         avalanche.x = -500;
+        avalanche.alpha = 1;
         // if (typeof avalanche.play === "function") avalanche.play(); 
     }
 
@@ -2508,7 +2529,7 @@ function gameLoop(dt) {
 
         // ЗАМЕНИТЬ БЛОК СКОРОСТИ ЛАВИНЫ:
         let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
-        let targetDist = 1200 / currentZoom; 
+        let targetDist = 1350 / currentZoom; // БЫЛО 1200. Теперь лавина ждет глубоко за левым краем кадра
 
         // Добавили проверку && !window.isGivingUp
         if (speedX <= 20 && !window.isGivingUp) {
