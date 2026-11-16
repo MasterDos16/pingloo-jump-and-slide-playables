@@ -2097,7 +2097,8 @@ function gameLoop(dt) {
             }
         } else {
          if (playerAnimLock <= 0 && !hasSled) { 
-             setPlayerState("roll");
+             // ФИКС АНИМАЦИИ: Если мы сдались, Кико обреченно скользит на пузе, а не весело катится
+             setPlayerState(window.isGivingUp ? "dive" : "roll");
          }
             if (slopeForce > 0) {
                 speedX += slopeForce * (hasSled ? 0.8 : 0.2) * dt; 
