@@ -79,7 +79,7 @@ function safePlayAvalanche() {
     function playObj(obj) {
         if (typeof obj.gotoAndPlay === "function") obj.gotoAndPlay(0);
         else if (typeof obj.play === "function") obj.play();
-        if (obj.framerate !== undefined) obj.framerate = 30; 
+        if (obj.framerate !== undefined) obj.framerate = 60; 
         if (obj.children) obj.children.forEach(playObj);
     }
     playObj(avalanche);
