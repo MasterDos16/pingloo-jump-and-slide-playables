@@ -417,7 +417,7 @@ function addTween(target, props, duration, onComplete = null, onUpdate = null) {
     window.activeTweens.push({ target, startProps, targetProps: props, duration, time: 0, onComplete, onUpdate });
 }
 
-let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen", "settingsScreen", "creditsScreen"];
+let screens = ["menuScreen", "menuLevelScreen", "menuCharScreen", "settingsScreen", "creditsScreen", "howToPlayScreen"];
     function showScreen(screenName) {
         screens.forEach(name => {
             if (gameRoot[name]) {
@@ -805,12 +805,12 @@ window.initGame = function(root, pixiScene) {
             showScreen("settingsScreen");
         });
     }
-    if (gameRoot.menuScreen.btnCredits) {
-        gameRoot.menuScreen.btnCredits.interactive = true;
-        gameRoot.menuScreen.btnCredits.cursor = "pointer";
-        gameRoot.menuScreen.btnCredits.on("pointerdown", () => {
+    if (gameRoot.menuScreen.btnInfo) { // <--- ЗАМЕНИЛ btnCredits на btnInfo
+        gameRoot.menuScreen.btnInfo.interactive = true;
+        gameRoot.menuScreen.btnInfo.cursor = "pointer";
+        gameRoot.menuScreen.btnInfo.on("pointerdown", () => {
             createjs.Sound.play("SfxClick");
-            showScreen("creditsScreen");
+            showScreen("howToPlayScreen"); // Открываем правила игры
         });
     }
 
@@ -864,14 +864,78 @@ window.initGame = function(root, pixiScene) {
         }
     }
 
+    // --- ЛОГИКА ЭКРАНА HOW TO PLAY ---
+    if (gameRoot.howToPlayScreen) {
+        let currentHowToPage = 0;
+        let totalHowToPages = 0;
+        
+        // Умный подсчет страниц: проверяем, сколько mcPage ты создал в Animate
+        while(gameRoot.howToPlayScreen["mcPage" + totalHowToPages]) {
+            totalHowToPages++;
+        }
+
+        function updateHowToPage() {
+            for (let i = 0; i < totalHowToPages; i++) {
+                let page = gameRoot.howToPlayScreen["mcPage" + i];
+                if (page) page.visible = (i === currentHowToPage);
+            }
+            if (gameRoot.howToPlayScreen.btnArrowLeft) {
+                gameRoot.howToPlayScreen.btnArrowLeft.visible = (currentHowToPage > 0);
+            }
+            if (gameRoot.howToPlayScreen.btnArrowRight) {
+                gameRoot.howToPlayScreen.btnArrowRight.visible = (currentHowToPage < totalHowToPages - 1);
+            }
+        }
+
+        if (gameRoot.howToPlayScreen.btnArrowLeft) {
+            gameRoot.howToPlayScreen.btnArrowLeft.interactive = true;
+            gameRoot.howToPlayScreen.btnArrowLeft.cursor = "pointer";
+            gameRoot.howToPlayScreen.btnArrowLeft.on("pointerdown", () => {
+                createjs.Sound.play("SfxPage"); // Звук перелистывания
+                if (currentHowToPage > 0) currentHowToPage--;
+                updateHowToPage();
+            });
+        }
+
+        if (gameRoot.howToPlayScreen.btnArrowRight) {
+            gameRoot.howToPlayScreen.btnArrowRight.interactive = true;
+            gameRoot.howToPlayScreen.btnArrowRight.cursor = "pointer";
+            gameRoot.howToPlayScreen.btnArrowRight.on("pointerdown", () => {
+                createjs.Sound.play("SfxPage"); // Звук перелистывания
+                if (currentHowToPage < totalHowToPages - 1) currentHowToPage++;
+                updateHowToPage();
+            });
+        }
+
+        if (gameRoot.howToPlayScreen.btnBack) {
+            gameRoot.howToPlayScreen.btnBack.interactive = true;
+            gameRoot.howToPlayScreen.btnBack.cursor = "pointer";
+            gameRoot.howToPlayScreen.btnBack.on("pointerdown", () => {
+                createjs.Sound.play("SfxClick");
+                showScreen("menuScreen"); // Возврат в главное меню
+            });
+        }
+
+        if (gameRoot.howToPlayScreen.btnCredits) {
+            gameRoot.howToPlayScreen.btnCredits.interactive = true;
+            gameRoot.howToPlayScreen.btnCredits.cursor = "pointer";
+            gameRoot.howToPlayScreen.btnCredits.on("pointerdown", () => {
+                createjs.Sound.play("SfxClick");
+                showScreen("creditsScreen"); // Переход к титрам
+            });
+        }
+        
+        updateHowToPage(); // Инициализация первой страницы при запуске
+    }
+
     // --- ЛОГИКА ЭКРАНА CREDITS ---
     if (gameRoot.creditsScreen) {
-        if (gameRoot.creditsScreen.btnBack) {
-            gameRoot.creditsScreen.btnBack.interactive = true;
-            gameRoot.creditsScreen.btnBack.cursor = "pointer";
-            gameRoot.creditsScreen.btnBack.on("pointerdown", () => { 
+        if (gameRoot.creditsScreen.btnMenu) { // <--- Твоя новая кнопка
+            gameRoot.creditsScreen.btnMenu.interactive = true;
+            gameRoot.creditsScreen.btnMenu.cursor = "pointer";
+            gameRoot.creditsScreen.btnMenu.on("pointerdown", () => { 
                 createjs.Sound.play("SfxClick"); 
-                showScreen("menuScreen"); 
+                showScreen("menuScreen"); // Возврат сразу в главное меню
             });
         }
     }
