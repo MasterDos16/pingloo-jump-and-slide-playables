@@ -2161,19 +2161,23 @@ function gameLoop(dt) {
     wasDiving = isDiving; 
     let playerWorldX = worldOffsetX + player.x;
 
-    // ПУЗЫРЬКИ ИЗО РТА В ВОДЕ
-    if (currentBiomeIndex === 4 && Math.random() > 0.85) {
+    // ПУЗЫРЬКИ ИЗО РТА В ВОДЕ (С ритмом дыхания)
+    // Используем синусоиду от пройденного пути, чтобы создать фазы дыхания (чередуем выдох и паузу)
+    let isBreathingPhase = Math.sin(worldOffsetX * 0.003) > 0;
+
+    // Спавним, только если сейчас фаза выдоха (и сделали шанс чуть выше, чтобы стайка была плотнее)
+    if (currentBiomeIndex === 4 && isBreathingPhase && Math.random() > 0.6) {
         let bub = new PIXI.Graphics();
         bub.beginFill(0xFFFFFF).drawCircle(0,0, 3 + Math.random()*4).endFill();
+        
         // Рот находится примерно справа-посередине от центра Кико
-        // Сместили правее (60) и выше (-20)
         bub.x = player.x + Math.cos(player.rotation) * 60 - Math.sin(player.rotation) * -20; 
         bub.y = player.y + Math.sin(player.rotation) * 60 + Math.cos(player.rotation) * -20;
         bub.alpha = 0.6;
-        bub.worldX = playerWorldX;
-        // Пузырьки живут отдельной логикой в effects
+        
+        // Запоминаем глобальную координату мира в момент "выдоха"
         cameraContainer.addChild(bub);
-        effects.push({ shape: bub, type: "bubble", life: 0 });
+        effects.push({ shape: bub, type: "bubble", life: 0, worldX: playerWorldX });
     }
 
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
