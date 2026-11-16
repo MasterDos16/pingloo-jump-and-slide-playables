@@ -13735,13 +13735,16 @@
         MovieClip.call(this, {
             duration: 1800
         });
-        var instance3 = new Graphic188(MovieClip.SYNCHED)
+        var instance4 = new Graphic188(MovieClip.SYNCHED)
             .setTransform(234.15, 381, 1.244, 1.244);
+        var instance3 = new Sprite(fromFrame("Bitmap 452"))
+            .setTransform(-2191, -561, 22.954, 16.272);
         var instance2 = new lib.btnMenu()
             .setTransform(-834.75, 436.7, 1.218, 1.218);
         this[instance2.name = "btnMenu"] = instance2;
         var instance1 = new Graphic187(MovieClip.SYNCHED);
-        this.addTimedChild(instance3)
+        this.addTimedChild(instance4)
+            .addTimedChild(instance3)
             .addTimedChild(instance2)
             .addTimedChild(instance1, 0, 1800, {
                 "0": {
@@ -19112,23 +19115,14 @@
         Container.call(this);
         var instance5 = new Sprite(fromFrame("htp_4"))
             .setTransform(-598, -332, 1.238, 1.238);
-        var instance4 = new Text("MAKE PERFECT LANDINGS FOR COMBOS AND GRAB SLEDS FOR A TURBO BOOST!")
-            .setStyle({
-                fontFamily: "Titan One",
-                fontSize: 50,
-                fill: "#fff",
-                leading: 2,
-                wordWrap: true,
-                wordWrapWidth: 747.5
-            })
-            .setAlign("center")
-            .setTransform(46.30000000000001, 98.94999999999999);
-        var instance3 = new Sprite(fromFrame("Bitmap 400"))
+        var instance4 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(-5, 410, 1, 1, 0, 0, 3.142);
-        var instance2 = new Sprite(fromFrame("Bitmap 400"))
+        var instance3 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(24, 410, 1, 1, 0, 0, 3.142);
-        var instance1 = new Sprite(fromFrame("Bitmap 400"))
+        var instance2 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(54, 410, 1, 1, 0, 0, 3.142);
+        var instance1 = new Sprite(fromFrame("Bitmap 451"))
+            .setTransform(-325, 100, 0.744, 0.744);
         this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -19136,34 +19130,16 @@
         Container.call(this);
         var instance6 = new Sprite(fromFrame("htp_3"))
             .setTransform(-581, -292, 1.18, 1.18);
-        var instance5 = new Text("CATCH FISH TO KEEP YOUR ENERGY UP. ")
-            .setStyle({
-                fontFamily: "Titan One",
-                fontSize: 50,
-                fill: "#fff",
-                leading: 2,
-                wordWrap: true,
-                wordWrapWidth: 468.05
-            })
-            .setAlign("center")
-            .setTransform(246.82500000000002, -233.75000000000006);
-        var instance4 = new Sprite(fromFrame("Bitmap 400"))
+        var instance5 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(5, 410);
-        var instance3 = new Sprite(fromFrame("Bitmap 400"))
+        var instance4 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(-5, 429, 1, 1, 3.142);
-        var instance2 = new Sprite(fromFrame("Bitmap 400"))
+        var instance3 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(25, 429, 1, 1, 3.142);
-        var instance1 = new Text("DON'T LET THE AVALANCHE CATCH YOU!")
-            .setStyle({
-                fontFamily: "Titan One",
-                fontSize: 50,
-                fill: "#fff",
-                leading: 2,
-                wordWrap: true,
-                wordWrapWidth: 468.05
-            })
-            .setAlign("center")
-            .setTransform(-262.525, 85.55000000000001);
+        var instance2 = new Sprite(fromFrame("Bitmap 446"))
+            .setTransform(12, -234, 0.442, 0.442);
+        var instance1 = new Sprite(fromFrame("Bitmap 448"))
+            .setTransform(-496, 86, 0.45, 0.45);
         this.addChild(instance6, instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -19171,23 +19147,14 @@
         Container.call(this);
         var instance5 = new Sprite(fromFrame("htp_2"))
             .setTransform(-549, -282, 1.182, 1.182);
-        var instance4 = new Text("RELEASE ON UPHILLS\nTO FLY HIGH!")
-            .setStyle({
-                fontFamily: "Titan One",
-                fontSize: 50,
-                fill: "#fff",
-                leading: 2,
-                wordWrap: true,
-                wordWrapWidth: 401.5
-            })
-            .setAlign("center")
-            .setTransform(-236.85000000000002, -212.64999999999998);
-        var instance3 = new Sprite(fromFrame("Bitmap 400"))
+        var instance4 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(5, 410);
-        var instance2 = new Sprite(fromFrame("Bitmap 400"))
+        var instance3 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(-24, 410);
-        var instance1 = new Sprite(fromFrame("Bitmap 400"))
+        var instance2 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(-5, 429, 1, 1, 3.142);
+        var instance1 = new Sprite(fromFrame("Bitmap 445"))
+            .setTransform(-435, -211, 0.38, 0.38);
         this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -19195,23 +19162,14 @@
         Container.call(this);
         var instance5 = new Sprite(fromFrame("htp_1"))
             .setTransform(-558, -284, 1.167, 1.167);
-        var instance4 = new Text("TAP & HOLD ON DOWNHILLS TO GAIN SPEED!")
-            .setStyle({
-                fontFamily: "Titan One",
-                fontSize: 50,
-                fill: "#fff",
-                leading: 2,
-                wordWrap: true,
-                wordWrapWidth: 723.9
-            })
-            .setAlign("center")
-            .setTransform(75.25, -205.1);
-        var instance3 = new Sprite(fromFrame("Bitmap 400"))
+        var instance4 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(5, 410);
-        var instance2 = new Sprite(fromFrame("Bitmap 400"))
+        var instance3 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(-24, 410);
-        var instance1 = new Sprite(fromFrame("Bitmap 400"))
+        var instance2 = new Sprite(fromFrame("Bitmap 400"))
             .setTransform(-54, 410);
+        var instance1 = new Sprite(fromFrame("Bitmap 444"))
+            .setTransform(-287, -205, 0.692, 0.692);
         this.addChild(instance5, instance4, instance3, instance2, instance1);
     });
 
@@ -19373,8 +19331,8 @@
 
     var Graphic191 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 100, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 440"))
-            .setTransform(-141, -25.45, 1.011, 1.039);
+        var instance1 = new Sprite(fromFrame("Bitmap 453"))
+            .setTransform(-141.6, -25.05, 0.572, 0.563);
         this.addTimedChild(instance1);
     });
 
@@ -19387,405 +19345,403 @@
             .setTransform(-145, -29, 0.278, 0.278);
         this.addTimedChild(instance2, 0, 100, {
                 "0": {
-                    x: -141.2,
-                    y: -1.55,
-                    sx: 0.013
+                    x: -141.8,
+                    y: -1.95,
+                    sx: 0.007
                 },
                 "1": {
-                    x: -139.79,
-                    sx: 0.023
+                    x: -139.041,
+                    sx: 0.027
                 },
                 "2": {
-                    x: -138.365,
-                    sx: 0.033
+                    x: -136.214,
+                    sx: 0.046
                 },
                 "3": {
-                    x: -136.958,
-                    sx: 0.043
+                    x: -133.413,
+                    sx: 0.066
                 },
                 "4": {
-                    x: -135.48,
-                    sx: 0.053
+                    x: -130.713,
+                    sx: 0.085
                 },
                 "5": {
-                    x: -134.073,
-                    sx: 0.063
+                    x: -128.016,
+                    sx: 0.104
                 },
                 "6": {
-                    x: -132.647,
-                    sx: 0.073
+                    x: -125.343,
+                    sx: 0.123
                 },
                 "7": {
-                    x: -131.19,
-                    sx: 0.083
-                },
-                "8": {
-                    x: -129.782,
-                    sx: 0.093
-                },
-                "9": {
-                    x: -128.355,
-                    sx: 0.102
-                },
-                "10": {
-                    x: -126.947,
-                    sx: 0.112
-                },
-                "11": {
-                    x: -125.472,
-                    sx: 0.122
-                },
-                "12": {
-                    x: -124.064,
-                    sx: 0.132
-                },
-                "13": {
-                    x: -122.637,
+                    x: -122.691,
                     sx: 0.142
                 },
+                "8": {
+                    x: -120.072,
+                    sx: 0.161
+                },
+                "9": {
+                    x: -117.457,
+                    sx: 0.179
+                },
+                "10": {
+                    x: -114.864,
+                    sx: 0.197
+                },
+                "11": {
+                    x: -112.376,
+                    sx: 0.215
+                },
+                "12": {
+                    x: -109.859,
+                    sx: 0.233
+                },
+                "13": {
+                    x: -107.375,
+                    sx: 0.25
+                },
                 "14": {
-                    x: -121.179,
-                    sx: 0.152
+                    x: -104.934,
+                    sx: 0.268
                 },
                 "15": {
-                    x: -119.804,
-                    sx: 0.162
+                    x: -102.526,
+                    sx: 0.285
                 },
                 "16": {
-                    x: -118.346,
-                    sx: 0.172
-                },
-                "17": {
-                    x: -116.939,
-                    sx: 0.182
-                },
-                "18": {
-                    x: -115.511,
-                    sx: 0.192
-                },
-                "19": {
-                    x: -114.054,
-                    sx: 0.202
-                },
-                "20": {
-                    x: -112.629,
-                    sx: 0.212
-                },
-                "21": {
-                    x: -111.171,
-                    sx: 0.222
-                },
-                "22": {
-                    x: -109.793,
-                    sx: 0.232
-                },
-                "23": {
-                    x: -108.336,
-                    sx: 0.242
-                },
-                "24": {
-                    x: -106.929,
-                    sx: 0.252
-                },
-                "25": {
-                    x: -105.483,
-                    sx: 0.262
-                },
-                "26": {
-                    x: -104.025,
-                    sx: 0.272
-                },
-                "27": {
-                    x: -102.65,
-                    sx: 0.282
-                },
-                "28": {
-                    x: -101.193,
-                    sx: 0.292
-                },
-                "29": {
-                    x: -99.765,
+                    x: -100.121,
                     sx: 0.302
                 },
+                "17": {
+                    x: -97.707,
+                    sx: 0.318
+                },
+                "18": {
+                    x: -95.43,
+                    sx: 0.335
+                },
+                "19": {
+                    x: -93.153,
+                    sx: 0.351
+                },
+                "20": {
+                    x: -90.849,
+                    sx: 0.367
+                },
+                "21": {
+                    x: -88.597,
+                    sx: 0.383
+                },
+                "22": {
+                    x: -86.399,
+                    sx: 0.399
+                },
+                "23": {
+                    x: -84.206,
+                    sx: 0.415
+                },
+                "24": {
+                    x: -82.053,
+                    sx: 0.43
+                },
+                "25": {
+                    x: -79.903,
+                    sx: 0.445
+                },
+                "26": {
+                    x: -77.806,
+                    sx: 0.46
+                },
+                "27": {
+                    x: -75.692,
+                    sx: 0.475
+                },
+                "28": {
+                    x: -73.653,
+                    sx: 0.489
+                },
+                "29": {
+                    x: -71.634,
+                    sx: 0.503
+                },
                 "30": {
-                    x: -98.358,
-                    sx: 0.312
+                    x: -69.619,
+                    sx: 0.517
                 },
                 "31": {
-                    x: -96.9,
-                    sx: 0.322
-                },
-                "32": {
-                    x: -95.475,
-                    sx: 0.332
-                },
-                "33": {
-                    x: -94.017,
-                    sx: 0.342
-                },
-                "34": {
-                    x: -92.64,
-                    sx: 0.352
-                },
-                "35": {
-                    x: -91.132,
-                    sx: 0.362
-                },
-                "36": {
-                    x: -89.757,
-                    sx: 0.372
-                },
-                "37": {
-                    x: -88.35,
-                    sx: 0.382
-                },
-                "38": {
-                    x: -86.872,
-                    sx: 0.392
-                },
-                "39": {
-                    x: -85.465,
-                    sx: 0.402
-                },
-                "40": {
-                    x: -84.007,
-                    sx: 0.412
-                },
-                "41": {
-                    x: -82.582,
-                    sx: 0.422
-                },
-                "42": {
-                    x: -81.174,
-                    sx: 0.432
-                },
-                "43": {
-                    x: -79.747,
-                    sx: 0.442
-                },
-                "44": {
-                    x: -78.339,
-                    sx: 0.452
-                },
-                "45": {
-                    x: -76.863,
-                    sx: 0.461
-                },
-                "46": {
-                    x: -75.456,
-                    sx: 0.471
-                },
-                "47": {
-                    x: -74.049,
-                    sx: 0.481
-                },
-                "48": {
-                    x: -72.571,
-                    sx: 0.491
-                },
-                "49": {
-                    x: -71.164,
-                    sx: 0.501
-                },
-                "50": {
-                    x: -69.738,
-                    sx: 0.511
-                },
-                "51": {
-                    x: -68.331,
-                    sx: 0.521
-                },
-                "52": {
-                    x: -66.853,
+                    x: -67.707,
                     sx: 0.531
                 },
-                "53": {
-                    x: -65.446,
-                    sx: 0.541
+                "32": {
+                    x: -65.747,
+                    sx: 0.545
                 },
-                "54": {
-                    x: -64.039,
-                    sx: 0.551
+                "33": {
+                    x: -63.841,
+                    sx: 0.558
                 },
-                "55": {
-                    x: -62.563,
-                    sx: 0.561
+                "34": {
+                    x: -62.01,
+                    sx: 0.572
                 },
-                "56": {
-                    x: -61.156,
-                    sx: 0.571
+                "35": {
+                    x: -60.128,
+                    sx: 0.585
                 },
-                "57": {
-                    x: -59.728,
-                    sx: 0.581
+                "36": {
+                    x: -58.301,
+                    sx: 0.598
                 },
-                "58": {
-                    x: -58.32,
-                    sx: 0.591
+                "37": {
+                    x: -56.496,
+                    sx: 0.61
                 },
-                "59": {
-                    x: -56.895,
-                    sx: 0.601
+                "38": {
+                    x: -54.724,
+                    sx: 0.623
                 },
-                "60": {
-                    x: -55.437,
-                    sx: 0.611
+                "39": {
+                    x: -52.976,
+                    sx: 0.635
                 },
-                "61": {
-                    x: -54.03,
-                    sx: 0.621
+                "40": {
+                    x: -51.269,
+                    sx: 0.647
                 },
-                "62": {
-                    x: -52.553,
-                    sx: 0.631
+                "41": {
+                    x: -49.625,
+                    sx: 0.659
                 },
-                "63": {
-                    x: -51.146,
-                    sx: 0.641
-                },
-                "64": {
-                    x: -49.72,
-                    sx: 0.651
-                },
-                "65": {
-                    x: -48.263,
-                    sx: 0.661
-                },
-                "66": {
-                    x: -46.885,
+                "42": {
+                    x: -48.005,
                     sx: 0.671
                 },
-                "67": {
-                    x: -45.427,
-                    sx: 0.681
+                "43": {
+                    x: -46.356,
+                    sx: 0.682
                 },
-                "68": {
-                    x: -44.002,
-                    sx: 0.691
+                "44": {
+                    x: -44.794,
+                    sx: 0.693
                 },
-                "69": {
-                    x: -42.544,
-                    sx: 0.701
+                "45": {
+                    x: -43.182,
+                    sx: 0.704
                 },
-                "70": {
-                    x: -41.137,
-                    sx: 0.711
+                "46": {
+                    x: -41.662,
+                    sx: 0.715
                 },
-                "71": {
-                    x: -39.709,
-                    sx: 0.721
+                "47": {
+                    x: -40.195,
+                    sx: 0.726
                 },
-                "72": {
-                    x: -38.252,
-                    sx: 0.731
+                "48": {
+                    x: -38.662,
+                    sx: 0.736
                 },
-                "73": {
-                    x: -36.877,
-                    sx: 0.741
+                "49": {
+                    x: -37.223,
+                    sx: 0.747
                 },
-                "74": {
-                    x: -35.419,
-                    sx: 0.751
+                "50": {
+                    x: -35.814,
+                    sx: 0.757
                 },
-                "75": {
-                    x: -33.974,
-                    sx: 0.761
+                "51": {
+                    x: -34.461,
+                    sx: 0.766
                 },
-                "76": {
-                    x: -32.566,
-                    sx: 0.771
+                "52": {
+                    x: -33.078,
+                    sx: 0.776
                 },
-                "77": {
-                    x: -31.108,
-                    sx: 0.781
+                "53": {
+                    x: -31.75,
+                    sx: 0.786
                 },
-                "78": {
-                    x: -29.731,
-                    sx: 0.791
+                "54": {
+                    x: -30.422,
+                    sx: 0.795
                 },
-                "79": {
-                    x: -28.273,
-                    sx: 0.801
+                "55": {
+                    x: -29.17,
+                    sx: 0.804
                 },
-                "80": {
-                    x: -26.848,
-                    sx: 0.811
+                "56": {
+                    x: -27.941,
+                    sx: 0.813
                 },
-                "81": {
-                    x: -25.391,
-                    sx: 0.82
+                "57": {
+                    x: -26.693,
+                    sx: 0.821
                 },
-                "82": {
-                    x: -23.963,
+                "58": {
+                    x: -25.551,
                     sx: 0.83
                 },
-                "83": {
-                    x: -22.556,
-                    sx: 0.84
+                "59": {
+                    x: -24.348,
+                    sx: 0.838
                 },
-                "84": {
-                    x: -21.098,
-                    sx: 0.85
+                "60": {
+                    x: -23.262,
+                    sx: 0.846
                 },
-                "85": {
-                    x: -19.723,
-                    sx: 0.86
+                "61": {
+                    x: -22.113,
+                    sx: 0.854
                 },
-                "86": {
-                    x: -18.266,
-                    sx: 0.87
+                "62": {
+                    x: -21.021,
+                    sx: 0.861
                 },
-                "87": {
-                    x: -16.837,
-                    sx: 0.88
+                "63": {
+                    x: -19.982,
+                    sx: 0.869
                 },
-                "88": {
-                    x: -15.43,
+                "64": {
+                    x: -18.996,
+                    sx: 0.876
+                },
+                "65": {
+                    x: -17.98,
+                    sx: 0.883
+                },
+                "66": {
+                    x: -17.018,
                     sx: 0.89
                 },
-                "89": {
-                    x: -13.955,
-                    sx: 0.9
+                "67": {
+                    x: -16.109,
+                    sx: 0.896
                 },
-                "90": {
-                    x: -12.548,
-                    sx: 0.91
+                "68": {
+                    x: -15.176,
+                    sx: 0.903
                 },
-                "91": {
-                    x: -11.119,
-                    sx: 0.92
+                "69": {
+                    x: -14.342,
+                    sx: 0.909
                 },
-                "92": {
-                    x: -9.712,
-                    sx: 0.93
+                "70": {
+                    x: -13.492,
+                    sx: 0.915
                 },
-                "93": {
-                    x: -8.255,
-                    sx: 0.94
+                "71": {
+                    x: -12.684,
+                    sx: 0.921
                 },
-                "94": {
-                    x: -6.83,
-                    sx: 0.95
+                "72": {
+                    x: -11.91,
+                    sx: 0.926
                 },
-                "95": {
-                    x: -5.422,
-                    sx: 0.96
+                "73": {
+                    x: -11.16,
+                    sx: 0.931
                 },
-                "96": {
-                    x: -3.944,
-                    sx: 0.97
+                "74": {
+                    x: -10.379,
+                    sx: 0.937
                 },
-                "97": {
-                    x: -2.537,
+                "75": {
+                    x: -9.705,
+                    sx: 0.942
+                },
+                "76": {
+                    x: -9.062,
+                    sx: 0.946
+                },
+                "77": {
+                    x: -8.412,
+                    sx: 0.951
+                },
+                "78": {
+                    x: -7.746,
+                    sx: 0.955
+                },
+                "79": {
+                    x: -7.184,
+                    sx: 0.959
+                },
+                "80": {
+                    x: -6.592,
+                    sx: 0.963
+                },
+                "81": {
+                    x: -6.072,
+                    sx: 0.967
+                },
+                "82": {
+                    x: -5.586,
+                    sx: 0.971
+                },
+                "83": {
+                    x: -5.074,
+                    sx: 0.974
+                },
+                "84": {
+                    x: -4.666,
+                    sx: 0.977
+                },
+                "85": {
+                    x: -4.26,
                     sx: 0.98
                 },
-                "98": {
-                    x: -1.112,
+                "86": {
+                    x: -3.824,
+                    sx: 0.983
+                },
+                "87": {
+                    x: -3.494,
+                    sx: 0.985
+                },
+                "88": {
+                    x: -3.215,
+                    sx: 0.988
+                },
+                "89": {
+                    x: -2.91,
                     sx: 0.99
                 },
-                "99": {
-                    x: 0,
+                "90": {
+                    x: -2.59,
+                    sx: 0.992
+                },
+                "91": {
+                    x: -2.34,
+                    sx: 0.994
+                },
+                "92": {
+                    x: -2.162,
+                    sx: 0.995
+                },
+                "93": {
+                    x: -1.918,
+                    sx: 0.996
+                },
+                "94": {
+                    x: -1.799,
+                    sx: 0.997
+                },
+                "95": {
+                    x: -1.68,
+                    sx: 0.998
+                },
+                "96": {
+                    x: -1.584,
+                    sx: 0.999
+                },
+                "97": {
+                    x: -1.492,
                     sx: 1
+                },
+                "98": {
+                    x: -1.453
+                },
+                "99": {
+                    x: -1.4
                 }
             })
             .addTimedChild(instance1)

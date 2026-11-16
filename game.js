@@ -79,7 +79,7 @@ function safePlayAvalanche() {
     function playObj(obj) {
         if (typeof obj.gotoAndPlay === "function") obj.gotoAndPlay(0);
         else if (typeof obj.play === "function") obj.play();
-        if (obj.framerate !== undefined) obj.framerate = 60; 
+        if (obj.framerate !== undefined) obj.framerate = 30; 
         if (obj.children) obj.children.forEach(playObj);
     }
     playObj(avalanche);
@@ -1185,14 +1185,14 @@ window.initGame = function(root, pixiScene) {
                 
                 // 2. ТЕЛЕПОРТ И ПЛАВНОЕ ПОЯВЛЕНИЕ ЛАВИНЫ
                 let currentZoom = gameRoot.scale.x / (window.baseGameScale || 1.0);
-                let targetDist = 1350 / currentZoom; // Сдвинули границу левее
+                let targetDist = 1350 / currentZoom;
                 let playerWorldX = worldOffsetX + player.x;
                 
-                // Закидываем лавину далеко за левый край и плавно проявляем
-                avalancheWorldX = playerWorldX - targetDist - 400; 
+                // ФИКС: Ставим лавину намного ближе (уже частично в кадре) и проявляем быстрее
+                avalancheWorldX = playerWorldX - targetDist + 200; 
                 if (avalanche) {
-                    avalanche.alpha = 0; // Прячем
-                    addTween(avalanche, { alpha: 1 }, 600); // Плавно проявляем
+                    avalanche.alpha = 0; 
+                    addTween(avalanche, { alpha: 1 }, 400); // Проявляется за 0.4 сек
                 }
             });
         }
@@ -1445,7 +1445,7 @@ function triggerGameOver(finalDistance) {
     //if (avalanche) avalanche.stop();
     if (avalanche) {
         // Лавина проезжает еще 350 пикселей вперед за 0.6 сек, накрывая Кико с головой
-        addTween(avalanche, { x: avalanche.x + 350 }, 600, () => {
+        addTween(avalanche, { x: avalanche.x + 650 }, 800, () => {
             if (typeof avalanche.stop === "function") avalanche.stop();
         });
     }
@@ -2028,18 +2028,17 @@ function gameLoop(dt) {
     
     player.y += velocityY * dt;
 
-    // === ИДЕАЛЬНАЯ АРКА (Прогрессивная гравитация) ===
-    // Заменяем "невидимую стену" на умную параболу. 
-    // Начинаем плавно накидывать вес уже с высоты -300, когда игрок только летит вверх.
-    if (player.y < -300 && velocityY < 0) {
-        // Вычисляем, насколько высоко мы забрались (от 0.0 на старте до 1.0 на пике)
-        let altitudeFactor = (Math.abs(player.y) - 300) / 700; 
+    // === ИДЕАЛЬНАЯ АРКА (Прогрессивная гравитация v2) ===
+    // Начинаем тормозить намного выше (с -600), возвращая чувство высокого полета!
+    if (player.y < -600 && velocityY < 0) {
+        // Рассчитываем силу натяжения "резинки" (от 0 на -600 до 1 на -1000)
+        let altitudeFactor = (Math.abs(player.y) - 600) / 400; 
         if (altitudeFactor > 1) altitudeFactor = 1;
         
-        // Добавочная гравитация растет экспоненциально (квадратично).
-        // Внизу она равна нулю, а ближе к -1000 превращается в мощный, но плавный тормоз.
-        // Умножаем на currentGravity, чтобы тяжелые и легкие персонажи (Папи/Лили) по-разному чувствовали этот потолок.
-        let progressiveGravity = currentGravity * (altitudeFactor * altitudeFactor * 3.5); 
+        // ФИКС ЛУЛУ И КОСМОСА: Используем мощную абсолютную силу (2.5), 
+        // а не умножаем на гравитацию персонажа. 
+        // Теперь даже пушинка-Лулу в невесомости мягко и гарантированно закруглит арку.
+        let progressiveGravity = 2.5 * (altitudeFactor * altitudeFactor); 
         
         velocityY += progressiveGravity * dt;
     }
@@ -2230,19 +2229,17 @@ function gameLoop(dt) {
     // Используем синусоиду от пройденного пути, чтобы создать фазы дыхания (чередуем выдох и паузу)
     let isBreathingPhase = Math.sin(worldOffsetX * 0.003) > 0;
 
-    // Спавним, только если сейчас фаза выдоха (и сделали шанс чуть выше, чтобы стайка была плотнее)
     if (currentBiomeIndex === 4 && isBreathingPhase && Math.random() > 0.6) {
         let bub = new PIXI.Graphics();
         bub.beginFill(0xFFFFFF).drawCircle(0,0, 3 + Math.random()*4).endFill();
         
-        // Рот находится примерно справа-посередине от центра Кико
         bub.x = player.x + Math.cos(player.rotation) * 60 - Math.sin(player.rotation) * -20; 
         bub.y = player.y + Math.sin(player.rotation) * 60 + Math.cos(player.rotation) * -20;
         bub.alpha = 0.6;
         
-        // Запоминаем глобальную координату мира в момент "выдоха"
         cameraContainer.addChild(bub);
-        effects.push({ shape: bub, type: "bubble", life: 0, worldX: playerWorldX });
+        // Убрали worldX, теперь пузырек живет просто на экране
+        effects.push({ shape: bub, type: "bubble", life: 0 });
     }
 
     // --- ДИСТАНЦИЯ 3500 (Объекты появляются на 2500px раньше, чем войдут в кадр) ---
@@ -2393,20 +2390,17 @@ function gameLoop(dt) {
             }
         }
         else if (fx.type === "bubble") {
-            // ФИКС: Жестко привязываем к миру. Теперь пузырьки отстают от Кико и улетают влево
-            fx.worldX -= 0.5 * dt; // Легкое собственное смещение назад
-            fx.shape.x = fx.worldX - worldOffsetX; 
+            // ИДЕАЛЬНЫЙ ШЛЕЙФ: плавно сносим влево и вверх без привязки к безумной скорости игрока
+            fx.shape.x -= (3 + Math.random() * 3) * dt; // Дрейф влево
+            fx.shape.y -= (2 + Math.random() * 2) * dt; // Всплытие вверх
             
-            // Всплывают вверх с разной скоростью
-            fx.shape.y -= (2 + Math.random() * 2) * dt; 
-            
-            // Эффект покачивания (Wobble) под водой для красоты
+            // Эффект покачивания (Wobble) под водой
             fx.shape.x += Math.sin(fx.life * 0.15) * 2;
 
             fx.life += dt;
             if (fx.life > 60) fx.shape.alpha -= 0.05 * dt;
             
-            // Удаляем, если растворились или улетели далеко за левый край экрана
+            // Удаляем, когда растворились или плавно ушли за край
             if (fx.shape.alpha <= 0 || fx.shape.x < -100) {
                 if (fx.shape.parent) fx.shape.parent.removeChild(fx.shape);
                 effects.splice(i, 1);
@@ -2641,8 +2635,9 @@ function gameLoop(dt) {
             }
             currentAvalancheSpeed = 15; 
         } else {
-            // Если сдались - лавина ускоряется, чтобы быстрее поглотить игрока
-            currentAvalancheSpeed = window.isGivingUp ? Math.max(avalancheBaseSpeed, 25) : avalancheBaseSpeed;
+            // ФИКС: Если игрок сдался, лавина летит с огромной скоростью (45), 
+            // чтобы мгновенно проглотить замедляющегося персонажа.
+            currentAvalancheSpeed = window.isGivingUp ? 45 : avalancheBaseSpeed;
         }
 
         avalancheWorldX += currentAvalancheSpeed * dt; 
