@@ -1110,9 +1110,9 @@ window.initGame = function(root, pixiScene) {
                 
                 // 1. ЛОМАЕМ САНКИ (Если они были)
                 if (hasSled) {
-                    hasSled = false;
-                    nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
-                    createjs.Sound.play("SfxSledBreak"); 
+                 hasSled = false;
+                 nextSledX = worldOffsetX + 30000 + Math.random() * 15000; // <--- Отодвинули далеко
+                 createjs.Sound.play("SfxSledBreak");
                     player.y += 35;
                     if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
                     activeSledInstance = null;
@@ -1474,6 +1474,7 @@ function triggerGameOver(finalDistance) {
 
 function resetGame(startImmediately) {
     window.isGivingUp = false; // Сбрасываем флаг сдачи
+    window.consecutiveSleds = 0;
     if (gameRoot.pauseScreen) gameRoot.pauseScreen.visible = false;
     velocityY = 0;
     isDiving = false;
@@ -2035,7 +2036,11 @@ function gameLoop(dt) {
                 createjs.Sound.play("SfxCombo");
                 
             } else {
-                createjs.Sound.play("SfxLand");
+                // ФИКС ЗВУКА: Играем звук шлепка ТОЛЬКО если упали с заметной высоты (больше 60 пикселей).
+                // Мелкие подскоки на кочках теперь будут абсолютно бесшумными и комфортными.
+                if (currentJumpHeight > 60) {
+                    createjs.Sound.play("SfxLand");
+                }
                 
                 // УМНЫЙ ШТРАФ ЗА ПРИЗЕМЛЕНИЕ:
                 // slopeForce > 0 это спуск (мы катимся вниз)
@@ -2275,7 +2280,8 @@ function gameLoop(dt) {
 
     while (!hasSled && nextSledX < worldOffsetX + 6000) {
         spawnSled(nextSledX, getHillY(nextSledX));
-        nextSledX += 24000 + Math.random() * 16000; // ВЕРНУЛИ ЧАСТЫЙ СПАВН (раз в 240-400 м)
+        // Базовый долгий шаг (30-45к пикселей), чтобы санки были реальной ценностью
+        nextSledX += 30000 + Math.random() * 15000; 
     }
 
     // --- АНИМАЦИЯ ЧАСТИЦ СКОЛЬЖЕНИЯ ---
@@ -2465,7 +2471,18 @@ function gameLoop(dt) {
 
         if (sledTimer <= 0) {
             hasSled = false;
-            nextSledX = worldOffsetX + 5000 + Math.random() * 10000;
+            
+            // --- УМНАЯ СИСТЕМА СПАВНА САНОК (АНТИ-ЧИТ + ДОФАМИН) ---
+            if (Math.random() < 0.25 && window.consecutiveSleds < 1) {
+                // ДЖЕКПОТ (25% шанс): Следующие санки спавнятся прямо перед носом!
+                nextSledX = worldOffsetX + 3000 + Math.random() * 3000;
+                window.consecutiveSleds++;
+            } else {
+                // ОБЫЧНЫЙ РЕЖИМ: Санки спавнятся далеко, заставляя игрока играть честно
+                nextSledX = worldOffsetX + 30000 + Math.random() * 15000;
+                window.consecutiveSleds = 0;
+            }
+
             createjs.Sound.play("SfxSledBreak"); 
             player.y += 35; 
             
@@ -2576,7 +2593,7 @@ function gameLoop(dt) {
             if (!isGameOver) {
                 if (hasSled) {
                     hasSled = false;
-                    nextSledX = worldOffsetX + 15000 + Math.random() * 10000;
+                    nextSledX = worldOffsetX + 30000 + Math.random() * 15000; // <--- Отодвинули далеко
                     createjs.Sound.play("SfxSledBreak"); 
                     player.y += 35;
                     if (activeSledInstance && activeSledInstance.parent) activeSledInstance.parent.removeChild(activeSledInstance);
