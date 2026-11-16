@@ -2328,15 +2328,25 @@ function gameLoop(dt) {
             }
         }
         else if (fx.type === "bubble") {
-            fx.shape.y -= 3 * dt; // Пузырек всплывает вверх
-            fx.shape.x -= 1 * dt; // Чуть сносит назад
+            // ФИКС: Жестко привязываем к миру. Теперь пузырьки отстают от Кико и улетают влево
+            fx.worldX -= 0.5 * dt; // Легкое собственное смещение назад
+            fx.shape.x = fx.worldX - worldOffsetX; 
+            
+            // Всплывают вверх с разной скоростью
+            fx.shape.y -= (2 + Math.random() * 2) * dt; 
+            
+            // Эффект покачивания (Wobble) под водой для красоты
+            fx.shape.x += Math.sin(fx.life * 0.15) * 2;
+
             fx.life += dt;
             if (fx.life > 60) fx.shape.alpha -= 0.05 * dt;
-            if (fx.shape.alpha <= 0) {
+            
+            // Удаляем, если растворились или улетели далеко за левый край экрана
+            if (fx.shape.alpha <= 0 || fx.shape.x < -100) {
                 if (fx.shape.parent) fx.shape.parent.removeChild(fx.shape);
                 effects.splice(i, 1);
             }
-        } 
+        }
         else if (fx.type === "speedLine") {
             fx.shape.x -= (speedX * 0.8 + 20) * dt; // Летят навстречу камере
             fx.shape.scale.x -= 0.01 * dt; // Сжимаются
