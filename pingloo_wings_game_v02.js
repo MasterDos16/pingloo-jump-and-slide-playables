@@ -12611,8 +12611,8 @@
 
     var Graphic184 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 60, loop: false });
-        var instance1 = new Sprite(fromFrame("Bitmap 429"))
-            .setTransform(-69, -74, 0.114, 0.114);
+        var instance1 = new Sprite(fromFrame("Bitmap 311"))
+            .setTransform(-81, -81, 0.295, 0.295);
         this.addTimedChild(instance1);
     });
 
@@ -13615,7 +13615,7 @@
             })
             .setAlign("center")
             .setTransform(0.024999999999977263, -435.6);
-        var instance10 = new Text("Studio Coordinator")
+        var instance10 = new Text("Creative Direction")
             .setStyle({
                 fontFamily: "Titan One",
                 fontSize: 100,
